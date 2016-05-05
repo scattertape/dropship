@@ -215,9 +215,8 @@ var State = (function (_super) {
         this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
         this._doors = this.game.add.group();
         this.createDoor();
-        this._text = "accel y: ";
         var style = { font: "13px Arial", fill: "#ff0044", align: "center" };
-        var t = this.game.add.text(300, 900, this._text, style);
+        this._text = this.game.add.text(300, 900, 'init', style);
         this._text.anchor.setTo(0.5, 0.5);
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
@@ -305,6 +304,13 @@ var State = (function (_super) {
             }
         }
         if (this._transitionTween.isRunning == false) {
+            // this._text.text ="no trans";
+            if (accel != null) {
+                // this._text.setText("accel OK ");
+                if (accel.y != null) {
+                    this._text.setText("new accel y: " + accel.y);
+                }
+            }
             for (var j = 0; j < this._doors.children.length; j++) {
                 if (this.checkOverlap(this._base, this._doors.getChildAt(j))) {
                     //console.log('door');
@@ -324,6 +330,7 @@ var State = (function (_super) {
         }, this);
         this.game.debug.body(this._base);
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        // this.game.debug.text(accel.y, 200, 850);
     };
     // -------------------------------------------------------------------------
     State.prototype.hitDron = function (aObject1, aObject2) {
@@ -343,11 +350,6 @@ var State = (function (_super) {
             this._base.body.thrust(State.THRUST_POWER);
         }
         else if (_holdThruster == 0) {
-        }
-        if (accel != null) {
-            if (accel.y != null) {
-                this._text.setText("accel y: " + accel.y);
-            }
         }
     };
     State.prototype.thrusterOff = function () {
