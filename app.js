@@ -491,6 +491,6 @@ function onDeviceMotion(event) {
 // -------------------------------------------------------------------------
 window.onload = function () {
     new Game();
-    window.addEventListener("devicemotion", onDeviceMotion, false);
+    // window.addEventListener("devicemotion", onDeviceMotion, false);
 };
 //# sourceMappingURL=app.js.map
