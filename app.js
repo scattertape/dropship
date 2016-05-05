@@ -304,9 +304,9 @@ var State = (function (_super) {
             }
         }
         if (this._transitionTween.isRunning == false) {
-            // this._text.text ="no trans";
+            this._text.setText("no trans");
             if (accel != null) {
-                // this._text.setText("accel OK ");
+                this._text.setText("accel OK ");
                 if (accel.y != null) {
                     this._text.setText("new accel y: " + accel.y);
                 }
