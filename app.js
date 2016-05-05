@@ -259,11 +259,6 @@ var State = (function (_super) {
             this._cannon.rotation += this.time.elapsedMS * State.CANNON_SPEED / 1000 * (Math.PI / 4);
         }
         else if (this._space.justDown) {
-            if (accel != null) {
-                if (accel.y != null) {
-                    this._text.setText("accel y: " + accel.y);
-                }
-            }
             // get firtst missile from pool
             var missile = this._missiles.getFirstExists(false);
             if (missile) {
@@ -348,6 +343,11 @@ var State = (function (_super) {
             this._base.body.thrust(State.THRUST_POWER);
         }
         else if (_holdThruster == 0) {
+        }
+        if (accel != null) {
+            if (accel.y != null) {
+                this._text.setText("accel y: " + accel.y);
+            }
         }
     };
     State.prototype.thrusterOff = function () {
