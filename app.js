@@ -215,6 +215,10 @@ var State = (function (_super) {
         this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
         this._doors = this.game.add.group();
         this.createDoor();
+        this._text = "accel y: ";
+        var style = { font: "13px Arial", fill: "#ff0044", align: "center" };
+        var t = this.game.add.text(300, 900, this._text, style);
+        this._text.anchor.setTo(0.5, 0.5);
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
          door1.name = 'd2';*/
@@ -255,6 +259,11 @@ var State = (function (_super) {
             this._cannon.rotation += this.time.elapsedMS * State.CANNON_SPEED / 1000 * (Math.PI / 4);
         }
         else if (this._space.justDown) {
+            if (accel != null) {
+                if (accel.y != null) {
+                    this._text.setText("accel y: " + accel.y);
+                }
+            }
             // get firtst missile from pool
             var missile = this._missiles.getFirstExists(false);
             if (missile) {
@@ -417,6 +426,7 @@ var State = (function (_super) {
     return State;
 }(Phaser.State));
 var _holdThruster = 3;
+var accel;
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
@@ -475,8 +485,12 @@ function wiggle(aProgress, aPeriod1, aPeriod2) {
 function difference(a, b) { return Math.abs(a - b); }
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
+function onDeviceMotion(event) {
+    accel = event.acceleration;
+}
 // -------------------------------------------------------------------------
 window.onload = function () {
     new Game();
+    window.addEventListener("devicemotion", onDeviceMotion, false);
 };
 //# sourceMappingURL=app.js.map
