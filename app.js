@@ -216,8 +216,10 @@ var State = (function (_super) {
         this._doors = this.game.add.group();
         this.createDoor();
         var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
-        this._text = this.game.add.text(300, 900, 'init', style);
-        this._text.anchor.setTo(0.5, 0.5);
+        this._text1 = this.game.add.text(300, 900, 'accel', style);
+        this._text1.anchor.setTo(0.5, 0.5);
+        this._text2 = this.game.add.text(300, 950, 'accel+gravity', style);
+        this._text2.anchor.setTo(0.5, 0.5);
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
          door1.name = 'd2';*/
@@ -305,10 +307,11 @@ var State = (function (_super) {
         }
         if (this._transitionTween.isRunning == false) {
             // this._text.setText("no trans");
-            if (accel != null) {
+            if (deviceMo.acceleration != null) {
                 //  this._text.setText("accel OK ");
-                if (accel.y != null) {
-                    this._text.setText("y:" + accel.y.toFixed(3) + ", x:" + accel.x.toFixed(3));
+                if (deviceMo.acceleration.y != null) {
+                    this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                    this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                 }
             }
             for (var j = 0; j < this._doors.children.length; j++) {
@@ -428,7 +431,7 @@ var State = (function (_super) {
     return State;
 }(Phaser.State));
 var _holdThruster = 3;
-var accel;
+var deviceMo;
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
@@ -488,7 +491,7 @@ function difference(a, b) { return Math.abs(a - b); }
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 function onDeviceMotion(event) {
-    accel = event.acceleration;
+    deviceMo = event;
 }
 // -------------------------------------------------------------------------
 window.onload = function () {
