@@ -215,7 +215,7 @@ var State = (function (_super) {
         this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
         this._doors = this.game.add.group();
         this.createDoor();
-        var style = { font: "13px Arial", fill: "#ff0044", align: "center" };
+        var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
         this._text = this.game.add.text(300, 900, 'init', style);
         this._text.anchor.setTo(0.5, 0.5);
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
@@ -304,11 +304,11 @@ var State = (function (_super) {
             }
         }
         if (this._transitionTween.isRunning == false) {
-            this._text.setText("no trans");
+            // this._text.setText("no trans");
             if (accel != null) {
-                this._text.setText("accel OK ");
+                //  this._text.setText("accel OK ");
                 if (accel.y != null) {
-                    this._text.setText("new accel y: " + accel.y);
+                    this._text.setText("y:" + accel.y.toFixed(3) + ", x:" + accel.x.toFixed(3));
                 }
             }
             for (var j = 0; j < this._doors.children.length; j++) {
