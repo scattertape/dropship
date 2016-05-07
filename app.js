@@ -533,12 +533,25 @@ var Joystick = (function (_super) {
         console.log('joystick setup... ' + myBase.name);
         this.base = myBase;
         this.game.add.existing(this);
-        this.inputEnabled = true;
-        this.input.enableDrag();
-        this.events.onDragUpdate.add(onDragUpdate, this);
+        var width = 30; // example;
+        var height = 30; // example;
+        var bmd = this.game.add.bitmapData(width, height);
+        bmd.ctx.beginPath();
+        bmd.ctx.rect(0, 0, width, height);
+        bmd.ctx.fillStyle = '#ffcc00';
+        bmd.ctx.fill();
+        this.dragger = this.game.add.sprite(0, 0, bmd);
+        this.dragger.anchor.setTo(0.5, 0.5);
+        this.dragger.width = this.dragger.height = 50;
+        this.dragger.inputEnabled = true;
+        this.dragger.input.enableDrag();
+        this.addChild(this.dragger);
+        // this.inputEnabled = true;
+        // this.input.enableDrag();
+        this.dragger.events.onDragUpdate.add(onDragUpdate, this);
         // this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
-        this.events.onInputUp.add(onUp, this);
-        this.events.onInputOut.add(onOut, this);
+        this.dragger.events.onInputUp.add(onUp, this);
+        // this.events.onInputOut.add(onOut, this);
         function onDragUpdate(sprite, pointer) {
             var b = 1 + 9;
             var deltaX = (pointer.x - pointer.positionDown.x);
@@ -549,10 +562,10 @@ var Joystick = (function (_super) {
             sprite.mydebug = '3deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
             var mrNum = Math.abs(deltaX);
             if (deltaX < sprite.previousDelta) {
-                sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
+                this.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
             }
             else if (deltaX > sprite.previousDelta) {
-                sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+                this.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
             }
             sprite.previousDelta = deltaX;
         }
