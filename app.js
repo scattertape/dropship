@@ -341,6 +341,7 @@ var State = (function (_super) {
             this.game.debug.body(aMissile);
         }, this);
         this.game.debug.body(this._base);
+        this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
         /*this.game.debug.cameraInfo(this.game.camera, 32, 32);
         this.game.debug.pointer(this.game.input.mousePointer);
         this.game.debug.pointer(this.game.input.pointer1);
@@ -526,6 +527,7 @@ var Joystick = (function (_super) {
         this.pinAngle = 0;
         this.disabled = false;
         this.isBeingDragged = false;
+        this.mydebug = '.';
     }
     Joystick.prototype.setup = function (myBase) {
         console.log('joystick setup... ' + myBase.name);
@@ -550,13 +552,14 @@ var Joystick = (function (_super) {
                     if (sprite.previousDelta == null) {
                         sprite.previousDelta = deltaX;
                     }
-                    console.log('deltaX: ' + deltaX);
+                    console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+                    sprite.mydebug = 'deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
                     var mrNum = Math.abs(deltaX);
                     if (deltaX < sprite.previousDelta) {
-                        sprite.base.body.rotation -= mrNum * 3 / 1000 * (Math.PI / 4);
+                        sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
                     }
                     else if (deltaX > sprite.previousDelta) {
-                        sprite.base.body.rotation += mrNum * 3 / 1000 * (Math.PI / 4);
+                        sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
                     }
                     sprite.previousDelta = deltaX;
                 }
