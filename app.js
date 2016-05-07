@@ -551,17 +551,21 @@ var Joystick = (function (_super) {
                     var deltaX = (pointer.x - pointer.positionDown.x);
                     if (sprite.previousDelta == null) {
                         sprite.previousDelta = deltaX;
+                        sprite.activePointerId = pointer.id;
                     }
-                    console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-                    sprite.mydebug = 'deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
-                    var mrNum = Math.abs(deltaX);
-                    if (deltaX < sprite.previousDelta) {
-                        sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
-                    }
-                    else if (deltaX > sprite.previousDelta) {
-                        sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+                    if (sprite.activePointerId == pointer.id) {
+                        console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+                        sprite.mydebug = 'deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
+                        var mrNum = Math.abs(deltaX);
+                        if (deltaX < sprite.previousDelta) {
+                            sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
+                        }
+                        else if (deltaX > sprite.previousDelta) {
+                            sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+                        }
                     }
                     sprite.previousDelta = deltaX;
+                    sprite.activePointerId = pointer.id;
                 }
             }, this);
         }
