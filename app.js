@@ -534,11 +534,31 @@ var Joystick = (function (_super) {
         this.base = myBase;
         this.game.add.existing(this);
         this.inputEnabled = true;
-        this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
+        this.input.enableDrag();
+        this.events.onDragUpdate.add(onDragUpdate, this);
+        // this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
         this.events.onInputUp.add(onUp, this);
         this.events.onInputOut.add(onOut, this);
+        function onDragUpdate(sprite, pointer) {
+            var b = 1 + 9;
+            var deltaX = (pointer.x - pointer.positionDown.x);
+            if (sprite.previousDelta == null) {
+                sprite.previousDelta = deltaX;
+            }
+            console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+            sprite.mydebug = '3deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
+            var mrNum = Math.abs(deltaX);
+            if (deltaX < sprite.previousDelta) {
+                sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
+            }
+            else if (deltaX > sprite.previousDelta) {
+                sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+            }
+            sprite.previousDelta = deltaX;
+        }
         // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
         function onDown() {
+            //if an input down event (thruster or fire) is currently active, need a way to ignore them
             var sprite = this.param1;
             var myBase = this.param2;
             // console.log('joystick onDown... ' + myBase.name);
