@@ -56,7 +56,7 @@ var State = (function (_super) {
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.game.physics.p2.gravity.y = 200;
         this.game.physics.p2.restitution = 0.1;
-        this._joystick = new Joystick(this.game, 150, 600);
+        this._joystick = new Joystick(this.game, 100, 600);
         // cannon base - place over cannon, so it overlaps it
         this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
         this._base.name = 'DROPSHIP';
@@ -187,7 +187,7 @@ var State = (function (_super) {
                 // shipTween.to({ angle: angleN }, eventDuration);
             }, this);
         }
-        this._thrustBtn = this.game.add.sprite(this.game.world.centerX, this.world.height, 'imageKey');
+        this._thrustBtn = this.game.add.sprite(480, this.world.height, 'imageKey');
         this._thrustBtn.anchor.setTo(0.5, 1);
         this._thrustBtn.inputEnabled = true;
         this._thrustBtn.events.onInputDown.add(this.igniteThruster);
@@ -251,12 +251,8 @@ var State = (function (_super) {
             this.applyThruster(true);
         }
         this.applyThruster(false);
-        if (this.game.input.activePointer.isDown && this._leftBtn.input.checkPointerOver(this.game.input.activePointer)) {
-            this.pressLeft();
-        }
-        if (this.game.input.activePointer.isDown && this._rightBtn.input.checkPointerOver(this.game.input.activePointer)) {
-            this.pressRight();
-        }
+        // if (this.game.input.activePointer.isDown && this._leftBtn.input.checkPointerOver(this.game.input.activePointer)) { this.pressLeft(); }
+        // if (this.game.input.activePointer.isDown && this._rightBtn.input.checkPointerOver(this.game.input.activePointer)) { this.pressRight(); }
         // left and right key
         if (keyboard.isDown(Phaser.Keyboard.COMMA)) {
             // calculate frame independent speed - 45 degrees (PI/4) in 1 second adjusted with cannon speed
