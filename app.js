@@ -15,6 +15,7 @@ var Game = (function (_super) {
     }
     return Game;
 }(Phaser.Game));
+//declare var VirtualJoystick: any; 
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
@@ -22,6 +23,7 @@ var State = (function (_super) {
     __extends(State, _super);
     function State() {
         _super.apply(this, arguments);
+        this._swipeActive = false;
         this._hangar = 1;
         this._cannonTip = new Phaser.Point();
         this._shipDirection = 0;
@@ -33,9 +35,11 @@ var State = (function (_super) {
         // load sprite images in atlas
         this.game.load.atlas("Atlas", "atlas.png", "atlas.json");
         this.game.load.image('imageKey', 'pink.png');
+        this.game.load.image('jsarea', 'jsarea.png');
     };
     // -------------------------------------------------------------------------
     State.prototype.create = function () {
+        // console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
         //gyro.frequency = 10;
         // start gyroscope detection
         //gyro.startTracking(function (o) {
@@ -52,8 +56,11 @@ var State = (function (_super) {
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.game.physics.p2.gravity.y = 200;
         this.game.physics.p2.restitution = 0.1;
+        this._joystick = new Joystick(this.game, 150, 600);
         // cannon base - place over cannon, so it overlaps it
         this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
+        this._base.name = 'DROPSHIP';
+        this._joystick.setup(this._base);
         // this._base = new DropShip(this.game, this.world.centerX, this.world.height / 1.5, 'imageKey');
         //  this._base.setUp();
         this._base.anchor.setTo(0.5, 1);
@@ -87,6 +94,8 @@ var State = (function (_super) {
         this._dronesCollisionGroup = this.game.physics.p2.createCollisionGroup();
         //  collision groups for missiles
         this._missilesCollisionGroup = this.physics.p2.createCollisionGroup();
+        //var js: Joystick = new Joystick(this.game,200,200,'imageKey');
+        // js.setUp();
         // drones group
         this._drones = this.add.group();
         this._drones.physicsBodyType = Phaser.Physics.P2JS;
@@ -122,60 +131,62 @@ var State = (function (_super) {
             body.collides(this._dronesCollisionGroup);
             // body.debug = true;
         }, this);
-        var swipeMinDistance = this.game.world.width / 10;
-        // Math.floor((swipeDistance / this.game.world.width) * 100);
-        var startPointx = 0;
-        var startPointy = 0;
-        var endPointx = 0;
-        var endPointy = 0;
-        this._swipeTimer = this.game.time.create(false);
-        this.game.input.onDown.add(function (pointer) { this._swipeTimer.start(); this.startPointx = pointer.clientX; this.startPointy = pointer.clientY; }, this);
-        this.game.input.onUp.add(function (pointer) {
-            var eventDuration = this._swipeTimer.ms;
-            this._swipeTimer.stop();
-            this.endPointx = pointer.clientX;
-            this.endPointy = pointer.clientY;
-            var currVelocitySqr = (this.startPointx + this.endPointx) * (this.startPointx + this.endPointx) + (this.startPointy + this.endPointy) * (this.startPointy + this.endPointy);
-            var vy = this.endPointy - this.startPointy;
-            var vx = this.endPointx - this.startPointx;
-            var angleN = Math.atan2(vy, vx);
-            vx = Math.cos(angleN) * 0.15 * eventDuration;
-            vy = Math.sin(angleN) * 0.15 * eventDuration;
-            var swipeDistance = difference(this.startPointx, this.endPointx);
-            var swipedLeft;
-            if (this.endPointx < this.startPointx - swipeMinDistance) {
-                // console.log("left: " + vx + 'duration: ' + eventDuration);
-                //this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
-                // this._base.body.rotateLeft(this.endPointy - this.startPointy);
-                swipedLeft = true;
-            }
-            else if (this.endPointx > this.startPointx + swipeMinDistance) {
-                //console.log("right: " + vx + 'duration: ' + eventDuration);
-                // this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
-                // this._base.body.rotateLeft(this.endPointy - this.startPointy);
-                swipedLeft = false;
-            }
-            else if (this.endPointy < this.startPointy - swipeMinDistance) {
-            }
-            else if (this.endPointx > this.startPointy + swipeMinDistance) {
-            }
-            var swipePercent = Math.floor((swipeDistance / this.game.world.width) * 50);
-            if (swipedLeft == true) {
-                swipePercent = 0 - swipePercent;
-            }
-            if (swipedLeft == true || swipedLeft == false) {
-                this.game.tweens.removeFrom(this._base.body);
-                this.game.add.tween(this._base.body).to({ angle: this._base.body.angle + swipePercent }, eventDuration * 2, Phaser.Easing.Power1, true);
-                console.log('Swipe Percent ' + swipePercent + ' -' + swipedLeft);
-            }
-            // var maxNum = Math.max(1000, eventDuration);
-            //this.game.tweens.removeFrom(this._base.body);
-            //this.game.tweens.removeTween(
-            //this.game.add.tween(this._base.body).to({ angle: vx }, 200, Phaser.Easing.Bounce.Out, true);
-            //this.shipDirection = 
-            //var shipTween = this.game.add.tween(this._base.body);
-            // shipTween.to({ angle: angleN }, eventDuration);
-        }, this);
+        if (this._swipeActive == true) {
+            var swipeMinDistance = this.game.world.width / 10;
+            // Math.floor((swipeDistance / this.game.world.width) * 100);
+            var startPointx = 0;
+            var startPointy = 0;
+            var endPointx = 0;
+            var endPointy = 0;
+            this._swipeTimer = this.game.time.create(false);
+            this.game.input.onDown.add(function (pointer) { this._swipeTimer.start(); this.startPointx = pointer.clientX; this.startPointy = pointer.clientY; }, this);
+            this.game.input.onUp.add(function (pointer) {
+                var eventDuration = this._swipeTimer.ms;
+                this._swipeTimer.stop();
+                this.endPointx = pointer.clientX;
+                this.endPointy = pointer.clientY;
+                var currVelocitySqr = (this.startPointx + this.endPointx) * (this.startPointx + this.endPointx) + (this.startPointy + this.endPointy) * (this.startPointy + this.endPointy);
+                var vy = this.endPointy - this.startPointy;
+                var vx = this.endPointx - this.startPointx;
+                var angleN = Math.atan2(vy, vx);
+                vx = Math.cos(angleN) * 0.15 * eventDuration;
+                vy = Math.sin(angleN) * 0.15 * eventDuration;
+                var swipeDistance = difference(this.startPointx, this.endPointx);
+                var swipedLeft;
+                if (this.endPointx < this.startPointx - swipeMinDistance) {
+                    // console.log("left: " + vx + 'duration: ' + eventDuration);
+                    //this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
+                    // this._base.body.rotateLeft(this.endPointy - this.startPointy);
+                    swipedLeft = true;
+                }
+                else if (this.endPointx > this.startPointx + swipeMinDistance) {
+                    //console.log("right: " + vx + 'duration: ' + eventDuration);
+                    // this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
+                    // this._base.body.rotateLeft(this.endPointy - this.startPointy);
+                    swipedLeft = false;
+                }
+                else if (this.endPointy < this.startPointy - swipeMinDistance) {
+                }
+                else if (this.endPointx > this.startPointy + swipeMinDistance) {
+                }
+                var swipePercent = Math.floor((swipeDistance / this.game.world.width) * 50);
+                if (swipedLeft == true) {
+                    swipePercent = 0 - swipePercent;
+                }
+                if (swipedLeft == true || swipedLeft == false) {
+                    this.game.tweens.removeFrom(this._base.body);
+                    this.game.add.tween(this._base.body).to({ angle: this._base.body.angle + swipePercent }, eventDuration * 2, Phaser.Easing.Power1, true);
+                    console.log('Swipe Percent ' + swipePercent + ' -' + swipedLeft);
+                }
+                // var maxNum = Math.max(1000, eventDuration);
+                //this.game.tweens.removeFrom(this._base.body);
+                //this.game.tweens.removeTween(
+                //this.game.add.tween(this._base.body).to({ angle: vx }, 200, Phaser.Easing.Bounce.Out, true);
+                //this.shipDirection = 
+                //var shipTween = this.game.add.tween(this._base.body);
+                // shipTween.to({ angle: angleN }, eventDuration);
+            }, this);
+        }
         this._thrustBtn = this.game.add.sprite(this.game.world.centerX, this.world.height, 'imageKey');
         this._thrustBtn.anchor.setTo(0.5, 1);
         this._thrustBtn.inputEnabled = true;
@@ -227,6 +238,7 @@ var State = (function (_super) {
     // -------------------------------------------------------------------------
     State.prototype.update = function () {
         // shortcut
+        //this._joystick.onUpdate();
         var keyboard = this.game.input.keyboard;
         this._missiles.forEach(function (aMissile) {
             if (aMissile.inWorld == false) {
@@ -306,14 +318,15 @@ var State = (function (_super) {
             }
         }
         if (this._transitionTween.isRunning == false) {
-            // this._text.setText("no trans");
-            if (deviceMo.acceleration != null) {
-                //  this._text.setText("accel OK ");
-                if (deviceMo.acceleration.y != null) {
-                    this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                    this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                }
-            }
+            /* if (deviceMo != null) {
+                 if (deviceMo.acceleration != null) {
+                     if (deviceMo.acceleration.y != null) {
+                         this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                         this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                     }
+                 }
+ 
+             }*/
             for (var j = 0; j < this._doors.children.length; j++) {
                 if (this.checkOverlap(this._base, this._doors.getChildAt(j))) {
                     //console.log('door');
@@ -332,8 +345,10 @@ var State = (function (_super) {
             this.game.debug.body(aMissile);
         }, this);
         this.game.debug.body(this._base);
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
-        // this.game.debug.text(accel.y, 200, 850);
+        /*this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        this.game.debug.pointer(this.game.input.mousePointer);
+        this.game.debug.pointer(this.game.input.pointer1);
+        this.game.debug.pointer(this.game.input.pointer2);*/
     };
     // -------------------------------------------------------------------------
     State.prototype.hitDron = function (aObject1, aObject2) {
@@ -498,4 +513,69 @@ window.onload = function () {
     new Game();
     window.addEventListener("devicemotion", onDeviceMotion, false);
 };
+var normalize = Phaser.Point.normalize;
+var zero = new Phaser.Point(0, 0);
+var Joystick = (function (_super) {
+    __extends(Joystick, _super);
+    function Joystick(game, x, y) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        console.log('joystick construcy...');
+        _super.call(this, game, x, y, 'jsarea');
+        this.anchor.setTo(0.5, 0.5);
+        this.fixedToCamera = true;
+        this.cameraOffset.setTo(x, y);
+        this.direction = new Phaser.Point(0, 0);
+        this.distance = 0;
+        this.pinAngle = 0;
+        this.disabled = false;
+        this.isBeingDragged = false;
+    }
+    Joystick.prototype.setup = function (myBase) {
+        console.log('joystick setup... ' + myBase.name);
+        this.base = myBase;
+        this.game.add.existing(this);
+        this.inputEnabled = true;
+        this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
+        this.events.onInputUp.add(onUp, this);
+        this.events.onInputOut.add(onOut, this);
+        // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
+        function onDown() {
+            var sprite = this.param1;
+            var myBase = this.param2;
+            // console.log('joystick onDown... ' + myBase.name);
+            // sprite.myPointer = pointer;
+            sprite.isBeingDragged = true;
+            sprite.game.input.addMoveCallback(function (pointer, x, y, myBase) {
+                if (sprite.isBeingDragged == true) {
+                    //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);
+                    //console.log('joystick movecallback... ' + sprite.base.name);
+                    var deltaX = (pointer.x - pointer.positionDown.x);
+                    if (sprite.previousDelta == null) {
+                        sprite.previousDelta = deltaX;
+                    }
+                    console.log('deltaX: ' + deltaX);
+                    var mrNum = Math.abs(deltaX);
+                    if (deltaX < sprite.previousDelta) {
+                        sprite.base.body.rotation -= mrNum * 3 / 1000 * (Math.PI / 4);
+                    }
+                    else if (deltaX > sprite.previousDelta) {
+                        sprite.base.body.rotation += mrNum * 3 / 1000 * (Math.PI / 4);
+                    }
+                    sprite.previousDelta = deltaX;
+                }
+            }, this);
+        }
+        function onUp(sprite, pointer) {
+            // console.log('onup: was' + pointer.positionDown + ', now ' + pointer.positionUp);
+            sprite.isBeingDragged = false;
+        }
+        function onOut(sprite, pointer) {
+            //console.log('onout');
+        }
+    };
+    Joystick.prototype.onUpdate = function () {
+    };
+    return Joystick;
+}(Phaser.Sprite));
 //# sourceMappingURL=app.js.map
