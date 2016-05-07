@@ -555,7 +555,7 @@ var Joystick = (function (_super) {
                     }
                     if (sprite.activePointerId == pointer.id) {
                         console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-                        sprite.mydebug = 'deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
+                        sprite.mydebug = '1deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
                         var mrNum = Math.abs(deltaX);
                         if (deltaX < sprite.previousDelta) {
                             sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
