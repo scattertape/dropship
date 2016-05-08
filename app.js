@@ -577,9 +577,9 @@ var Joystick = (function (_super) {
         }
         // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
         function onDown() {
-            sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
             //if an input down event (thruster or fire) is currently active, need a way to ignore them
             var sprite = this.param1;
+            sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
             var myBase = this.param2;
             console.log('joystick onDown... ' + myBase.name);
             // sprite.myPointer = pointer;
