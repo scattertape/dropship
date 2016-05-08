@@ -191,6 +191,7 @@ var State = (function (_super) {
         this._thrustBtn = this.game.add.sprite(480, this.world.height, 'imageKey');
         this._thrustBtn.anchor.setTo(0.5, 1);
         this._thrustBtn.inputEnabled = true;
+        this._thrustBtn.input;
         this._thrustBtn.events.onInputDown.add(this.igniteThruster);
         this._thrustBtn.events.onInputUp.add(this.thrusterOff);
         this._leftBtn = this.game.add.sprite(this.game.world.centerX - 50, this.world.height, 'imageKey');
@@ -531,7 +532,24 @@ var Joystick = (function (_super) {
         this.mydebug = '.';
     }
     Joystick.prototype.update = function () {
-        //console.log('rar');
+        if (this.isBeingDragged == true) {
+            //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);                   
+            //console.log('joystick movecallback... ' + sprite.base.name);
+            var deltaX = (this.myPointer.x - this.myPointer.positionDown.x);
+            if (this.previousDelta == null) {
+                this.previousDelta = deltaX;
+            }
+            //console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+            this.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
+            var mrNum = Math.abs(deltaX);
+            if (deltaX < this.previousDelta) {
+                this.base.body.angle = this.base.body.angle - 1; // -= mrNum * 2 / 1000 * (Math.PI / 4);
+            }
+            else if (deltaX > this.previousDelta) {
+                this.base.body.angle = this.base.body.angle + 1;
+            }
+            this.previousDelta = deltaX;
+        }
     };
     Joystick.prototype.setup = function (myBase) {
         console.log('joystick setup... ' + myBase.name);
@@ -555,26 +573,40 @@ var Joystick = (function (_super) {
         this.inputEnabled = true;
         // this.input.enableDrag();
         // this.dragger.events.onDragUpdate.add(onDragUpdate, this);
-        this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
+        // this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
+        this.events.onInputDown.add(onDown2, this);
         this.events.onInputUp.add(onUp, this);
         // this.events.onInputOut.add(onOut, this);
-        function onDragUpdate(sprite, pointer) {
+        /*function onDragUpdate(sprite: Joystick, pointer: Phaser.Pointer) {
+
             sprite.mydebug = 'dragging';
-            var deltaX = (pointer.x - pointer.positionDown.x);
+            
+            var deltaX: any = (pointer.x - pointer.positionDown.x);
+
             if (sprite.previousDelta == null) {
                 sprite.previousDelta = deltaX;
+               
             }
-            // console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+            
+
+           // console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
             sprite.mydebug = '3deltaX: ' + deltaX + ', pID: ' + pointer.id;
-            var mrNum = Math.abs(deltaX);
+           
+            var mrNum: any = Math.abs(deltaX);
+            
             if (deltaX < sprite.previousDelta) {
                 this.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
-            }
-            else if (deltaX > sprite.previousDelta) {
+                //sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
+            } else if (deltaX > sprite.previousDelta) {
                 this.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+               // sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
             }
+
             sprite.previousDelta = deltaX;
-        }
+
+            
+
+        }*/
         // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
         function onDown() {
             //if an input down event (thruster or fire) is currently active, need a way to ignore them
@@ -612,6 +644,10 @@ var Joystick = (function (_super) {
                     }
                 }
             }, this);
+        }
+        function onDown2(sprite, pointer) {
+            sprite.isBeingDragged = true;
+            sprite.myPointer = pointer;
         }
         function onUp(sprite, pointer) {
             // console.log('onup: was' + pointer.positionDown + ', now ' + pointer.positionUp);
