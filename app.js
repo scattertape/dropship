@@ -55,7 +55,7 @@ var State = (function (_super) {
         this._backgroundImage = this.add.image(0, 0, "BG");
         // set physiscs to P2 physics engin
         this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.gravity.y = 2; //00;
+        this.game.physics.p2.gravity.y = 200;
         this.game.physics.p2.restitution = 0.1;
         this._joystick = new Joystick(this.game, 200, 600);
         // cannon base - place over cannon, so it overlaps it
@@ -601,10 +601,10 @@ var Joystick = (function (_super) {
                         sprite.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
                         var mrNum = Math.abs(deltaX);
                         if (deltaX < sprite.previousDelta) {
-                            sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
+                            sprite.base.body.angle = sprite.base.body.angle - 1; // -= mrNum * 2 / 1000 * (Math.PI / 4);
                         }
                         else if (deltaX > sprite.previousDelta) {
-                            sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
+                            sprite.base.body.angle = sprite.base.body.angle + 1;
                         }
                         sprite.previousDelta = deltaX;
                     }
