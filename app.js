@@ -6,6 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
+var globalPointerID = -1;
 var Game = (function (_super) {
     __extends(Game, _super);
     // -------------------------------------------------------------------------
@@ -54,9 +55,9 @@ var State = (function (_super) {
         this._backgroundImage = this.add.image(0, 0, "BG");
         // set physiscs to P2 physics engin
         this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.gravity.y = 200;
+        this.game.physics.p2.gravity.y = 2; //00;
         this.game.physics.p2.restitution = 0.1;
-        this._joystick = new Joystick(this.game, 100, 600);
+        this._joystick = new Joystick(this.game, 200, 600);
         // cannon base - place over cannon, so it overlaps it
         this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
         this._base.name = 'DROPSHIP';
@@ -543,19 +544,19 @@ var Joystick = (function (_super) {
         bmd.ctx.rect(0, 0, width, height);
         bmd.ctx.fillStyle = '#ffcc00';
         bmd.ctx.fill();
-        this.dragger = this.game.add.sprite(0, 0, bmd);
-        this.dragger.anchor.setTo(0.5, 0.5);
-        this.dragger.width = this.dragger.height = 50;
-        this.dragger.inputEnabled = true;
-        this.dragger.input.enableDrag();
-        this.dragger.input.allowVerticalDrag = false;
-        this.game.input.pollRate = 0;
-        this.addChild(this.dragger);
-        // this.inputEnabled = true;
+        //this.dragger = this.game.add.sprite(0, 0, bmd);
+        //this.dragger.anchor.setTo(0.5, 0.5);
+        //this.dragger.width = this.dragger.height = 50;
+        //this.dragger.inputEnabled = true;
+        //this.dragger.input.enableDrag();
+        //this.dragger.input.allowVerticalDrag = false;
+        //this.game.input.pollRate = 0;
+        // this.addChild(this.dragger);
+        this.inputEnabled = true;
         // this.input.enableDrag();
-        this.dragger.events.onDragUpdate.add(onDragUpdate, this);
-        // this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
-        this.dragger.events.onInputUp.add(onUp, this);
+        // this.dragger.events.onDragUpdate.add(onDragUpdate, this);
+        this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
+        this.events.onInputUp.add(onUp, this);
         // this.events.onInputOut.add(onOut, this);
         function onDragUpdate(sprite, pointer) {
             sprite.mydebug = 'dragging';
@@ -579,19 +580,23 @@ var Joystick = (function (_super) {
             //if an input down event (thruster or fire) is currently active, need a way to ignore them
             var sprite = this.param1;
             var myBase = this.param2;
-            // console.log('joystick onDown... ' + myBase.name);
+            console.log('joystick onDown... ' + myBase.name);
             // sprite.myPointer = pointer;
             sprite.isBeingDragged = true;
             sprite.game.input.addMoveCallback(function (pointer, x, y, myBase) {
-                if (sprite.isBeingDragged == true) {
-                    //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);
-                    //console.log('joystick movecallback... ' + sprite.base.name);
-                    var deltaX = (pointer.x - pointer.positionDown.x);
-                    if (sprite.previousDelta == null) {
-                        sprite.previousDelta = deltaX;
-                        sprite.activePointerId = pointer.id;
-                    }
-                    if (sprite.activePointerId == pointer.id) {
+                // move callbacks will be triggered by thrust & fire buttons
+                // but they will have different pointer IDs, so ignore them.
+                if (globalPointerID == -1) {
+                    globalPointerID = pointer.id;
+                }
+                if (globalPointerID == pointer.id) {
+                    if (sprite.isBeingDragged == true) {
+                        //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);                   
+                        //console.log('joystick movecallback... ' + sprite.base.name);
+                        var deltaX = (pointer.x - pointer.positionDown.x);
+                        if (sprite.previousDelta == null) {
+                            sprite.previousDelta = deltaX;
+                        }
                         console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
                         sprite.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
                         var mrNum = Math.abs(deltaX);
@@ -602,7 +607,6 @@ var Joystick = (function (_super) {
                             sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
                         }
                         sprite.previousDelta = deltaX;
-                        sprite.activePointerId = pointer.id;
                     }
                 }
             }, this);
@@ -610,6 +614,7 @@ var Joystick = (function (_super) {
         function onUp(sprite, pointer) {
             // console.log('onup: was' + pointer.positionDown + ', now ' + pointer.positionUp);
             sprite.isBeingDragged = false;
+            globalPointerID = -1;
         }
         function onOut(sprite, pointer) {
             //console.log('onout');
