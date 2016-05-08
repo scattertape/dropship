@@ -529,12 +529,15 @@ var Joystick = (function (_super) {
         this.isBeingDragged = false;
         this.mydebug = '.';
     }
+    Joystick.prototype.update = function () {
+        //console.log('rar');
+    };
     Joystick.prototype.setup = function (myBase) {
         console.log('joystick setup... ' + myBase.name);
         this.base = myBase;
         this.game.add.existing(this);
-        var width = 30; // example;
-        var height = 30; // example;
+        var width = 50; // example;
+        var height = 50; // example;
         var bmd = this.game.add.bitmapData(width, height);
         bmd.ctx.beginPath();
         bmd.ctx.rect(0, 0, width, height);
@@ -545,6 +548,8 @@ var Joystick = (function (_super) {
         this.dragger.width = this.dragger.height = 50;
         this.dragger.inputEnabled = true;
         this.dragger.input.enableDrag();
+        this.dragger.input.allowVerticalDrag = false;
+        this.game.input.pollRate = 0;
         this.addChild(this.dragger);
         // this.inputEnabled = true;
         // this.input.enableDrag();
@@ -553,13 +558,13 @@ var Joystick = (function (_super) {
         this.dragger.events.onInputUp.add(onUp, this);
         // this.events.onInputOut.add(onOut, this);
         function onDragUpdate(sprite, pointer) {
-            var b = 1 + 9;
+            sprite.mydebug = 'dragging';
             var deltaX = (pointer.x - pointer.positionDown.x);
             if (sprite.previousDelta == null) {
                 sprite.previousDelta = deltaX;
             }
-            console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-            sprite.mydebug = '3deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
+            // console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+            sprite.mydebug = '3deltaX: ' + deltaX + ', pID: ' + pointer.id;
             var mrNum = Math.abs(deltaX);
             if (deltaX < sprite.previousDelta) {
                 this.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
