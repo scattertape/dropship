@@ -543,10 +543,10 @@ var Joystick = (function (_super) {
             this.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
             var mrNum = Math.abs(deltaX);
             if (deltaX < this.previousDelta) {
-                this.base.body.angle = this.base.body.angle - 1; // -= mrNum * 2 / 1000 * (Math.PI / 4);
+                this.base.body.angle = this.base.body.angle - 5; // -= mrNum * 2 / 1000 * (Math.PI / 4);
             }
             else if (deltaX > this.previousDelta) {
-                this.base.body.angle = this.base.body.angle + 1;
+                this.base.body.angle = this.base.body.angle + 5;
             }
             this.previousDelta = deltaX;
         }
@@ -608,43 +608,72 @@ var Joystick = (function (_super) {
 
         }*/
         // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
-        function onDown() {
-            //if an input down event (thruster or fire) is currently active, need a way to ignore them
-            var sprite = this.param1;
-            sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
-            var myBase = this.param2;
-            console.log('joystick onDown... ' + myBase.name);
+        /* function onDown() {
+ 
+             
+ 
+             //if an input down event (thruster or fire) is currently active, need a way to ignore them
+             var sprite: Joystick = this.param1;
+ 
+             sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
+ 
+             var myBase:Phaser.Sprite = this.param2;
+                        
+             console.log('joystick onDown... ' + myBase.name);
             // sprite.myPointer = pointer;
-            sprite.isBeingDragged = true;
-            sprite.game.input.addMoveCallback(function (pointer, x, y, myBase) {
+             sprite.isBeingDragged = true;
+                        
+             
+            sprite.game.input.addMoveCallback(function (pointer: Phaser.Pointer, x, y, myBase:Phaser.Sprite) {
                 // move callbacks will be triggered by thrust & fire buttons
                 // but they will have different pointer IDs, so ignore them.
+ 
                 sprite.mydebug = 'addMoveCallback, gpID: ' + globalPointerID;
+ 
                 if (globalPointerID == -1) {
                     globalPointerID = pointer.id;
                 }
-                if (globalPointerID == pointer.id) {
+ 
+                if (globalPointerID == pointer.id){
+ 
                     if (sprite.isBeingDragged == true) {
-                        //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);                   
+                        //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);
                         //console.log('joystick movecallback... ' + sprite.base.name);
-                        var deltaX = (pointer.x - pointer.positionDown.x);
+ 
+                        var deltaX: any = (pointer.x - pointer.positionDown.x);
+ 
                         if (sprite.previousDelta == null) {
                             sprite.previousDelta = deltaX;
+                            //sprite.activePointerId = pointer.id;
                         }
+ 
+ 
+ 
                         console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
                         sprite.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
-                        var mrNum = Math.abs(deltaX);
+ 
+ 
+                        var mrNum: any = Math.abs(deltaX);
+ 
                         if (deltaX < sprite.previousDelta) {
                             sprite.base.body.angle = sprite.base.body.angle - 1; // -= mrNum * 2 / 1000 * (Math.PI / 4);
-                        }
-                        else if (deltaX > sprite.previousDelta) {
+                        } else if (deltaX > sprite.previousDelta) {
                             sprite.base.body.angle = sprite.base.body.angle + 1;
+                            //sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
                         }
+ 
                         sprite.previousDelta = deltaX;
+ 
+ 
                     }
+                    
+ 
+                    //sprite.base.body.rotation = sprite.base.body.rotation + (deltaX);
                 }
-            }, this);
-        }
+                               
+             }, this);
+         
+         }*/
         function onDown2(sprite, pointer) {
             sprite.isBeingDragged = true;
             sprite.myPointer = pointer;
