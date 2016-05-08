@@ -577,6 +577,7 @@ var Joystick = (function (_super) {
         }
         // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
         function onDown() {
+            sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
             //if an input down event (thruster or fire) is currently active, need a way to ignore them
             var sprite = this.param1;
             var myBase = this.param2;
@@ -586,6 +587,7 @@ var Joystick = (function (_super) {
             sprite.game.input.addMoveCallback(function (pointer, x, y, myBase) {
                 // move callbacks will be triggered by thrust & fire buttons
                 // but they will have different pointer IDs, so ignore them.
+                sprite.mydebug = 'addMoveCallback, gpID: ' + globalPointerID;
                 if (globalPointerID == -1) {
                     globalPointerID = pointer.id;
                 }
