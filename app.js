@@ -12,7 +12,7 @@ var Game = (function (_super) {
     // -------------------------------------------------------------------------
     function Game() {
         // init game
-        _super.call(this, 500, 660, Phaser.CANVAS, "content", State);
+        _super.call(this, 640, 960, Phaser.CANVAS, "", State);
     }
     return Game;
 }(Phaser.Game));
@@ -29,6 +29,9 @@ var State = (function (_super) {
         this._cannonTip = new Phaser.Point();
         this._shipDirection = 0;
     }
+    State.prototype.boot = function () {
+        this.game.scale.windowConstraints.bottom = "visual";
+    };
     // -------------------------------------------------------------------------
     State.prototype.preload = function () {
         // background image
@@ -40,6 +43,14 @@ var State = (function (_super) {
     };
     // -------------------------------------------------------------------------
     State.prototype.create = function () {
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // Set a minimum and maximum size for the game
+        // Here the minimum is half the game size
+        // And the maximum is the original game size
+        this.game.scale.setMinMax(this.game.width / 2, this.game.height / 2, this.game.width, this.game.height);
+        // Center the game horizontally and vertically
+        this.game.scale.pageAlignHorizontally = true;
+        this.game.scale.pageAlignVertically = true;
         // console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
         //gyro.frequency = 10;
         // start gyroscope detection
@@ -389,8 +400,10 @@ var State = (function (_super) {
         console.log('object hit');
     };
     State.prototype.checkOverlap = function (spriteA, spriteB) {
-        var boundsA = spriteA.getBounds();
-        var boundsB = spriteB.getBounds();
+        // var boundsA = spriteA.getBounds();
+        // var boundsB = spriteB.getBounds();
+        var boundsA = getManualBounds(spriteA);
+        var boundsB = getManualBounds(spriteB);
         return Phaser.Rectangle.intersects(boundsA, boundsB);
     };
     State.prototype.callTransition = function () {
@@ -495,6 +508,16 @@ var Dron = (function (_super) {
 }(Phaser.Sprite));
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
+function getManualBounds(object) {
+    if (object.manualBounds == undefined) {
+        object.manualBounds = new Phaser.Rectangle(object.x - object.offsetX, object.y - object.offsetY, object.width, object.height);
+    }
+    else {
+        object.manualBounds.x = object.x - object.offsetX;
+        object.manualBounds.y = object.y - object.offsetY;
+    }
+    return object.manualBounds;
+}
 // -------------------------------------------------------------------------
 function wiggle(aProgress, aPeriod1, aPeriod2) {
     var current1 = aProgress * Math.PI * 2 * aPeriod1;
@@ -540,7 +563,7 @@ var Joystick = (function (_super) {
                 this.previousDelta = deltaX;
             }
             //console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-            this.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
+            this.mydebug = '4deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
             var mrNum = Math.abs(deltaX);
             if (deltaX < this.previousDelta) {
                 this.base.body.angle = this.base.body.angle - 5; // -= mrNum * 2 / 1000 * (Math.PI / 4);
