@@ -251,7 +251,7 @@ var State = (function (_super) {
         this._level1.body.setCollisionGroup(this._levelCollisionGroup);
         this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup]);
         this._base.body.setCollisionGroup(this._shipCollisionGroup);
-        //this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
+        this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
         this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
         this._doors = this.game.add.group();
         this.createDoor();
@@ -263,7 +263,7 @@ var State = (function (_super) {
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
          door1.name = 'd2';*/
-        this._joystick = new Joystick(this.game, 200, 920);
+        this._joystick = new Joystick(this.game, 0, 900);
         this._joystick.setup(this._base);
     };
     // -------------------------------------------------------------------------
@@ -562,7 +562,7 @@ var Joystick = (function (_super) {
         if (y === void 0) { y = 0; }
         console.log('joystick construcy...');
         _super.call(this, game, x, y, 'jsarea');
-        this.anchor.setTo(0.5, 0.5);
+        this.anchor.setTo(0.0, 0.0);
         this.fixedToCamera = true;
         this.cameraOffset.setTo(x, y);
         this.direction = new Phaser.Point(0, 0);
@@ -596,8 +596,8 @@ var Joystick = (function (_super) {
         console.log('joystick setup... ' + myBase.name);
         this.base = myBase;
         this.game.add.existing(this);
-        var width = 50; // example;
-        var height = 50; // example;
+        var width = 60; // example;
+        var height = 60; // example;
         var bmd = this.game.add.bitmapData(width, height);
         bmd.ctx.beginPath();
         bmd.ctx.rect(0, 0, width, height);
