@@ -1,18 +1,30 @@
+// -------------------------------------------------------------------------
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
 var globalPointerID = -1;
+var screenWidth = screen.width;
+var screenHeight = screen.height;
+var landscapeLayout = true;
+var constructorWidth = 960;
+var constructorHeight = 640;
+if (screenHeight > screenWidth) {
+    landscapeLayout = false;
+}
+//landscapeLayout = false;
+if (landscapeLayout == false) {
+    constructorWidth = 640;
+    constructorHeight = 960;
+}
+console.log('landscapeLayout: ' + landscapeLayout);
 var Game = (function (_super) {
     __extends(Game, _super);
     // -------------------------------------------------------------------------
     function Game() {
         // init game
-        _super.call(this, 640, 960, Phaser.CANVAS, "", State);
+        _super.call(this, constructorWidth, constructorHeight, Phaser.CANVAS, "", State);
     }
     return Game;
 }(Phaser.Game));
@@ -25,6 +37,10 @@ var State = (function (_super) {
     function State() {
         _super.apply(this, arguments);
         this._swipeActive = false;
+        this._upTolerance = 40;
+        this._downTolerance = 100;
+        this._leftTolerance = 60;
+        this._rightTolerance = 60;
         this._hangar = 1;
         this._cannonTip = new Phaser.Point();
         this._shipDirection = 0;
@@ -40,11 +56,12 @@ var State = (function (_super) {
         this.game.load.atlas("Atlas", "atlas.png", "atlas.json");
         this.game.load.image('imageKey', 'pink.png');
         this.game.load.image('jsarea', 'jsarea.png');
-        this.game.load.image('level1', 'level1.png');
-        this.game.load.physics('physicsData', 'level1.json');
+        this.game.load.image('level1', 'level2.png');
+        this.game.load.physics('physicsData', 'level2.json');
     };
     // -------------------------------------------------------------------------
     State.prototype.create = function () {
+        this.game.world.setBounds(-1800, -1800, 3600, 3600);
         this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         // Set a minimum and maximum size for the game
         // Here the minimum is half the game size
@@ -61,23 +78,62 @@ var State = (function (_super) {
         //player.body.velocity.x += o.gamma / 20;
         // player.body.velocity.y += o.beta / 20;
         //});
-        this.game.world.setBounds(0, 0, 640, 1920);
-        this.game.camera.y = 900;
-        this._transitionTween = this.game.add.tween(this.game.camera).to({ y: 900 }, 10, Phaser.Easing.Power1, true);
+        /*
+        if (landscapeLayout) {
+          //  this.game.world.setBounds(0, 0, 1920, 640);
+            this.game.world.setBounds(0, 0, 640, 1920);
+        } else {
+            this.game.world.setBounds(0, 0, 640, 1920);
+        }
+        */
+        //this.game.camera.y = 0;//900;
+        //this._transitionTween = this.game.add.tween(this.game.camera).to({ y:900 }, 10, Phaser.Easing.Power1, true);
+        console.log('world center x: ' + this.world.centerX + ', world center y: ' + this.world.centerY);
+        var cameraStartX = this.world.centerX - (constructorWidth * 0.5);
+        var cameraStartY = this.world.centerY - constructorHeight * 0.5;
+        this._transitionTween = this.game.add.tween(this.game.camera).to({ x: cameraStartX, y: cameraStartY }, 10, Phaser.Easing.Power1, true);
+        //this.game.camera.view = new Phaser.Rectangle(cameraStartX, cameraStartY, 700, 700);
         // background
-        this._level1 = this.game.add.sprite(320, 900, 'level1');
+        this._allGroup = this.game.add.group();
+        this._levelGroup = this.game.add.group();
+        this._level1 = this.game.add.sprite(this.world.centerX, this.world.centerY, 'level1');
+        // this._level1.alpha = 0.5;
+        this._level1.anchor.setTo(0.5, 0.5);
+        this._levelGroup.add(this._level1);
+        /* this._worldGroup = this.game.add.group();
+         this._worldGroup.x = this.world.centerX - (constructorWidth * 0.5);
+         this._worldGroup.y = this.world.centerY - (constructorWidth * 0.5);
+         this._worldGroup.pivot.x = 900;
+         this._worldGroup.pivot.y = 900;*/
+        this._thingsGroup = this.game.add.group();
+        this._allGroup.add(this._levelGroup);
+        this._allGroup.add(this._thingsGroup);
+        this._controlsGroup = this.game.add.group();
+        this._allGroup.add(this._controlsGroup);
+        //this._level1 = this.game.add.sprite(320, 900, 'level1');
+        // this._worldGroup.add(this._level1);
+        var defenderBMD = this.game.add.bitmapData(25, 25);
+        defenderBMD.ctx.beginPath();
+        defenderBMD.ctx.rect(0, 0, 25, 25);
+        defenderBMD.ctx.fillStyle = '#ffccff';
+        defenderBMD.ctx.fill();
+        var defender = this.game.add.sprite(this.world.centerX, this.world.centerY + 200, defenderBMD);
+        defender.anchor.setTo(0.5, 0.5);
+        this._thingsGroup.add(defender);
         // set physiscs to P2 physics engin
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.game.physics.p2.gravity.y = 200;
         this.game.physics.p2.restitution = 0.1;
         // cannon base - place over cannon, so it overlaps it
-        this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
+        //this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
+        this._base = this.game.add.sprite(this.world.centerX, this.world.centerY, "Atlas", "base");
         this._base.name = 'DROPSHIP';
         // this._base = new DropShip(this.game, this.world.centerX, this.world.height / 1.5, 'imageKey');
         //  this._base.setUp();
         this._base.anchor.setTo(0.5, 1);
         // cannon - place it in the bottom center
         this._cannon = this.game.add.sprite(this.world.centerX, this.world.height / 2, "Atlas", "cannon");
+        // this._worldGroup.add(this._cannon);
         //this._cannon = new Phaser.Sprite(this.game, 0, 0, "Atlas", "cannon");
         ///this._base.addChild(this._cannon);
         // this._cannon.x =0;
@@ -117,6 +173,9 @@ var State = (function (_super) {
         // js.setUp();
         // drones group
         this._drones = this.add.group();
+        this._allGroup.add(this._drones);
+        // this._drones.x = this.world.centerX;
+        // this._drones.y = this.world.centerY;
         this._drones.physicsBodyType = Phaser.Physics.P2JS;
         this._drones.enableBody = true;
         // create 8 drones
@@ -208,26 +267,33 @@ var State = (function (_super) {
         }
         this._backgroundImage = this.add.image(0, 0, "BG");
         this._backgroundImage.anchor.setTo(0, 0);
-        this._backgroundImage.fixedToCamera = true;
-        this._backgroundImage.cameraOffset.setTo(0, 900);
+        this._backgroundImage.alpha = 0.85;
+        // this._backgroundImage.fixedToCamera = true;
+        // this._backgroundImage.cameraOffset.setTo(0, 900);
+        this._controlsGroup.add(this._backgroundImage);
         this._thrustBtn = this.game.add.sprite(0, 0, 'imageKey');
-        this._thrustBtn.anchor.setTo(0.0, 0.0);
-        this._thrustBtn.fixedToCamera = true;
-        this._thrustBtn.cameraOffset.setTo(480, 900);
+        this._controlsGroup.add(this._thrustBtn);
+        this._thrustBtn.anchor.setTo(1.0, 0.0);
+        this._thrustBtn.x = this._backgroundImage.width;
+        // this._thrustBtn.fixedToCamera = true;
+        //  this._thrustBtn.cameraOffset.setTo(480, 900);
         this._thrustBtn.inputEnabled = true;
         this._thrustBtn.events.onInputDown.add(this.igniteThruster);
         this._thrustBtn.events.onInputUp.add(this.thrusterOff);
         this._leftBtn = this.game.add.sprite(this.game.world.centerX - 50, this.world.height, 'imageKey');
+        //this._controlsGroup.add(this._leftBtn);
         this._leftBtn.rotation = -1;
         this._leftBtn.anchor.setTo(0.5, 1);
         this._leftBtn.inputEnabled = true;
         this._rightBtn = this.game.add.sprite(this.game.world.centerX + 50, this.world.height, 'imageKey');
+        // this._controlsGroup.add(this._rightBtn);
         this._rightBtn.rotation = 1;
         this._rightBtn.anchor.setTo(0.5, 1);
         this._rightBtn.inputEnabled = true;
         this._objectsCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this._shipCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this._objects = this.game.add.group();
+        this._allGroup.add(this._objects);
         this._objects.enableBody = true;
         this._objects.physicsBodyType = Phaser.Physics.P2JS;
         for (var i = 0; i < 1; i++) {
@@ -236,9 +302,9 @@ var State = (function (_super) {
             var bmd = this.game.add.bitmapData(width, height);
             bmd.ctx.beginPath();
             bmd.ctx.rect(0, 0, width, height);
-            bmd.ctx.fillStyle = '#bfcffa';
+            bmd.ctx.fillStyle = '#ffffff';
             bmd.ctx.fill();
-            var object = this._objects.create(this.world.centerX, this.world.height / 1.25, bmd);
+            var object = this._objects.create(this.world.centerX, this.world.centerY + 100, bmd);
             object.anchor.setTo(0.5, 0.5);
             this.game.physics.p2.enable(object);
             //object.body.mass = 0;
@@ -253,8 +319,11 @@ var State = (function (_super) {
         this._base.body.setCollisionGroup(this._shipCollisionGroup);
         this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
         this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
-        this._doors = this.game.add.group();
-        this.createDoor();
+        /*this._doors = this.game.add.group();
+
+        this._thingsGroup.add(this._doors);
+
+        this.createDoor();*/
         var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
         this._text1 = this.game.add.text(300, 1200, 'accel', style);
         this._text1.anchor.setTo(0.5, 0.5);
@@ -263,8 +332,19 @@ var State = (function (_super) {
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
          door1.name = 'd2';*/
-        this._joystick = new Joystick(this.game, 0, 900);
+        var joystickY = 900;
+        this._controlsGroup.fixedToCamera = true;
+        this._controlsGroup.cameraOffset.setTo(0, this.game.height - this._controlsGroup.height);
+        if (landscapeLayout == true) {
+            this._level1.body.angle = 90;
+            this._thingsGroup.angle = 90;
+            // this._controlsGroup.cameraOffset.setTo(0, 580);
+            joystickY = 580;
+        }
+        this._joystick = new Joystick(this.game, 0, joystickY);
+        this._controlsGroup.add(this._joystick);
         this._joystick.setup(this._base);
+        this._allGroup.sendToBack(this._levelGroup);
     };
     // -------------------------------------------------------------------------
     State.prototype.update = function () {
@@ -354,11 +434,31 @@ var State = (function (_super) {
                  }
  
              }*/
-            for (var j = 0; j < this._doors.children.length; j++) {
+            // SOLID DOOR SCRIPT:
+            /*for (var j = 0; j < this._doors.children.length; j++) {
                 if (this.checkOverlap(this._base, this._doors.getChildAt(j))) {
-                    //console.log('door');
                     this.callTransition();
                 }
+            }*/
+            if (this._base.y < (this.game.camera.y + this._upTolerance)) {
+                this._downTolerance = 60;
+                this._upTolerance = 40;
+                this.callTransition('up');
+            }
+            if (this._base.y > (this.game.camera.y + (this.game.camera.height - this._downTolerance))) {
+                this._upTolerance = 0;
+                this._downTolerance = 100;
+                this.callTransition('down');
+            }
+            if (this._base.x < (this.game.camera.x + this._leftTolerance)) {
+                this._rightTolerance = 10;
+                this._leftTolerance = 40;
+                this.callTransition('left');
+            }
+            if (this._base.x > (this.game.camera.x + (this.game.camera.width - this._rightTolerance))) {
+                this._leftTolerance = 10;
+                this._rightTolerance = 40;
+                this.callTransition('right');
             }
         }
     };
@@ -373,10 +473,10 @@ var State = (function (_super) {
         }, this);
         this.game.debug.body(this._base);
         this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
-        /*this.game.debug.cameraInfo(this.game.camera, 32, 32);
-        this.game.debug.pointer(this.game.input.mousePointer);
-        this.game.debug.pointer(this.game.input.pointer1);
-        this.game.debug.pointer(this.game.input.pointer2);*/
+        this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        /* this.game.debug.pointer(this.game.input.mousePointer);
+         this.game.debug.pointer(this.game.input.pointer1);
+         this.game.debug.pointer(this.game.input.pointer2); */
     };
     // -------------------------------------------------------------------------
     State.prototype.hitDron = function (aObject1, aObject2) {
@@ -424,48 +524,65 @@ var State = (function (_super) {
         var boundsB = getManualBounds(spriteB);
         return Phaser.Rectangle.intersects(boundsA, boundsB);
     };
-    State.prototype.callTransition = function () {
-        this._doors.removeAll();
+    State.prototype.callTransition = function (direction) {
+        console.log(direction);
+        //this._doors.removeAll();
         this.game.physics.p2.pause();
-        var cameraY;
-        switch (this._hangar) {
+        var cameraX = this.game.camera.x;
+        var cameraY = this.game.camera.y;
+        if (direction == 'up') {
+            cameraY = this.game.camera.y - (this.game.camera.height - 120);
+        }
+        if (direction == 'down') {
+            cameraY = this.game.camera.y + (this.game.camera.height - 120);
+        }
+        if (direction == 'left') {
+            cameraX = this.game.camera.x - (this.game.camera.width - 100);
+        }
+        if (direction == 'right') {
+            cameraX = this.game.camera.x + (this.game.camera.width - 100);
+        }
+        /*switch (this._hangar) {
+
             case 1:
                 cameraY = 0;
                 //this._base.y = this._base.y - 100;
                 this._hangar = 2;
                 break;
+
             case 2:
                 cameraY = 900;
                 // this._base.y = this._base.y + 100;
                 this._hangar = 1;
                 break;
+
             case 3:
                 break;
+
             default:
                 console.log('no level?');
-        }
-        this._transitionTween = this.game.add.tween(this.game.camera).to({ y: cameraY }, 250, Phaser.Easing.Linear.None, true);
+        }*/
+        this._transitionTween = this.game.add.tween(this.game.camera).to({ y: cameraY, x: cameraX }, 250, Phaser.Easing.Linear.None, true);
         this._transitionTween.onComplete.add(this.transitionComplete, this);
         console.log('trans');
     };
     State.prototype.transitionComplete = function () {
-        this.createDoor();
+        // this.createDoor();
         this.game.physics.p2.resume();
+        console.log('camera view width: ' + this.camera.width + ', camera view height: ' + this.camera.height + 'this.camera.x: ' + this.camera.x + 'this.camera.y: ' + this.camera.y);
     };
     State.prototype.createDoor = function () {
-        var bmd2 = this.game.add.bitmapData(640, 40);
-        bmd2.ctx.beginPath();
-        bmd2.ctx.rect(0, 0, 640, 40);
-        //bmd2.ctx.fillStyle = '#1111aa';
-        //bmd2.ctx.fill();
+        var doorBMD = this.game.add.bitmapData(640, 40);
+        doorBMD.ctx.beginPath();
+        doorBMD.ctx.rect(0, 0, 640, 40);
+        doorBMD.ctx.fillStyle = '#1111aa';
+        doorBMD.ctx.fill();
         var yPos = 0;
         if (this._hangar == 1) {
-            yPos = 900 - 40; //this.game.camera.y + 40;
         }
         if (this._hangar == 2) {
-            yPos = 900 + 40;
         }
-        var door1 = this._doors.create(this.world.centerX, yPos, bmd2);
+        var door1 = this._doors.create(this.world.centerX, yPos, doorBMD);
         door1.name = 'd1';
         door1.anchor.setTo(0.5, 0.5);
     };
@@ -488,6 +605,7 @@ var Dron = (function (_super) {
     // -------------------------------------------------------------------------
     Dron.prototype.setUp = function () {
         this.anchor.setTo(0.5, 0.5);
+        this.autoCull = true;
         // random position
         this.reset(this.game.rnd.between(40, 340), this.game.rnd.between(60, 350));
         // random movement range
