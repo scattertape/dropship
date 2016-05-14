@@ -98,7 +98,7 @@ var State = (function (_super) {
         this._allGroup = this.game.add.group();
         this._levelGroup = this.game.add.group();
         this._level1 = this.game.add.sprite(this.world.centerX, this.world.centerY, 'level1');
-        this._level1.visible = false;
+        this._level1.visible = true;
         // this._level1.alpha = 0.5;
         this._level1.anchor.setTo(0.5, 0.5);
         this._levelGroup.add(this._level1);
@@ -324,7 +324,7 @@ var State = (function (_super) {
         this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup]);
         this._base.body.setCollisionGroup(this._shipCollisionGroup);
         this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
-        this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
+        //this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
         /*this._doors = this.game.add.group();
 
         this._thingsGroup.add(this._doors);
