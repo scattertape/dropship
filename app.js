@@ -50,6 +50,7 @@ var State = (function (_super) {
     };
     // -------------------------------------------------------------------------
     State.prototype.preload = function () {
+        this.game.time.advancedTiming = true;
         // background image
         this.game.load.image("BG", "bg.jpg");
         // load sprite images in atlas
@@ -482,6 +483,7 @@ var State = (function (_super) {
             this.game.debug.body(aMissile);
         }, this);
         this.game.debug.body(this._base);
+        this.game.debug.text(this.game.time.fps.toString() || '--', 2, 14, "#00ff00");
         //  this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
         // this.game.debug.cameraInfo(this.game.camera, 32, 32);     
         /* this.game.debug.pointer(this.game.input.mousePointer);
