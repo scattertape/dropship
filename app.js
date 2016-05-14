@@ -5,8 +5,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var globalPointerID = -1;
-var screenWidth = screen.width;
-var screenHeight = screen.height;
+var screenWidth = window.screen.availWidth; //screen.width;
+var screenHeight = window.screen.availHeight; //screen.height;
 var landscapeLayout = true;
 var constructorWidth = 960;
 var constructorHeight = 640;
@@ -61,7 +61,7 @@ var State = (function (_super) {
     };
     // -------------------------------------------------------------------------
     State.prototype.create = function () {
-        this.game.world.setBounds(-1800, -1800, 3600, 3600);
+        this.game.world.setBounds((0 - constructorWidth) - (constructorWidth / 2), (0 - constructorHeight) - (constructorHeight / 2), constructorWidth * 3, constructorHeight * 3);
         this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         // Set a minimum and maximum size for the game
         // Here the minimum is half the game size
@@ -92,7 +92,7 @@ var State = (function (_super) {
         var cameraStartX = this.world.centerX - (constructorWidth * 0.5);
         var cameraStartY = this.world.centerY - constructorHeight * 0.5;
         this._transitionTween = this.game.add.tween(this.game.camera).to({ x: cameraStartX, y: cameraStartY }, 10, Phaser.Easing.Power1, true);
-        //this.game.camera.view = new Phaser.Rectangle(cameraStartX, cameraStartY, 700, 700);
+        //this.game.camera.view = new Phaser.Rectangle(cameraStartX, cameraStartY, constructorWidth, constructorHeight);
         // background
         this._allGroup = this.game.add.group();
         this._levelGroup = this.game.add.group();
@@ -267,7 +267,7 @@ var State = (function (_super) {
         }
         this._backgroundImage = this.add.image(0, 0, "BG");
         this._backgroundImage.anchor.setTo(0, 0);
-        this._backgroundImage.alpha = 0.85;
+        //this._backgroundImage.alpha = 0.85;
         // this._backgroundImage.fixedToCamera = true;
         // this._backgroundImage.cameraOffset.setTo(0, 900);
         this._controlsGroup.add(this._backgroundImage);
@@ -472,8 +472,8 @@ var State = (function (_super) {
             this.game.debug.body(aMissile);
         }, this);
         this.game.debug.body(this._base);
-        this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        //  this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
+        // this.game.debug.cameraInfo(this.game.camera, 32, 32);     
         /* this.game.debug.pointer(this.game.input.mousePointer);
          this.game.debug.pointer(this.game.input.pointer1);
          this.game.debug.pointer(this.game.input.pointer2); */
