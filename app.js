@@ -63,7 +63,7 @@ var State = (function (_super) {
     State.prototype.create = function () {
         this.game.world.setBounds((0 - constructorWidth) - (constructorWidth / 2), (0 - constructorHeight) - (constructorHeight / 2), constructorWidth * 3, constructorHeight * 3);
         // this.game.world.setBounds(0, 0, 900, 900);
-        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         // Set a minimum and maximum size for the game
         // Here the minimum is half the game size
         // And the maximum is the original game size
