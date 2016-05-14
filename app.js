@@ -320,12 +320,16 @@ var State = (function (_super) {
             object.body.setCollisionGroup(this._objectsCollisionGroup);
             object.body.collides([this._objectsCollisionGroup, this._shipCollisionGroup]);
         }
-        this._levelCollisionGroup = this.game.physics.p2.createCollisionGroup();
-        this._level1.body.setCollisionGroup(this._levelCollisionGroup);
-        this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup]);
-        this._base.body.setCollisionGroup(this._shipCollisionGroup);
-        this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
-        this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
+        /*    this._levelCollisionGroup = this.game.physics.p2.createCollisionGroup();
+            this._level1.body.setCollisionGroup(this._levelCollisionGroup);
+            this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup]);
+    
+            this._base.body.setCollisionGroup(this._shipCollisionGroup);
+    
+            this._base.body.collides(this._objectsCollisionGroup, this.hitObject, this);
+    
+           this._base.body.collides(this._levelCollisionGroup, this.hitObject, this);
+            */
         /*this._doors = this.game.add.group();
 
         this._thingsGroup.add(this._doors);
@@ -436,41 +440,6 @@ var State = (function (_super) {
             }
         }
         if (this._transitionTween.isRunning == false) {
-            /* if (deviceMo != null) {
-                 if (deviceMo.acceleration != null) {
-                     if (deviceMo.acceleration.y != null) {
-                         this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                         this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                     }
-                 }
- 
-             }*/
-            // SOLID DOOR SCRIPT:
-            /*for (var j = 0; j < this._doors.children.length; j++) {
-                if (this.checkOverlap(this._base, this._doors.getChildAt(j))) {
-                    this.callTransition();
-                }
-            }*/
-            if (this._base.y < (this.game.camera.y + this._upTolerance)) {
-                this._downTolerance = 60;
-                this._upTolerance = 40;
-                this.callTransition('up');
-            }
-            if (this._base.y > (this.game.camera.y + (this.game.camera.height - this._downTolerance))) {
-                this._upTolerance = 0;
-                this._downTolerance = 100;
-                this.callTransition('down');
-            }
-            if (this._base.x < (this.game.camera.x + this._leftTolerance)) {
-                this._rightTolerance = 10;
-                this._leftTolerance = 40;
-                this.callTransition('left');
-            }
-            if (this._base.x > (this.game.camera.x + (this.game.camera.width - this._rightTolerance))) {
-                this._leftTolerance = 10;
-                this._rightTolerance = 40;
-                this.callTransition('right');
-            }
         }
     };
     // -------------------------------------------------------------------------
