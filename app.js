@@ -5,8 +5,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var globalPointerID = -1;
-var screenWidth = window.screen.availWidth; //screen.width;
-var screenHeight = window.screen.availHeight; //screen.height;
+var screenWidth = window.innerWidth; //screen.width;
+var screenHeight = window.innerHeight; //screen.height;
 var landscapeLayout = true;
 var constructorWidth = 960;
 var constructorHeight = 640;
@@ -24,7 +24,7 @@ var Game = (function (_super) {
     // -------------------------------------------------------------------------
     function Game() {
         // init game
-        _super.call(this, constructorWidth, constructorHeight, Phaser.CANVAS, "", State);
+        _super.call(this, constructorWidth, constructorHeight, Phaser.AUTO, "", State);
     }
     return Game;
 }(Phaser.Game));
@@ -47,6 +47,7 @@ var State = (function (_super) {
     }
     State.prototype.boot = function () {
         this.game.scale.windowConstraints.bottom = "visual";
+        this.game.time.desiredFps = 30;
     };
     // -------------------------------------------------------------------------
     State.prototype.preload = function () {
