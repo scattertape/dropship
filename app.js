@@ -98,6 +98,7 @@ var State = (function (_super) {
         this._allGroup = this.game.add.group();
         this._levelGroup = this.game.add.group();
         this._level1 = this.game.add.sprite(this.world.centerX, this.world.centerY, 'level1');
+        this._level1.visible = false;
         // this._level1.alpha = 0.5;
         this._level1.anchor.setTo(0.5, 0.5);
         this._levelGroup.add(this._level1);
@@ -269,6 +270,7 @@ var State = (function (_super) {
         }
         this._backgroundImage = this.add.image(0, 0, "BG");
         this._backgroundImage.anchor.setTo(0, 0);
+        this._backgroundImage.cacheAsBitmap = true;
         //this._backgroundImage.alpha = 0.85;
         // this._backgroundImage.fixedToCamera = true;
         // this._backgroundImage.cameraOffset.setTo(0, 900);
@@ -352,7 +354,6 @@ var State = (function (_super) {
         this._joystick = new Joystick(this.game, 0, joystickY);
         this._controlsGroup.add(this._joystick);
         this._joystick.setup(this._base);
-        this._controlsGroup.cacheAsBitmap = true;
         this._allGroup.sendToBack(this._levelGroup);
     };
     // -------------------------------------------------------------------------
