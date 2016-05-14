@@ -13,7 +13,7 @@ var constructorHeight = 640;
 if (screenHeight > screenWidth) {
     landscapeLayout = false;
 }
-//landscapeLayout = false;
+// landscapeLayout = false;
 if (landscapeLayout == false) {
     constructorWidth = 640;
     constructorHeight = 960;
@@ -311,6 +311,7 @@ var State = (function (_super) {
             object.anchor.setTo(0.5, 0.5);
             this.game.physics.p2.enable(object);
             //object.body.mass = 0;
+            object.outOfBoundsKill = true;
             object.body.data.gravityScale = 0.0;
             object.body.setRectangle(30, 30);
             object.body.setCollisionGroup(this._objectsCollisionGroup);
@@ -345,9 +346,13 @@ var State = (function (_super) {
             // this._controlsGroup.cameraOffset.setTo(0, 580);
             joystickY = 580;
         }
+        else {
+            this._levelGroup.cacheAsBitmap = true;
+        }
         this._joystick = new Joystick(this.game, 0, joystickY);
         this._controlsGroup.add(this._joystick);
         this._joystick.setup(this._base);
+        this._controlsGroup.cacheAsBitmap = true;
         this._allGroup.sendToBack(this._levelGroup);
     };
     // -------------------------------------------------------------------------
