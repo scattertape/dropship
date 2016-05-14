@@ -24,7 +24,7 @@ var Game = (function (_super) {
     // -------------------------------------------------------------------------
     function Game() {
         // init game
-        _super.call(this, constructorWidth, constructorHeight, Phaser.AUTO, "", State);
+        _super.call(this, constructorWidth, constructorHeight, Phaser.CANVAS, "", State);
     }
     return Game;
 }(Phaser.Game));
@@ -111,16 +111,17 @@ var State = (function (_super) {
         this._allGroup.add(this._thingsGroup);
         this._controlsGroup = this.game.add.group();
         this._allGroup.add(this._controlsGroup);
-        //this._level1 = this.game.add.sprite(320, 900, 'level1');
-        // this._worldGroup.add(this._level1);
-        var defenderBMD = this.game.add.bitmapData(25, 25);
-        defenderBMD.ctx.beginPath();
-        defenderBMD.ctx.rect(0, 0, 25, 25);
-        defenderBMD.ctx.fillStyle = '#ffccff';
-        defenderBMD.ctx.fill();
-        var defender = this.game.add.sprite(this.world.centerX, this.world.centerY + 200, defenderBMD);
-        defender.anchor.setTo(0.5, 0.5);
-        this._thingsGroup.add(defender);
+        /* var defenderBMD = this.game.add.bitmapData(25,25);
+ 
+         defenderBMD.ctx.beginPath();
+         defenderBMD.ctx.rect(0, 0, 25, 25);
+         defenderBMD.ctx.fillStyle = '#ffccff';
+         defenderBMD.ctx.fill();
+ 
+         var defender: Phaser.Sprite = this.game.add.sprite(this.world.centerX, this.world.centerY + 200, defenderBMD);
+         defender.anchor.setTo(0.5, 0.5);
+ 
+         this._thingsGroup.add(defender);*/
         // set physiscs to P2 physics engin
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.game.physics.p2.gravity.y = 200;
@@ -298,19 +299,20 @@ var State = (function (_super) {
         this._objects.enableBody = true;
         this._objects.physicsBodyType = Phaser.Physics.P2JS;
         for (var i = 0; i < 1; i++) {
-            var width = 30; // example;
-            var height = 30; // example;
-            var bmd = this.game.add.bitmapData(width, height);
-            bmd.ctx.beginPath();
-            bmd.ctx.rect(0, 0, width, height);
-            bmd.ctx.fillStyle = '#ffffff';
-            bmd.ctx.fill();
-            var object = this._objects.create(this.world.centerX, this.world.centerY + 100, bmd);
+            /* var width = 30 // example;
+             var height = 30 // example;
+             var bmd = this.game.add.bitmapData(width, height);
+ 
+             bmd.ctx.beginPath();
+             bmd.ctx.rect(0, 0, width, height);
+             bmd.ctx.fillStyle = '#ffffff';
+             bmd.ctx.fill();*/
+            var object = this._objects.create(this.world.centerX, this.world.centerY + 100, 'imageKey');
             object.anchor.setTo(0.5, 0.5);
             this.game.physics.p2.enable(object);
             //object.body.mass = 0;
             object.body.data.gravityScale = 0.0;
-            object.body.setRectangle(width, height);
+            object.body.setRectangle(30, 30);
             object.body.setCollisionGroup(this._objectsCollisionGroup);
             object.body.collides([this._objectsCollisionGroup, this._shipCollisionGroup]);
         }
@@ -325,11 +327,12 @@ var State = (function (_super) {
         this._thingsGroup.add(this._doors);
 
         this.createDoor();*/
-        var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
-        this._text1 = this.game.add.text(300, 1200, 'accel', style);
+        /*var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
+        this._text1 = this.game.add.text(300, 300, 'accel', style);
         this._text1.anchor.setTo(0.5, 0.5);
-        this._text2 = this.game.add.text(300, 1250, 'accel+gravity', style);
-        this._text2.anchor.setTo(0.5, 0.5);
+
+        this._text2 = this.game.add.text(300, 300, 'accel+gravity', style);
+        this._text2.anchor.setTo(0.5, 0.5);*/
         /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
          door2.anchor.setTo(0.5, 0.5);
          door1.name = 'd2';*/
@@ -715,13 +718,14 @@ var Joystick = (function (_super) {
         console.log('joystick setup... ' + myBase.name);
         this.base = myBase;
         this.game.add.existing(this);
-        var width = 60; // example;
-        var height = 60; // example;
-        var bmd = this.game.add.bitmapData(width, height);
-        bmd.ctx.beginPath();
-        bmd.ctx.rect(0, 0, width, height);
-        bmd.ctx.fillStyle = '#ffcc00';
-        bmd.ctx.fill();
+        /* var width = 60 // example;
+         var height = 60 // example;
+         var bmd = this.game.add.bitmapData(width, height);
+         
+         bmd.ctx.beginPath();
+         bmd.ctx.rect(0, 0, width, height);
+         bmd.ctx.fillStyle = '#ffcc00';
+         bmd.ctx.fill();*/
         //this.dragger = this.game.add.sprite(0, 0, bmd);
         //this.dragger.anchor.setTo(0.5, 0.5);
         //this.dragger.width = this.dragger.height = 50;
