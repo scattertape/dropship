@@ -63,6 +63,8 @@ var State = (function (_super) {
     };
     // -------------------------------------------------------------------------
     State.prototype.create = function () {
+        this.game.time.advancedTiming = true;
+        this.game.time.desiredFps = 60;
         this.game.world.setBounds((0 - constructorWidth) - (constructorWidth / 2), (0 - constructorHeight) - (constructorHeight / 2), constructorWidth * 3, constructorHeight * 3);
         // this.game.world.setBounds(0, 0, 900, 900);
         //this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
