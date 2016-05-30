@@ -23,6 +23,10 @@ var Dropship;
             }
             else {
             }
+            this.game.input.addPointer();
+            this.game.input.addPointer();
+            this.game.input.addPointer();
+            this.game.input.addPointer();
             this.game.scale.pageAlignHorizontally = true;
             this.game.scale.pageAlignVertically = true;
             this.game.scale.windowConstraints.bottom = "visual";
