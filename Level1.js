@@ -284,12 +284,14 @@ var Dropship;
             this._lasers.physicsBodyType = Phaser.Physics.P2JS;
             this._lasers.enableBody = true;
             // create 30 lasers
-            this._lasers.createMultiple(30, "Atlas", "explosion001");
+            this._lasers.createMultiple(15, "Atlas", "explosion001");
             this._lasers.forEach(function (aLaser) {
                 aLaser.anchor.setTo(0.5, 0.5);
                 aLaser.height = aLaser.height * 0.25;
                 aLaser.width = aLaser.width * 0.25;
                 aLaser.name = 'laser';
+                aLaser.autoCull = true;
+                aLaser.lifespan = 3000;
                 aLaser.animations.add("goodHit", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
                 aLaser.animations.add("badHit", Phaser.Animation.generateFrameNames("dron", 1, 2, "", 1));
                 // physics
@@ -564,7 +566,7 @@ var Dropship;
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
             this.game.time.events.add(Phaser.Timer.SECOND * 1, suggestFPS, this);
-            //this.game.physics.p2.setPostBroadphaseCallback(this.checkOverlap2, this);
+            // this.game.physics.p2.setPostBroadphaseCallback(this.checkOverlap2, this);
         };
         // -------------------------------------------------------------------------
         Level1.prototype.update = function () {
@@ -720,17 +722,16 @@ var Dropship;
              this.game.debug.pointer(this.game.input.pointer2); */
         };
         // -------------------------------------------------------------------------
-        /*private checkOverlap2(body1, body2) {
-            if ((body1.sprite.name === 'DROPSHIP' && body2.sprite.name === 'antiGrav') || (body2.sprite.name === 'DROPSHIP' && body1.sprite.name === 'antiGrav')) {
+        Level1.prototype.checkOverlap2 = function (body1, body2) {
+            if ((body1.sprite.name === 'laser' && body2.sprite.name === 'level') || (body2.sprite.name === 'laser' && body1.sprite.name === 'level')) {
                 this.dosomething();
                 return false;
             }
             return true;
-        }
-
-        private dosomething() {
+        };
+        Level1.prototype.dosomething = function () {
             console.log('ds');
-        }*/
+        };
         Level1.prototype.weaponContactHandler = function (body, shape1, shape2, equation) {
             var objectHit = body.sprite;
             var laser;
@@ -798,9 +799,9 @@ var Dropship;
                 // this._cannonTip.setTo(this._cannon.width * 2, 0);
                 // this._cannonTip.rotate(0, 0, this._cannon.rotation);
                 laser.loadTexture('Atlas', 'explosion001');
-                laser.lifespan = 3000;
+                //laser.lifespan = 3000;
                 laser.body.damping = 0;
-                laser.body.kinematic = false;
+                //laser.body.kinematic = false;
                 laser.reset(this._base.body.x, this._base.body.y);
                 laser.body.rotation = this._base.body.rotation;
                 // life of missile in millis
