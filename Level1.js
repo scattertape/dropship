@@ -584,12 +584,12 @@ var Dropship;
                     aBullet.kill();
                 }
             }, this);
-            this._lasers.forEach(function (aLaser) {
+            /*this._lasers.forEach(function (aLaser: Phaser.Sprite) {
                 if (aLaser.inWorld == false) {
                     //console.log('aLaser out of world');
                     aLaser.kill();
                 }
-            }, this);
+            }, this);*/
             //this._cannon.x = this._base.x;
             //this._cannon.y = this._base.y;
             //this._cannon.angle = this._base.angle+90;
