@@ -64,73 +64,104 @@ var Dropship;
             this._transitionTween = this.game.add.tween(this.game.camera).to({ x: cameraStartX, y: cameraStartY }, 10, Phaser.Easing.Power1, true);
             //this.game.camera.view = new Phaser.Rectangle(cameraStartX, cameraStartY, constructorWidth, constructorHeight);
             this._allGroup = this.game.add.group();
-            this._levelGroup = this.game.add.group();
-            this._level1 = this.game.add.sprite(this.world.centerX, this.world.centerY, '');
-            this._level1.width = 1920;
-            this._level1.height = 2880;
-            this._level1.visible = false;
-            this._level1.alpha = 0.25;
             this._currentSubLevel = 5;
             this._tiles = this.game.add.group();
+            var anchor = false;
+            var tileWidth = 640;
+            var tileHeight = 960;
             // Center
             var tile5 = this.game.add.sprite(this.world.centerX, this.world.centerY, 'level1-5');
-            tile5.anchor.setTo(0.5, 0.5);
+            if (anchor) {
+                tile5.anchor.setTo(0.5, 0.5);
+            }
             tile5.name = 'tile5';
             this._tiles.add(tile5);
             // Top
-            var tile8 = this.game.add.sprite(this.world.centerX, this.world.centerY + this._cameraOverlap, 'level1-8');
-            tile8.anchor.setTo(0.5, 1.5);
+            var tile8 = this.game.add.sprite(this.world.centerX, (this.world.centerY - tileHeight) + this._cameraOverlap, 'level1-8');
+            if (anchor) {
+                tile8.anchor.setTo(0.5, 1.5);
+            }
             tile8.name = 'tile8';
             this._tiles.add(tile8);
             // Bottom
-            var tile2 = this.game.add.sprite(this.world.centerX, this.world.centerY - this._cameraOverlap, 'level1-2');
-            tile2.anchor.setTo(0.5, -0.5);
+            var tile2 = this.game.add.sprite(this.world.centerX, (this.world.centerY + tileHeight) - this._cameraOverlap, 'level1-2');
+            if (anchor) {
+                tile2.anchor.setTo(0.5, -0.5);
+            }
             tile2.name = 'tile2';
             this._tiles.add(tile2);
             // Left
-            var tile4 = this.game.add.sprite(this.world.centerX + this._cameraOverlap, this.world.centerY, 'level1-4');
-            tile4.anchor.setTo(1.5, 0.5);
+            var tile4 = this.game.add.sprite((this.world.centerX - tileWidth) + this._cameraOverlap, this.world.centerY, 'level1-4');
+            if (anchor) {
+                tile4.anchor.setTo(1.5, 0.5);
+            }
             tile4.name = 'tile4';
             this._tiles.add(tile4);
             // Right
-            var tile6 = this.game.add.sprite(this.world.centerX - this._cameraOverlap, this.world.centerY, 'level1-6');
-            tile6.anchor.setTo(-0.5, 0.5);
+            var tile6 = this.game.add.sprite((this.world.centerX + tileWidth) - this._cameraOverlap, this.world.centerY, 'level1-6');
+            if (anchor) {
+                tile6.anchor.setTo(-0.5, 0.5);
+            }
             tile6.name = 'tile6';
             this._tiles.add(tile6);
             // Top Left
-            var tile7 = this.game.add.sprite(this.world.centerX + this._cameraOverlap, this.world.centerY + this._cameraOverlap, 'level1-7');
-            tile7.anchor.setTo(1.5, 1.5);
+            var tile7 = this.game.add.sprite((this.world.centerX - tileWidth) + this._cameraOverlap, (this.world.centerY - tileHeight) + this._cameraOverlap, 'level1-7');
+            if (anchor) {
+                tile7.anchor.setTo(1.5, 1.5);
+            }
             tile7.name = 'tile7';
             this._tiles.add(tile7);
             // Top Right
-            var tile9 = this.game.add.sprite(this.world.centerX - this._cameraOverlap, this.world.centerY + this._cameraOverlap, 'level1-9');
-            tile9.anchor.setTo(-0.5, 1.5);
+            var tile9 = this.game.add.sprite((this.world.centerX + tileWidth) - this._cameraOverlap, (this.world.centerY - tileHeight) + this._cameraOverlap, 'level1-9');
+            if (anchor) {
+                tile9.anchor.setTo(-0.5, 1.5);
+            }
             tile9.name = 'tile9';
             this._tiles.add(tile9);
             // Bottom Left
-            var tile1 = this.game.add.sprite(this.world.centerX + this._cameraOverlap, this.world.centerY - this._cameraOverlap, 'level1-1');
+            var tile1 = this.game.add.sprite((this.world.centerX - tileWidth) + this._cameraOverlap, (this.world.centerY + tileHeight) - this._cameraOverlap, 'level1-1');
             tile1.anchor.setTo(1.5, -0.5);
             tile1.name = 'tile1';
             this._tiles.add(tile1);
             // Bottom Right
-            var tile3 = this.game.add.sprite(this.world.centerX - this._cameraOverlap, this.world.centerY - this._cameraOverlap, 'level1-3');
+            var tile3 = this.game.add.sprite((this.world.centerX + tileWidth) - this._cameraOverlap, (this.world.centerY + tileHeight) - this._cameraOverlap, 'level1-3');
             tile3.anchor.setTo(-0.5, -0.5);
             tile3.name = 'tile3';
             this._tiles.add(tile3);
+            this.game.physics.startSystem(Phaser.Physics.P2JS);
+            this.game.physics.p2.gravity.y = 200;
+            this.game.physics.p2.restitution = 0;
+            this.game.physics.p2.friction = 0.8;
+            if (this.game.physics.p2.paused) {
+                this.game.physics.p2.resume();
+            }
+            this._tilesCollisionGroup = this.game.physics.p2.createCollisionGroup();
             var tileNo = 0;
             for (tileNo; tileNo < 9; tileNo++) {
-                var tile = this._tiles.getChildAt(tileNo);
+                var tile = this._tiles.getByName('tile' + (tileNo + 1));
                 //tile.alpha = 1;
                 //tile.autoCull = true;
                 //console.log(tile.name);
+                this.game.physics.p2.enable(tile);
+                this.game.physics.p2.enableBody(tile, true);
+                var tileBody = tile.body;
+                tileBody.static = true;
+                tileBody.clearShapes();
+                var str1 = (tileNo + 1) + '-1';
+                var str2 = (tileNo + 1) + '-2';
+                tileBody.loadPolygon('levelData', str1);
+                tileBody.loadPolygon('levelData', str2);
+                tileBody.debug = true;
+                tileBody.allowSleep = true;
+                tileBody.setCollisionGroup(this._tilesCollisionGroup);
                 if (tile.name != 'tile' + this._currentSubLevel) {
                     tile.visible = false;
+                    tileBody.data.sleep();
+                }
+                else {
+                    tileBody.data.wakeUp();
                 }
             }
-            // this._level1.alpha = 0.5;
-            this._level1.anchor.setTo(0.5, 0.5);
-            this._level1.name = 'level';
-            this._levelGroup.add(this._level1);
             /* this._worldGroup = this.game.add.group();
              this._worldGroup.x = this.world.centerX - (constructorWidth * 0.5);
              this._worldGroup.y = this.world.centerY - (constructorWidth * 0.5);
@@ -138,7 +169,7 @@ var Dropship;
              this._worldGroup.pivot.y = 900;*/
             this._thingsGroup = this.game.add.group();
             this._allGroup.add(this._tiles);
-            this._allGroup.add(this._levelGroup);
+            //this._allGroup.add(this._levelGroup);
             this._allGroup.add(this._thingsGroup);
             this._controlsGroup = this.game.add.group();
             this._allGroup.add(this._controlsGroup);
@@ -154,13 +185,6 @@ var Dropship;
      
              this._thingsGroup.add(defender);*/
             // set physiscs to P2 physics engin
-            this.game.physics.startSystem(Phaser.Physics.P2JS);
-            this.game.physics.p2.gravity.y = 200;
-            this.game.physics.p2.restitution = 0;
-            this.game.physics.p2.friction = 0.8;
-            if (this.game.physics.p2.paused) {
-                this.game.physics.p2.resume();
-            }
             /*this.game.physics.p2.enable(tile8);
             this.game.physics.p2.enableBody(tile8, true);
             var tBody: Phaser.Physics.P2.Body = tile8.body;
@@ -190,33 +214,6 @@ var Dropship;
             // make it point straight up
             //this._cannon.rotation = -Math.PI / 2;
             //this._cannonTween = this.game.add.tween(this._cannon).to({ rotation: -Math.PI / 2 }, 100, Phaser.Easing.Power1, true);
-            this.game.physics.p2.enable(this._level1);
-            this.game.physics.p2.enableBody(this._level1, true);
-            var levelBody = this._level1.body;
-            levelBody.static = true;
-            levelBody.clearShapes();
-            levelBody.loadPolygon('physicsData', 'level1-pins');
-            levelBody.loadPolygon('physicsData', 'level1-1-1');
-            levelBody.loadPolygon('physicsData', 'level1-1-2');
-            levelBody.loadPolygon('physicsData', 'level1-2-1');
-            levelBody.loadPolygon('physicsData', 'level1-2-2');
-            levelBody.loadPolygon('physicsData', 'level1-3-1');
-            levelBody.loadPolygon('physicsData', 'level1-3-2');
-            levelBody.loadPolygon('physicsData', 'level1-4-1');
-            levelBody.loadPolygon('physicsData', 'level1-4-2');
-            levelBody.loadPolygon('physicsData', 'level1-5-1');
-            levelBody.loadPolygon('physicsData', 'level1-5-2');
-            levelBody.loadPolygon('physicsData', 'level1-6-1');
-            levelBody.loadPolygon('physicsData', 'level1-6-2');
-            levelBody.loadPolygon('physicsData', 'level1-7-1');
-            levelBody.loadPolygon('physicsData', 'level1-7-2');
-            levelBody.loadPolygon('physicsData', 'level1-8-1');
-            levelBody.loadPolygon('physicsData', 'level1-8-2');
-            levelBody.loadPolygon('physicsData', 'level1-9-1');
-            levelBody.loadPolygon('physicsData', 'level1-9-2');
-            levelBody.debug = false;
-            this._levelCollisionGroup = this.game.physics.p2.createCollisionGroup();
-            this._level1.body.setCollisionGroup(this._levelCollisionGroup);
             //this._level1.x = 320;
             //this._level1.anchor.setTo(0.5, 0.5);
             //this._cannon.body.gravityScale = 0;
@@ -303,7 +300,7 @@ var Dropship;
                 body.setCollisionGroup(this._lasersCollisionGroup);
                 body.collides(this._dronesCollisionGroup);
                 body.collides(this._sentriesCollisionGroup);
-                body.collides(this._levelCollisionGroup);
+                body.collides(this._tilesCollisionGroup);
                 body.collides(this._aggCollisionGroup);
                 //body.collides(this._levelCollisionGroup, this.laserHitLevel, this);
                 body.onBeginContact.add(this.weaponContactHandler);
@@ -472,9 +469,12 @@ var Dropship;
                 object.body.collides([this._objectsCollisionGroup, this._shipCollisionGroup]);
 
             }*/
-            this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup, this._lasersCollisionGroup]);
+            //this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup, this._lasersCollisionGroup]);
+            this._tiles.forEach(function (tile) {
+                tile.body.collides([this._shipCollisionGroup, this._lasersCollisionGroup]);
+            }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
-            this._base.body.collides([this._objectsCollisionGroup, this._levelCollisionGroup, this._sentryBulletsCollisionGroup]);
+            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
@@ -542,9 +542,15 @@ var Dropship;
             this._controlsGroup.fixedToCamera = true;
             this._controlsGroup.cameraOffset.setTo(0, this.game.height - this._controlsGroup.height);
             if (this.landscapeLayout == true) {
-                this._level1.body.angle = 90;
+                // this._level1.body.angle = 90;
                 // this._thingsGroup.angle = 90;
-                this._tiles.angle = 90;
+                // this._tiles.angle = 90;
+                this._tiles.forEach(function (tile) {
+                    var newPoint = this.rotate_point(tile.body.x, tile.body.y, this.world.centerX, this.world.centerY, 90);
+                    tile.body.x = newPoint.x;
+                    tile.body.y = newPoint.y;
+                    tile.body.angle = 90;
+                }, this);
                 this._sentries.forEach(function (aSentry) {
                     console.log('oldpoint: ' + aSentry.body.x + ',' + aSentry.body.y);
                     var newPoint = this.rotate_point(aSentry.body.x, aSentry.body.y, this.world.centerX, this.world.centerY, 90);
@@ -557,12 +563,11 @@ var Dropship;
                 joystickY = 580;
             }
             else {
-                this._levelGroup.cacheAsBitmap = true;
             }
             this._joystick = new Joystick(this.game, 0, joystickY);
             this._controlsGroup.add(this._joystick);
             this._joystick.setup(this._base);
-            this._allGroup.sendToBack(this._levelGroup);
+            this._allGroup.sendToBack(this._tiles);
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
             this.game.time.events.add(Phaser.Timer.SECOND * 1, suggestFPS, this);
@@ -713,7 +718,15 @@ var Dropship;
                 this.game.debug.body(aMissile);
             }, this);
             this.game.debug.body(this._base);
-            //this.game.debug.body(this._level1);
+            this.game.debug.body(this._tiles.getByName('tile1'));
+            this.game.debug.body(this._tiles.getByName('tile2'));
+            this.game.debug.body(this._tiles.getByName('tile3'));
+            this.game.debug.body(this._tiles.getByName('tile4'));
+            this.game.debug.body(this._tiles.getByName('tile5'));
+            this.game.debug.body(this._tiles.getByName('tile6'));
+            this.game.debug.body(this._tiles.getByName('tile7'));
+            this.game.debug.body(this._tiles.getByName('tile8'));
+            this.game.debug.body(this._tiles.getByName('tile9'));
             this.game.debug.text(this.game.time.fps.toString() || '--', 2, 14, "#00ff00");
             //  this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
             // this.game.debug.cameraInfo(this.game.camera, 32, 32);     
@@ -722,6 +735,9 @@ var Dropship;
              this.game.debug.pointer(this.game.input.pointer2); */
         };
         // -------------------------------------------------------------------------
+        Level1.prototype.newEvent = function (n) {
+            console.log('ne');
+        };
         Level1.prototype.checkOverlap2 = function (body1, body2) {
             if ((body1.sprite.name === 'laser' && body2.sprite.name === 'level') || (body2.sprite.name === 'laser' && body1.sprite.name === 'level')) {
                 this.dosomething();
@@ -758,7 +774,9 @@ var Dropship;
                 var laserBody = laser.body;
                 laserBody.setZeroVelocity();
                 laserBody.damping = 1;
-                if (objectHit.name == 'level') {
+                var objName = objectHit.name;
+                var truncName = objName.substr(0, 4);
+                if (truncName == 'tile') {
                     laser.play("badHit", 10, false, true);
                 }
                 else {
@@ -953,7 +971,14 @@ var Dropship;
             //levelBody.addPhaserPolygon('physicsData', sub1);
             // levelBody.addPhaserPolygon('physicsData', sub2)
             var tileToHide = this._tiles.getByName('tile' + this._currentSubLevel);
+            console.log('tile' + this._currentSubLevel + ' was ' + tileToHide.body.data.sleepState);
             tileToHide.visible = false;
+            tileToHide.body.data.sleep();
+            console.log('tile' + this._currentSubLevel + ' now ' + tileToHide.body.data.sleepState);
+            var newTile = this._tiles.getByName('tile' + this._newSubLevel);
+            console.log('tile' + this._newSubLevel + ' was ' + tileToHide.body.data.sleepState);
+            newTile.body.data.wakeUp();
+            console.log('tile' + this._newSubLevel + ' now ' + tileToHide.body.data.sleepState);
             this._currentSubLevel = this._newSubLevel;
             this.game.physics.p2.resume();
             //console.log('camera view width: ' + this.camera.width + ', camera view height: ' + this.camera.height + 'this.camera.x: ' + this.camera.x + 'this.camera.y: ' + this.camera.y);
@@ -1267,7 +1292,9 @@ var Dropship;
         Ship.prototype.endContactHandler = function (body, shape1, shape2, equation) {
             if (body) {
                 if (body.sprite != null) {
-                    if (body.sprite.name == 'level') {
+                    var objName = body.sprite.name;
+                    var truncName = objName.substr(0, 4);
+                    if (truncName == 'tile') {
                         //this.contactDamage = false;
                         shape2.body.parent.sprite.contactDamage = false;
                         //this.contactDamageCount = 0;
@@ -1299,7 +1326,9 @@ var Dropship;
                 }
                 return;
             }
-            if (body.sprite.name == 'level') {
+            var objName = body.sprite.name;
+            var truncName = objName.substr(0, 4);
+            if (truncName == 'tile') {
                 // damage ship on prolonged contact...
                 // this.contactDamage = true;
                 base.contactDamage = true;
