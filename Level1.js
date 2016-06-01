@@ -143,7 +143,7 @@ var Dropship;
                 //tile.autoCull = true;
                 //console.log(tile.name);
                 this.game.physics.p2.enable(tile);
-                this.game.physics.p2.enableBody(tile, true);
+                this.game.physics.p2.enableBody(tile, false);
                 var tileBody = tile.body;
                 tileBody.static = true;
                 tileBody.clearShapes();
@@ -151,7 +151,7 @@ var Dropship;
                 var str2 = (tileNo + 1) + '-2';
                 tileBody.loadPolygon('levelData', str1);
                 tileBody.loadPolygon('levelData', str2);
-                tileBody.debug = true;
+                //tileBody.debug = true;
                 tileBody.allowSleep = true;
                 tileBody.setCollisionGroup(this._tilesCollisionGroup);
                 if (tile.name != 'tile' + this._currentSubLevel) {
