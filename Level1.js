@@ -718,7 +718,7 @@ var Dropship;
                 this.game.debug.body(aMissile);
             }, this);
             this.game.debug.body(this._base);
-            this.game.debug.body(this._tiles.getByName('tile1'));
+            /*this.game.debug.body(this._tiles.getByName('tile1'));
             this.game.debug.body(this._tiles.getByName('tile2'));
             this.game.debug.body(this._tiles.getByName('tile3'));
             this.game.debug.body(this._tiles.getByName('tile4'));
@@ -726,7 +726,7 @@ var Dropship;
             this.game.debug.body(this._tiles.getByName('tile6'));
             this.game.debug.body(this._tiles.getByName('tile7'));
             this.game.debug.body(this._tiles.getByName('tile8'));
-            this.game.debug.body(this._tiles.getByName('tile9'));
+            this.game.debug.body(this._tiles.getByName('tile9'));*/
             this.game.debug.text(this.game.time.fps.toString() || '--', 2, 14, "#00ff00");
             //  this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
             // this.game.debug.cameraInfo(this.game.camera, 32, 32);     
