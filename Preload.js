@@ -12,19 +12,19 @@ var Dropship;
         }
         Preloader.prototype.preload = function () {
             //  Set-up our preloader sprite
-            this.preloadBar = this.add.sprite(200, 250, 'preloadBar');
+            this.preloadBar = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'preloadBar');
+            this.preloadBar.x = this.preloadBar.x - (this.preloadBar.width * 0.5);
             this.load.setPreloadSprite(this.preloadBar);
             //  Load our actual games assets
             this.load.image('titlepage', 'assets/titlepage.jpg');
             this.load.image('logo', 'assets/logo.png');
             // this.load.image('level1', 'assets/level1.png');
-            //
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
-            this.game.load.image("BG", "assets/bg.jpg");
-            this.game.load.atlas("Atlas", "assets/atlas.png", "assets/atlas.json");
+            this.game.load.image("BG", "assets/bg.png");
+            // this.game.load.atlas("Atlas", "assets/atlas.png", "assets/atlas.json");
+            this.game.load.atlas("Atlas", "assets/atlas2.png", "assets/atlas2.json");
             this.game.load.image('imageKey', 'assets/pink.png');
-            this.game.load.image('jsarea', 'assets/jsarea.png');
             //this.game.load.physics('physicsData', 'assets/level2.json');
             this.game.load.physics('levelData', 'assets/level3.json');
             this.game.load.image('level1-1', 'assets/level1-1.png');

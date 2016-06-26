@@ -11,10 +11,10 @@ var Dropship;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            this.background = this.add.sprite(0, 0, 'titlepage');
+            this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
             this.background.alpha = 0;
             this.background.anchor.setTo(0.5, 0.5);
-            this.logo = this.add.sprite(this.world.centerX, -300, 'logo');
+            this.logo = this.add.sprite(this.game.width * 0.5, this.game.height - 300, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.add.tween(this.logo).to({ y: 220 }, 200, Phaser.Easing.Elastic.Out, true, 200);

@@ -196,12 +196,13 @@ var Dropship;
             // cannon base - place over cannon, so it overlaps it
             //this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
             this._base = new Ship(this.game, this.world.centerX, this.world.centerY);
-            this._base.setup();
+            this._base.setup(this);
             // this._base = this.game.add.sprite(this.world.centerX, this.world.centerY, "Atlas", "base");
             this._base.name = 'DROPSHIP';
             // this._base = new DropShip(this.game, this.world.centerX, this.world.height / 1.5, 'imageKey');
             //  this._base.setUp();
-            this._base.anchor.setTo(0.5, 1);
+            this._base.anchor.setTo(0.5, 0.7);
+            //this._base.scale.setTo(.65, .65);
             // cannon - place it in the bottom center
             //this._cannon = this.game.add.sprite(this.world.centerX, this.world.height / 2, "Atlas", "cannon");
             // this._worldGroup.add(this._cannon);
@@ -220,7 +221,7 @@ var Dropship;
             this.game.physics.p2.enable(this._base);
             this._base.body.setCircle(33);
             this._base.body.collideWorldBounds = false;
-            this._base.body.debug = true;
+            //this._base.body.debug = true;
             this._base.normalGravity();
             this._base.body.onBeginContact.add(this._base.contactHandler);
             this._base.body.onEndContact.add(this._base.endContactHandler);
@@ -238,7 +239,7 @@ var Dropship;
             // allow inpact events
             this.game.physics.p2.setImpactEvents(true);
             //  collision groups for drones
-            this._dronesCollisionGroup = this.game.physics.p2.createCollisionGroup();
+            //this._dronesCollisionGroup = this.game.physics.p2.createCollisionGroup();
             //  collision groups for missiles
             this._missilesCollisionGroup = this.physics.p2.createCollisionGroup();
             this._sentryBulletsCollisionGroup = this.physics.p2.createCollisionGroup();
@@ -259,38 +260,38 @@ var Dropship;
             this._drones.enableBody = true;
             // create 8 drones
             this._drones.classType = Dron;
-            this._drones.createMultiple(3, "Atlas", "dron1");
+            this._drones.createMultiple(3, "Atlas", "Mine0025");
             this._drones.forEach(function (aDron) {
                 // setup movements and animations
-                aDron.setUp();
+                aDron.setUp(100, 200, -200, -150);
                 // aDron.events.onInputDown.add(function (currentSprite) { this._facingTarget = false; this._targetDrone = currentSprite; }, this);
+                //aDron.scale.setTo(.5, .5);
                 // setup physics
                 var body = aDron.body;
-                body.setCircle(aDron.width / 2);
+                body.setCircle(20);
                 body.kinematic = true; // does not respond to forces
-                body.setCollisionGroup(this._dronesCollisionGroup);
+                body.setCollisionGroup(this._objectsCollisionGroup);
                 // adds group drones will collide with and callback
                 //body.collides(this._missilesCollisionGroup, this.hitDron, this);
-                body.collides(this._missilesCollisionGroup);
-                body.collides(this._lasersCollisionGroup);
+                body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
                 //body.collides(this._lasersCollisionGroup, this.hitDron, this);
-                //body.debug = true;
+                // body.debug = true;
             }, this);
             // Laser group
             this._lasers = this.add.group();
             this._lasers.physicsBodyType = Phaser.Physics.P2JS;
             this._lasers.enableBody = true;
             // create 30 lasers
-            this._lasers.createMultiple(15, "Atlas", "explosion001");
+            this._lasers.createMultiple(15, "Atlas", "Bullet0025");
             this._lasers.forEach(function (aLaser) {
                 aLaser.anchor.setTo(0.5, 0.5);
-                aLaser.height = aLaser.height * 0.25;
-                aLaser.width = aLaser.width * 0.25;
+                //aLaser.height = aLaser.height * 0.25;
+                //aLaser.width = aLaser.width * 0.25;
                 aLaser.name = 'laser';
                 aLaser.autoCull = true;
-                aLaser.lifespan = 3000;
-                aLaser.animations.add("goodHit", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
-                aLaser.animations.add("badHit", Phaser.Animation.generateFrameNames("dron", 1, 2, "", 1));
+                aLaser.lifespan = 1500;
+                aLaser.animations.add("goodHit", Phaser.Animation.generateFrameNames("Bullet", 25, 40, "", 4));
+                aLaser.animations.add("badHit", Phaser.Animation.generateFrameNames("Bullet", 35, 40, "", 4));
                 // physics
                 var body = aLaser.body;
                 body.setRectangle(aLaser.width, aLaser.height);
@@ -298,7 +299,7 @@ var Dropship;
                 body.damping = 0;
                 body.data.gravityScale = 0;
                 body.setCollisionGroup(this._lasersCollisionGroup);
-                body.collides(this._dronesCollisionGroup);
+                body.collides(this._objectsCollisionGroup);
                 body.collides(this._sentriesCollisionGroup);
                 body.collides(this._tilesCollisionGroup);
                 body.collides(this._aggCollisionGroup);
@@ -311,7 +312,7 @@ var Dropship;
             this._missiles.physicsBodyType = Phaser.Physics.P2JS;
             this._missiles.enableBody = true;
             // create 10 missiles
-            this._missiles.createMultiple(10, "Atlas", "missile");
+            this._missiles.createMultiple(10, "Atlas", "missile0000");
             this._missiles.forEach(function (aMissile) {
                 aMissile.anchor.setTo(0.5, 0.5);
                 aMissile.name = 'missile';
@@ -319,7 +320,7 @@ var Dropship;
                 var body = aMissile.body;
                 body.setRectangle(aMissile.width, aMissile.height);
                 body.setCollisionGroup(this._missilesCollisionGroup);
-                body.collides(this._dronesCollisionGroup);
+                body.collides(this._objectsCollisionGroup);
                 body.collides(this._aggCollisionGroup);
                 body.collides(this._sentriesCollisionGroup);
                 body.onBeginContact.add(this.weaponContactHandler);
@@ -385,28 +386,26 @@ var Dropship;
             this._backgroundImage.anchor.setTo(0, 0);
             this._backgroundImage.cacheAsBitmap = true;
             this._backgroundImage.width = this.game.width;
-            //this._backgroundImage.alpha = 0.85;
-            // this._backgroundImage.fixedToCamera = true;
-            // this._backgroundImage.cameraOffset.setTo(0, 900);
             this._controlsGroup.add(this._backgroundImage);
-            this._thrustBtn = this.game.add.sprite(0, 0, 'imageKey');
+            this._thrustBtn = this.game.add.sprite(0, 0, "Atlas", "ThrustOff");
             this._controlsGroup.add(this._thrustBtn);
-            this._thrustBtn.anchor.setTo(1.0, 0.0);
+            this._thrustBtn.anchor.setTo(1.4, 0.0);
             this._thrustBtn.x = this.game.camera.width;
             this._thrustBtn.inputEnabled = true;
             this._thrustBtn.events.onInputDown.add(this.igniteThruster, this);
             this._thrustBtn.events.onInputUp.add(this.deactivateThruster, this);
-            this._fireBtn = this.game.add.sprite(0, 0, 'imageKey');
+            this._fireBtn = this.game.add.sprite(0, 0, "Atlas", "FireOff");
             this._controlsGroup.add(this._fireBtn);
-            this._fireBtn.anchor.setTo(3.0, 0.0);
+            this._fireBtn.anchor.setTo(2.8, 0.0);
             this._fireBtn.x = this.game.camera.width;
             this._fireBtn.inputEnabled = true;
             this._fireBtn.events.onInputDown.add(this.fireBtnDown, this);
             this._fireBtn.events.onInputUp.add(this.fireBtnUp, this);
-            this._missileBtn = this.game.add.sprite(0, 0, 'imageKey');
+            this._missileBtn = this.game.add.sprite(0, 0, "Atlas", "BombOff");
             this._controlsGroup.add(this._missileBtn);
-            this._missileBtn.anchor.setTo(5.0, 0.0);
+            this._missileBtn.anchor.setTo(4.2, 0.0);
             this._missileBtn.x = this.game.camera.width;
+            this._missileBtn.animations.add("release", ["BombOn", "BombOn", "BombOn", "BombOn", "BombOn", "BombOff"], 15, false);
             this._missileBtn.inputEnabled = true;
             this._missileBtn.events.onInputDown.add(this.missileBtnDown, this);
             // Sentry projectiles
@@ -415,7 +414,7 @@ var Dropship;
             this._sentryBullets.physicsBodyType = Phaser.Physics.P2JS;
             this._sentryBullets.enableBody = true;
             // create 20 bullets
-            this._sentryBullets.createMultiple(20, "Atlas", "missile");
+            this._sentryBullets.createMultiple(20, "Atlas", "Bullet0025");
             this._sentryBullets.forEach(function (aBullet) {
                 aBullet.anchor.setTo(0.5, 0.5);
                 // physics
@@ -431,10 +430,10 @@ var Dropship;
             //this._thingsGroup.add(this._sentries);
             //this._sentries.physicsBodyType = Phaser.Physics.P2JS;
             //this._sentries.enableBody = true;
-            var sentryPositions = [[-260, -260, 0], [-800, 200, 0], [-460, -360, 180]];
+            var sentryPositions = [[-260, -260, 90], [-800, 200, 90], [-460, -360, 270], [700, 1215, 0], [-110, -540, 45]];
             for (var i = 0; i < sentryPositions.length; i++) {
                 var sentry = new Sentry(this.game, this.world.centerX + sentryPositions[i][0], this.world.centerY + sentryPositions[i][1]);
-                sentry.inputEnabled = true;
+                //sentry.inputEnabled = true;
                 //sentry.events.onInputDown.add(function (currentSprite) { this._facingTarget = false; this._targetDrone = currentSprite; }, this);
                 this.game.physics.p2.enable(sentry);
                 var body = sentry.body;
@@ -445,8 +444,10 @@ var Dropship;
                 // body.collides(this._lasersCollisionGroup, this.hitSentry, this);
                 body.collides([this._missilesCollisionGroup]);
                 body.collides([this._lasersCollisionGroup]);
+                body.collides([this._shipCollisionGroup]);
                 body.angle = sentryPositions[i][2];
                 sentry.setup(this._base, this._sentryBullets);
+                //sentry.updateCannonPosition();
                 // this.physicsEnabled = true;
                 // this.physicsType = Phaser.Physics.P2JS;
                 this._sentries.add(sentry);
@@ -455,26 +456,26 @@ var Dropship;
             this._allGroup.add(this._objects);
             this._objects.enableBody = true;
             this._objects.physicsBodyType = Phaser.Physics.P2JS;
-            /*for (var i = 0; i < 1; i++) {
-                
-                var object: Phaser.Sprite = this._objects.create(this.world.centerX, this.world.centerY + 100, 'imageKey');
+            for (var i = 0; i < 1; i++) {
+                var object = this._objects.create(this.world.centerX + 185, this.world.centerY + 145, 'Atlas', 'Sentry0000');
                 object.anchor.setTo(0.5, 0.5);
-
+                object.autoCull = true;
                 this.game.physics.p2.enable(object);
                 //object.body.mass = 0;
-                object.outOfBoundsKill = true;
-                object.body.data.gravityScale = 0.0;
-                object.body.setRectangle(30, 30);
+                //object.outOfBoundsKill = true;
+                // object.body.data.gravityScale = 0.0;
+                // object.body.setRectangle(30, 30);
+                object.body.angle = -90;
+                object.body.kinematic = true;
                 object.body.setCollisionGroup(this._objectsCollisionGroup);
-                object.body.collides([this._objectsCollisionGroup, this._shipCollisionGroup]);
-
-            }*/
+                object.body.collides([this._shipCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup]);
+            }
             //this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup, this._lasersCollisionGroup]);
             this._tiles.forEach(function (tile) {
                 tile.body.collides([this._shipCollisionGroup, this._lasersCollisionGroup]);
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
-            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup]);
+            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
@@ -492,10 +493,10 @@ var Dropship;
             this._antiGravities = this.game.add.group();
             var antiGravPositions;
             if (this.landscapeLayout == true) {
-                antiGravPositions = [[-250, -10, 0], [650, -195, 180]];
+                antiGravPositions = [[140, 0, 0], [650, -175, 180]];
             }
             else {
-                antiGravPositions = [[-220, 180, 0], [-100, -1185, 180]];
+                antiGravPositions = [[-220, 150, 0], [-100, -1185, 180]];
             }
             for (var i = 0; i < antiGravPositions.length; i++) {
                 var poly = new Phaser.Polygon();
@@ -507,7 +508,7 @@ var Dropship;
                 graphics.endFill();*/
                 //var antiGrav: AntiGrav = this.game.add.sprite(antiGravPositions[i][0], antiGravPositions[i][1], graphics.generateTexture());
                 var antiGrav = new AntiGrav(this.game, this.world.centerX + antiGravPositions[i][0], this.world.centerY + antiGravPositions[i][1]);
-                antiGrav.alpha = 0.25;
+                antiGrav.alpha = 1;
                 antiGrav.name = 'antiGrav';
                 this.game.physics.p2.enable(antiGrav, true);
                 this.game.physics.p2.enableBody(antiGrav, true);
@@ -538,7 +539,7 @@ var Dropship;
                 antiGrav.generator.body.collides([this._aggCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup]);
             }
             this._base.body.collides([this._antiGravCollisionGroup]);
-            var joystickY = 900;
+            var joystickY = 890;
             this._controlsGroup.fixedToCamera = true;
             this._controlsGroup.cameraOffset.setTo(0, this.game.height - this._controlsGroup.height);
             if (this.landscapeLayout == true) {
@@ -551,22 +552,35 @@ var Dropship;
                     tile.body.y = newPoint.y;
                     tile.body.angle = 90;
                 }, this);
+                this._objects.forEach(function (obj) {
+                    var newPoint = this.rotate_point(obj.body.x, obj.body.y, this.world.centerX, this.world.centerY, 90);
+                    obj.body.x = newPoint.x;
+                    obj.body.y = newPoint.y;
+                    obj.body.angle = obj.body.angle + 90;
+                }, this);
+                this._drones.forEach(function (drone) {
+                    var newPoint = this.rotate_point(drone.body.x, drone.body.y, this.world.centerX, this.world.centerY, 90);
+                    drone.body.x = newPoint.x;
+                    drone.body.y = newPoint.y;
+                    //drone.body.angle = obj.body.angle + 90;
+                }, this);
                 this._sentries.forEach(function (aSentry) {
-                    console.log('oldpoint: ' + aSentry.body.x + ',' + aSentry.body.y);
+                    //console.log('oldpoint: ' + aSentry.body.x + ',' + aSentry.body.y);
                     var newPoint = this.rotate_point(aSentry.body.x, aSentry.body.y, this.world.centerX, this.world.centerY, 90);
-                    console.log('newpoint: ' + newPoint.x + ',' + newPoint.y);
+                    //console.log('newpoint: ' + newPoint.x + ',' + newPoint.y);
                     aSentry.body.x = newPoint.x;
                     aSentry.body.y = newPoint.y;
+                    aSentry.body.angle = aSentry.body.angle + 90;
                     aSentry.updateCannonPosition();
                 }, this);
                 // this._controlsGroup.cameraOffset.setTo(0, 580);
-                joystickY = 580;
+                joystickY = 570;
             }
             else {
             }
             this._joystick = new Joystick(this.game, 0, joystickY);
             this._controlsGroup.add(this._joystick);
-            this._joystick.setup(this._base);
+            this._joystick.setup(this);
             this._allGroup.sendToBack(this._tiles);
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
@@ -738,6 +752,10 @@ var Dropship;
         Level1.prototype.newEvent = function (n) {
             console.log('ne');
         };
+        Level1.prototype.goodbye = function (obj) {
+            console.log('kil');
+            obj.kill();
+        };
         Level1.prototype.checkOverlap2 = function (body1, body2) {
             if ((body1.sprite.name === 'laser' && body2.sprite.name === 'level') || (body2.sprite.name === 'laser' && body1.sprite.name === 'level')) {
                 this.dosomething();
@@ -776,12 +794,13 @@ var Dropship;
                 laserBody.damping = 1;
                 var objName = objectHit.name;
                 var truncName = objName.substr(0, 4);
+                //laserBody.kinematic = false;
                 if (truncName == 'tile') {
-                    laser.play("badHit", 10, false, true);
+                    laser.play("badHit", 30, false, true);
                 }
                 else {
                     // (<Laser>laser).animations.add("hit", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
-                    laser.play("goodHit", 30, false, true);
+                    laser.play("goodHit", 60, false, true);
                 }
             }
         };
@@ -792,6 +811,7 @@ var Dropship;
             //(<Sentry>aObject1.sprite).successfulHit();
         };
         Level1.prototype.missileBtnDown = function () {
+            this._missileBtn.play('release');
             var missile = this._missiles.getFirstExists(false);
             if (missile) {
                 missile.lifespan = 3000;
@@ -811,38 +831,44 @@ var Dropship;
         };
         Level1.prototype.fire = function () {
             console.log('FIRE');
+            this._fireBtn.loadTexture('Atlas', 'FireOn');
             var laser = this._lasers.getFirstExists(false);
             if (laser) {
                 // calculate position of cannon tip. Put distance from cannon base along x axis and rotate it to cannon angle
                 // this._cannonTip.setTo(this._cannon.width * 2, 0);
                 // this._cannonTip.rotate(0, 0, this._cannon.rotation);
-                laser.loadTexture('Atlas', 'explosion001');
-                //laser.lifespan = 3000;
+                laser.loadTexture('Atlas', 'Bullet0025');
                 laser.body.damping = 0;
-                //laser.body.kinematic = false;
                 laser.reset(this._base.body.x, this._base.body.y);
+                laser.lifespan = 1500;
                 laser.body.rotation = this._base.body.rotation;
-                // life of missile in millis
-                //missile.lifespan = 3000;
-                // set velocity of missile in direction of cannon barrel
                 laser.body.moveForward(600);
             }
         };
         Level1.prototype.fireBtnUp = function () {
             console.log('fireBtnUp');
+            this._fireBtn.loadTexture('Atlas', 'FireOff');
             this._fireTimer.stop();
         };
         Level1.prototype.igniteThruster = function () {
+            this._thrustBtn.loadTexture("Atlas", "ThrustOn");
             this._base.thrusting = true;
         };
         Level1.prototype.deactivateThruster = function () {
+            this._thrustBtn.loadTexture("Atlas", "ThrustOff");
             this._base.thrusting = false;
         };
         Level1.prototype.pressLeft = function () {
-            this._base.body.rotation -= this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+            if (this._base.justCrashed == false) {
+                this._base.body.rotation -= this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+                this._base.rotationChanged(true);
+            }
         };
         Level1.prototype.pressRight = function () {
-            this._base.body.rotation += this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+            if (this._base.justCrashed == false) {
+                this._base.body.rotation += this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+                this._base.rotationChanged(false);
+            }
         };
         /* private targetAquired() {
              this._facingTarget = true;
@@ -1011,7 +1037,7 @@ var Dropship;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             console.log('AntiGrav constructor...');
-            _super.call(this, game, x, y, 'Atlas', 'base');
+            _super.call(this, game, x, y, 'Atlas', 'AntiGrav0000');
             this.autoCull = true;
             this.anchor.setTo(.5, .5);
         }
@@ -1021,11 +1047,14 @@ var Dropship;
                 yOffset = 180;
             }
             //this.generator = this.game.add.sprite(this.x + 98, this.y + yOffset, 'Atlas', 'dron1');  
-            this.generator = new AntiGravGenerator(this.game, this.x + 98, this.y + yOffset, 'Atlas', 'dron1');
+            this.generator = new AntiGravGenerator(this.game, this.x + 98, this.y + yOffset, 'Atlas', 'Mine0025');
             this.game.add.existing(this.generator);
+            this.generator.alpha = 0.1;
             this.generator.antiGrav = this;
             this.generator.name = 'antiGravGenerator';
             this.game.physics.p2.enable(this.generator, false);
+            this.animations.add("active", ["AntiGrav0000", "AntiGrav0001", "AntiGrav0002", "AntiGrav0003", "AntiGrav0004", "AntiGrav0005"], 30, true);
+            this.play("active");
         };
         return AntiGrav;
     }(Phaser.Sprite));
@@ -1035,9 +1064,11 @@ var Dropship;
             _super.apply(this, arguments);
         }
         AntiGravGenerator.prototype.successfulHit = function (weapon) {
-            this.antiGrav.destroy(true);
-            this.destroy(true);
-            this.base.normalGravity();
+            if (this.inCamera) {
+                this.antiGrav.destroy(true);
+                this.destroy(true);
+                this.base.normalGravity();
+            }
         };
         return AntiGravGenerator;
     }(Phaser.Sprite));
@@ -1056,11 +1087,11 @@ var Dropship;
             _super.apply(this, arguments);
         }
         // -------------------------------------------------------------------------
-        Dron.prototype.setUp = function () {
+        Dron.prototype.setUp = function (xMin, xMax, yMin, yMax) {
             this.anchor.setTo(0.5, 0.5);
             this.autoCull = true;
             // random position
-            this.reset(this.game.rnd.between(40, 340), this.game.rnd.between(60, 350));
+            this.reset(this.game.rnd.between(xMin, xMax), this.game.rnd.between(yMin, yMax));
             // random movement range
             var range = this.game.rnd.between(60, 120);
             // random duration of complete move
@@ -1080,11 +1111,11 @@ var Dropship;
                 return wiggle(aProgress, yPeriod1, yPeriod2);
             }, true, 0, -1);
             // define animations
-            this.animations.add("anim", ["dron1", "dron2"], this.game.rnd.between(2, 5), true);
-            this.animations.add("explosion", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
+            this.animations.add("anim", Phaser.Animation.generateFrameNames("Mine", 25, 40, "", 4));
+            this.animations.add("kapow", Phaser.Animation.generateFrameNames("MineExp", 25, 40, "", 4));
             // play first animation as default
-            this.play("anim");
-            this.inputEnabled = true;
+            this.play("anim", 30, true);
+            // this.inputEnabled = true;
             this.name = 'dron';
         };
         // -------------------------------------------------------------------------
@@ -1092,7 +1123,7 @@ var Dropship;
             // remove movement tweens
             this.game.tweens.removeFrom(this.body);
             // explode dron and kill it on complete
-            this.play("explosion", 8, false, true);
+            this.play("kapow", 30, false, true);
         };
         return Dron;
     }(Phaser.Sprite));
@@ -1103,7 +1134,7 @@ var Dropship;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             console.log('sentry constructor...');
-            _super.call(this, game, x, y, 'imageKey');
+            _super.call(this, game, x, y, 'Atlas', 'Sentry0000');
             this.anchor.setTo(0.5, 0.5);
             this.autoCull = true;
             //this.cameraOffset.setTo(x, y);
@@ -1117,6 +1148,7 @@ var Dropship;
                     var distanceFromShip = Math.sqrt((this.x - this.base.x) * (this.x - this.base.x) + (this.y - this.base.y) * (this.y - this.base.y));
                     if (distanceFromShip < 333) {
                         this.sleeping = false;
+                        this.baseTop.play("sheildsDown", 30, false);
                         this.alpha = 1;
                         this.fireTimer = this.game.time.create(false);
                         this.fireTimer.loop(2000, this.fire, this);
@@ -1124,14 +1156,32 @@ var Dropship;
                     }
                 }
                 else {
-                    var angle = Math.atan2(this.base.y - this.cannon.y, this.base.x - this.cannon.x);
-                    //angle = angle * (180 / Math.PI);
-                    var calculatedAngle = angle * (180 / Math.PI);
-                    var diff = difference(calculatedAngle, this.cannon.angle);
-                    //console.log(diff);
-                    this.cannon.angle = calculatedAngle;
+                    var angleRadians = (Math.atan2(this.base.y - this.cannon.y, this.base.x - this.cannon.x));
+                    var angleDegrees = angleRadians * (180 / Math.PI);
+                    var normalisedAngleDegrees = this.normalise(angleDegrees);
+                    // 0 or 360 = 3 o clock
+                    // 90 = 6 o clock
+                    // 180 = 9 o clock
+                    // 270 = 12 o clock
+                    var calculatedAngle = this.normalise(normalisedAngleDegrees - this.body.angle);
+                    //console.log(calculatedAngle);
+                    var inRange = false;
+                    if (calculatedAngle > 190 && calculatedAngle < 350) {
+                        inRange = true;
+                    }
+                    if (inRange) {
+                        this.cannon.rotation = angleRadians;
+                    }
                 }
             }
+        };
+        Sentry.prototype.normalise = function (angle) {
+            var newAngle = angle;
+            while (newAngle <= -0)
+                newAngle += 360;
+            while (newAngle > 360)
+                newAngle -= 360;
+            return newAngle;
         };
         Sentry.prototype.blowUp = function () {
             console.log('sentry blow up: ' + this.damageTaken);
@@ -1144,21 +1194,30 @@ var Dropship;
         Sentry.prototype.updateCannonPosition = function () {
             this.cannon.x = this.body.x;
             this.cannon.y = this.body.y;
+            this.baseTop.x = this.body.x;
+            this.baseTop.y = this.body.y;
+            this.baseTop.angle = this.body.angle;
         };
         // -------------------------------------------------------------------------
         Sentry.prototype.setup = function (bse, sBullets) {
             this.base = bse;
             this.sentryBullets = sBullets;
-            this.bulletSpeed = 12;
+            this.bulletSpeed = 6;
             this.cannonTip = new Phaser.Point();
             this.sleeping = true;
             this.alpha = 0.5;
-            this.cannon = this.game.add.sprite(this.x, this.y, "Atlas", "cannon");
-            this.cannon.anchor.setTo(0.5, 0.5);
+            this.cannon = this.game.add.sprite(this.x, this.y, "Atlas", "cannon0000");
+            this.cannon.anchor.setTo(0.25, 0.5);
+            this.baseTop = this.game.add.sprite(this.x, this.y, "Atlas", "Sentry0000");
+            this.baseTop.anchor.setTo(0.5, 0.5);
+            this.baseTop.alpha = 1;
+            this.baseTop.angle = this.body.angle;
+            this.baseTop.animations.add("sheildsDown", Phaser.Animation.generateFrameNames("Sentry", 0, 20, "", 4));
+            this.baseTop.animations.add("lightsOn", Phaser.Animation.generateFrameNames("Sentry", 20, 40, "", 4));
+            // play first animation as default
             // this.animations.add("anim", ["dron1", "dron2"], this.game.rnd.between(2, 5), true);
             // this.x = pos[0];
             // this.y = pos[1];
-            // this.play("anim");
             // this.inputEnabled = true;
         };
         Sentry.prototype.successfulHit = function (object) {
@@ -1175,6 +1234,7 @@ var Dropship;
         };
         Sentry.prototype.fire = function () {
             if (this.inCamera) {
+                this.baseTop.play("lightsOn", 30, true);
                 // get firtst missile from pool
                 var bullet = this.sentryBullets.getFirstExists(false);
                 if (bullet) {
@@ -1238,11 +1298,13 @@ var Dropship;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             console.log('ship constructor...');
-            _super.call(this, game, x, y, 'Atlas', 'base');
+            _super.call(this, game, x, y, 'Atlas', 'Ship0000');
             this.contactDamage = false;
             this.contactDamageCount = 0;
             this.thrusting = false;
             this.thrustPower = 450;
+            this.justCrashed = false;
+            this.justCoasted = false;
         }
         Ship.prototype.update = function () {
             if (this.contactDamage == true) {
@@ -1251,23 +1313,41 @@ var Dropship;
                     console.log('Prolonged contact destroy');
                 }
             }
-            if (this.thrusting) {
-                this.body.thrust(this.thrustPower);
-                this.animations.play('trusting', 30, true, false);
+            if (this.justCrashed == false) {
+                if (this.thrusting) {
+                    this.body.thrust(this.thrustPower);
+                    this.animations.play('trusting', 30, true, false);
+                    this.justCoasted = false;
+                }
+                else {
+                    if (this.justCoasted == false) {
+                        this.animations.play('coasting', 15, false, false);
+                        this.justCoasted = true;
+                    }
+                }
             }
-            else {
-                this.animations.play('coasting', 2, false, false);
+        };
+        Ship.prototype.rotationChanged = function (negative) {
+            if (negative == true) {
+            }
+            else if (negative == false) {
             }
         };
         Ship.prototype.successfulHit = function () {
             console.log('ship base hit...');
             //this.game.state.restart();
         };
-        Ship.prototype.setup = function () {
+        Ship.prototype.setup = function (si) {
+            this.stateInstance = si;
             this.game.add.existing(this);
-            this.animations.add("trusting", ["dron1", "dron2"], this.game.rnd.between(2, 5), true);
-            this.animations.add("coasting", ["base", "base"], 2, false);
+            this.animations.add("trusting", Phaser.Animation.generateFrameNames("Ship", 20, 40, "", 4));
+            this.animations.add("coasting", Phaser.Animation.generateFrameNames("Ship", 60, 70, "", 4));
+            this.animations.add("explode", Phaser.Animation.generateFrameNames("Ship", 91, 120, "", 4));
             // play first animation as default
+            // this.animations.add("anim", Phaser.Animation.generateFrameNames("Mine", 25, 40, "", 4));
+            // this.animations.add("kapow", Phaser.Animation.generateFrameNames("MineExp", 25, 40, "", 4));
+            // play first animation as default
+            //this.play("anim", 30, true);
         };
         Ship.prototype.normalGravity = function () {
             this.body.angularDamping = 1;
@@ -1285,7 +1365,10 @@ var Dropship;
             }
         };
         Ship.prototype.crashed = function () {
-            this.game.physics.p2.pause();
+            this.justCrashed = true;
+            this.play("explode", 30, false);
+            //this.game.physics.p2.pause();
+            this.game.physics.p2.removeBody(this.body);
             this.alpha = 0.5;
             var mytimer = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.gameOver, this);
         };
@@ -1311,6 +1394,9 @@ var Dropship;
             }
         };
         Ship.prototype.contactHandler = function (body, shape1, shape2, equation) {
+            if (body) {
+                return;
+            }
             var shipShapeBody = shape2.body;
             var shipBody = shipShapeBody.parent;
             var base = shipBody.sprite;
@@ -1355,7 +1441,7 @@ var Dropship;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             console.log('joystick construcy...');
-            _super.call(this, game, x, y, 'jsarea');
+            _super.call(this, game, x, y, 'Atlas', 'joystick0001');
             this.anchor.setTo(0.0, 0.0);
             this.fixedToCamera = true;
             this.cameraOffset.setTo(x, y);
@@ -1370,25 +1456,42 @@ var Dropship;
             if (this.isBeingDragged == true) {
                 //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);                   
                 //console.log('joystick movecallback... ' + sprite.base.name);
-                var deltaX = (this.myPointer.x - this.myPointer.positionDown.x);
-                if (this.previousDelta == null) {
+                if (this.stateInstance._base.justCrashed == false) {
+                    var deltaX = (this.myPointer.x - this.myPointer.positionDown.x);
+                    if (this.previousDelta == null) {
+                        this.previousDelta = deltaX;
+                    }
+                    //console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
+                    this.mydebug = '4deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
+                    var mrNum = Math.abs(deltaX);
+                    if (deltaX < this.previousDelta) {
+                        this.stateInstance._base.body.angle = this.stateInstance._base.body.angle - 5; // -= mrNum * 2 / 1000 * (Math.PI / 4);
+                        this.stateInstance._base.rotationChanged(true);
+                        if (this.myPointer.x < 160) {
+                            this.loadTexture('Atlas', 'joystick0000');
+                        }
+                        else {
+                        }
+                    }
+                    else if (deltaX > this.previousDelta) {
+                        this.stateInstance._base.body.angle = this.stateInstance._base.body.angle + 5;
+                        this.stateInstance._base.rotationChanged(false);
+                        if (this.myPointer.x > 160) {
+                            this.loadTexture('Atlas', 'joystick0002');
+                        }
+                        else {
+                        }
+                    }
+                    console.log(this.myPointer.x);
+                    if (this.myPointer.x > 150 && this.myPointer.x < 170) {
+                        this.loadTexture('Atlas', 'joystick0001');
+                    }
                     this.previousDelta = deltaX;
                 }
-                //console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-                this.mydebug = '4deltaX: ' + deltaX + ' ,pID: ' + this.myPointer.id;
-                var mrNum = Math.abs(deltaX);
-                if (deltaX < this.previousDelta) {
-                    this.base.body.angle = this.base.body.angle - 5; // -= mrNum * 2 / 1000 * (Math.PI / 4);
-                }
-                else if (deltaX > this.previousDelta) {
-                    this.base.body.angle = this.base.body.angle + 5;
-                }
-                this.previousDelta = deltaX;
             }
         };
-        Joystick.prototype.setup = function (myBase) {
-            console.log('joystick setup... ' + myBase.name);
-            this.base = myBase;
+        Joystick.prototype.setup = function (si) {
+            this.stateInstance = si;
             this.game.add.existing(this);
             /* var width = 60 // example;
              var height = 60 // example;
@@ -1506,9 +1609,16 @@ var Dropship;
             function onDown2(sprite, pointer) {
                 sprite.isBeingDragged = true;
                 sprite.myPointer = pointer;
+                if (pointer.x < 160) {
+                    sprite.loadTexture('Atlas', 'joystick0000');
+                }
+                else {
+                    sprite.loadTexture('Atlas', 'joystick0002');
+                }
             }
             function onUp(sprite, pointer) {
                 // console.log('onup: was' + pointer.positionDown + ', now ' + pointer.positionUp);
+                sprite.loadTexture('Atlas', 'joystick0001');
                 sprite.isBeingDragged = false;
                 //globalPointerID = -1;
             }
