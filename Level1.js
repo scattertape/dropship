@@ -25,6 +25,7 @@ var Dropship;
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
+            //321Thrust
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
@@ -263,21 +264,13 @@ var Dropship;
             ];
             for (var i = 0; i < dronPositions.length; i++) {
                 var aDron = new Dron(this.game, dronPositions[i][0], dronPositions[i][1]);
-                // setup movements and animations
-                // aDron.events.onInputDown.add(function (currentSprite) { this._facingTarget = false; this._targetDrone = currentSprite; }, this);
-                //aDron.scale.setTo(.5, .5);
-                // setup physics
                 this.game.physics.p2.enable(aDron);
                 var body = aDron.body;
                 body.setCircle(20);
                 body.kinematic = true; // does not respond to forces
                 body.setCollisionGroup(this._objectsCollisionGroup);
-                // adds group drones will collide with and callback
-                //body.collides(this._missilesCollisionGroup, this.hitDron, this);
                 body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
                 aDron.setUp(dronPositions[i][0], dronPositions[i][1]);
-                //body.collides(this._lasersCollisionGroup, this.hitDron, this);
-                // body.debug = true;
                 this._drones.add(aDron);
             }
             // proximity mines group
@@ -571,12 +564,11 @@ var Dropship;
             this._thingsGroup.add(this._doors);
     
             this.createDoor();*/
-            /*var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
+            var style = { font: "15px Arial", fill: "#ffcc00", align: "left" };
             this._text1 = this.game.add.text(300, 300, 'accel', style);
             this._text1.anchor.setTo(0.5, 0.5);
-    
-            this._text2 = this.game.add.text(300, 300, 'accel+gravity', style);
-            this._text2.anchor.setTo(0.5, 0.5);*/
+            this._text2 = this.game.add.text(280, 280, 'accel+gravity', style);
+            this._text2.anchor.setTo(0.5, 0.5);
             /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
              door2.anchor.setTo(0.5, 0.5);
              door1.name = 'd2';*/
@@ -784,15 +776,14 @@ var Dropship;
 
             }*/
             if (this._transitionTween.isRunning == false) {
-                /* if (deviceMo != null) {
-                     if (deviceMo.acceleration != null) {
-                         if (deviceMo.acceleration.y != null) {
-                             this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                         }
-                     }
-     
-                 }*/
+                if (deviceMo != null) {
+                    if (deviceMo.acceleration != null) {
+                        if (deviceMo.acceleration.y != null) {
+                            this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                        }
+                    }
+                }
                 // SOLID DOOR SCRIPT:
                 /*for (var j = 0; j < this._doors.children.length; j++) {
                     if (this.checkOverlap(this._base, this._doors.getChildAt(j))) {
@@ -1645,6 +1636,7 @@ var Dropship;
     // -------------------------------------------------------------------------
     function onDeviceMotion(event) {
         deviceMo = event;
+        console.log('onDeviceMotion');
     }
     // -------------------------------------------------------------------------
     window.onload = function () {
