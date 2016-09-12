@@ -781,6 +781,12 @@ var Dropship;
                         if (deviceMo.acceleration.y != null) {
                             this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            if (this.landscapeLayout == true) {
+                                this._base.body.rotation = this._base.body.rotation + deviceMo.accelerationIncludingGravity.y;
+                            }
+                            else {
+                                this._base.body.rotation = this._base.body.rotation + deviceMo.accelerationIncludingGravity.x;
+                            }
                         }
                     }
                 }
