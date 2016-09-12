@@ -22,6 +22,7 @@ var Dropship;
             this._hangar = 1;
             this._shipDirection = 0;
             this._fireRate = 400;
+            this.prevMotion = 0;
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -781,8 +782,11 @@ var Dropship;
                         if (deviceMo.acceleration.y != null) {
                             this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            var newDiff;
                             if (this.landscapeLayout == true) {
-                                this._base.body.rotation = this._base.body.rotation + (deviceMo.accelerationIncludingGravity.y * 0.1);
+                                newDiff = Math.abs(this.prevMotion - deviceMo.accelerationIncludingGravity.y);
+                                this._base.body.rotation = this._base.body.rotation + newDiff;
+                                this.prevMotion = deviceMo.accelerationIncludingGravity.y;
                             }
                             else {
                                 this._base.body.rotation = this._base.body.rotation + (deviceMo.accelerationIncludingGravity.x * 0.01);
