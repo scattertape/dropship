@@ -780,8 +780,8 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            //  this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newDiff;
                             var minMotion = deviceMo.accelerationIncludingGravity.y * 0.1;
                             if (this.landscapeLayout == true) {
@@ -791,6 +791,7 @@ var Dropship;
                                 else {
                                     newDiff = minMotion - this.prevMotion;
                                 }
+                                this._text1.setText(newDiff);
                                 this._base.body.angle = this._base.body.angle + newDiff;
                                 this.prevMotion = minMotion;
                             }
