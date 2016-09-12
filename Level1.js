@@ -791,7 +791,7 @@ var Dropship;
                                 else {
                                     newDiff = minMotion - this.prevMotion;
                                 }
-                                this._base.body.rotation = this._base.body.rotation + newDiff;
+                                this._base.body.angle = this._base.body.angle + newDiff;
                                 this.prevMotion = minMotion;
                             }
                             else {
