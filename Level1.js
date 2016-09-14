@@ -789,11 +789,11 @@ var Dropship;
                                 this._base.body.angle = this._base.body.angle + deviceMo.accelerationIncludingGravity.y;
                                 if (currentMotion > this.prevMotion) {
                                     // turn ship clockwise
-                                    this._base.body.angle = this._base.body.angle + difference(currentMotion, this.prevMotion);
+                                    this._base.body.angle = (this._base.body.angle + difference(currentMotion, this.prevMotion)) + deviceMo.acceleration.y;
                                 }
                                 else {
                                     // turn ship anticlockwise
-                                    this._base.body.angle = this._base.body.angle - difference(currentMotion, this.prevMotion);
+                                    this._base.body.angle = (this._base.body.angle - difference(currentMotion, this.prevMotion)) + deviceMo.acceleration.y;
                                 }
                                 /*  if (this.prevMotion > minMotion) {
                                       newDiff = this.prevMotion - minMotion;
