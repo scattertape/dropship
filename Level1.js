@@ -679,6 +679,7 @@ var Dropship;
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
             this.game.time.events.add(Phaser.Timer.SECOND * 1, suggestFPS, this);
+            this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: 0 }, 1, Phaser.Easing.Linear.None, true);
             // this.game.physics.p2.setPostBroadphaseCallback(this.checkOverlap2, this);
         };
         // -------------------------------------------------------------------------
@@ -783,10 +784,12 @@ var Dropship;
                         if (deviceMo.acceleration.y != null) {
                             this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                            var angleDiff;
+                            var newAngle = 0;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
-                                this._base.body.angle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
+                                newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
+                                this._shipMotionTween.stop();
+                                this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: newAngle }, 25, Phaser.Easing.Linear, true);
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
