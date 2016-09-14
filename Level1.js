@@ -788,18 +788,19 @@ var Dropship;
                             var newAngle = 0;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
-                                newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
+                                //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
                                 //this._base.body.angle = newAngle;
+                                this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                                 //newAngle = difference(currentMotion, this.prevMotion);
-                                this._text2.setText('newAngle: ' + newAngle);
+                                /*this._text2.setText('newAngle: ' + newAngle);
+                                
                                 if (currentMotion > this.prevMotion) {
                                     // turn ship clockwise
-                                    this._base.body.rotateRight(newAngle);
-                                }
-                                else {
+                                    (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                                } else {
                                     // turn ship anticlockwise
-                                    this._base.body.rotateLeft(newAngle);
-                                }
+                                    (<Phaser.Physics.P2.Body>this._base.body).rotateLeft(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                                }*/
                                 this.prevMotion = currentMotion;
                             }
                             else {
