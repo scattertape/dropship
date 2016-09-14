@@ -786,7 +786,7 @@ var Dropship;
                             var angleDiff;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
-                                this._base.body.angle = (currentMotion * (Math.abs(currentMotion) * 0.1)) * 10;
+                                this._base.body.angle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
