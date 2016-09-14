@@ -784,9 +784,17 @@ var Dropship;
                             this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newDiff;
-                            var minMotion = deviceMo.accelerationIncludingGravity.y;
+                            var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
                                 this._base.body.angle = this._base.body.angle + deviceMo.accelerationIncludingGravity.y;
+                                if (currentMotion > this.prevMotion) {
+                                    // turn ship clockwise
+                                    this._base.body.angle = this._base.body.angle + difference(currentMotion, this.prevMotion);
+                                }
+                                else {
+                                    // turn ship anticlockwise
+                                    this._base.body.angle = this._base.body.angle - difference(currentMotion, this.prevMotion);
+                                }
                                 /*  if (this.prevMotion > minMotion) {
                                       newDiff = this.prevMotion - minMotion;
                                       this._text1.setText(newDiff);
@@ -797,7 +805,7 @@ var Dropship;
                                       this._base.body.angle = this._base.body.angle + newDiff;
                                   }
                                   */
-                                this.prevMotion = minMotion;
+                                this.prevMotion = currentMotion;
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
