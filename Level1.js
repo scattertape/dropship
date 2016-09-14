@@ -786,7 +786,7 @@ var Dropship;
                             var newDiff;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
-                                this._base.body.angle = this._base.body.angle + deviceMo.accelerationIncludingGravity.y;
+                                //this._base.body.angle = this._base.body.angle + deviceMo.accelerationIncludingGravity.y 
                                 if (currentMotion > this.prevMotion) {
                                     // turn ship clockwise
                                     this._base.body.angle = (this._base.body.angle + difference(currentMotion, this.prevMotion)) + deviceMo.acceleration.y;
