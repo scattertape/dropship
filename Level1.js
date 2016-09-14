@@ -789,7 +789,7 @@ var Dropship;
                             if (this.landscapeLayout == true) {
                                 newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
                                 this._shipMotionTween.stop();
-                                this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: newAngle }, 25, Phaser.Easing.Linear, true);
+                                this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: newAngle }, 25, Phaser.Easing.Linear.None, true);
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
