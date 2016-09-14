@@ -781,35 +781,12 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var angleDiff;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
-                                angleDiff = difference(currentMotion, this.prevMotion);
-                                this._text2.setText('angleDiff: ' + angleDiff);
-                                if (angleDiff < 0.1) {
-                                    angleDiff = 0;
-                                }
-                                if (currentMotion > this.prevMotion) {
-                                    // turn ship clockwise
-                                    this._base.body.angle = this._base.body.angle + (angleDiff * 25);
-                                }
-                                else {
-                                    // turn ship anticlockwise
-                                    this._base.body.angle = this._base.body.angle - (angleDiff * 25);
-                                }
-                                /*  if (this.prevMotion > minMotion) {
-                                      newDiff = this.prevMotion - minMotion;
-                                      this._text1.setText(newDiff);
-                                      this._base.body.angle = this._base.body.angle - newDiff;
-                                  } else{
-                                      newDiff = minMotion - this.prevMotion;
-                                      this._text1.setText(newDiff);
-                                      this._base.body.angle = this._base.body.angle + newDiff;
-                                  }
-                                  */
-                                this.prevMotion = currentMotion;
+                                this._base.body.angle = currentMotion * 10;
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
