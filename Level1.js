@@ -783,14 +783,24 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
                                 //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
                                 //this._base.body.angle = newAngle;
-                                this._base.body.angularVelocity = deviceMo.acceleration.y;
+                                newAngle = difference(currentMotion, this.prevMotion);
+                                this._text2.setText('newAngle: ' + newAngle);
+                                if (currentMotion > this.prevMotion) {
+                                    // turn ship clockwise
+                                    this._base.body.rotateRight(newAngle);
+                                }
+                                else {
+                                    // turn ship anticlockwise
+                                    this._base.body.rotateLeft(newAngle);
+                                }
+                                this.prevMotion = currentMotion;
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
