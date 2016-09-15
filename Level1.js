@@ -791,7 +791,7 @@ var Dropship;
                             var newAngle = 0;
                             var currentMotion;
                             if (this.landscapeLayout == true) {
-                                currentMotion = deviceMo.accelerationIncludingGravity.y;
+                                currentMotion = deviceMo.acceleration.y;
                             }
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
