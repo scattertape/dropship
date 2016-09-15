@@ -225,6 +225,7 @@ var Dropship;
             this._base.body.setCircle(33);
             this._base.body.collideWorldBounds = false;
             //this._base.body.debug = true;
+            //this._base.body.fixedRotation = true;
             this._base.normalGravity();
             this._base.body.onBeginContact.add(this._base.contactHandler);
             this._base.body.onEndContact.add(this._base.endContactHandler);
@@ -787,10 +788,24 @@ var Dropship;
                             this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
-                            var currentMotion = deviceMo.accelerationIncludingGravity.y;
+                            //var currentMotion = deviceMo.accelerationIncludingGravity.y;
+                            var currentMotion = deviceMo.rotationRate.gamma;
                             if (this.landscapeLayout == true) {
-                                newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
-                                this._base.body.angle = newAngle;
+                                //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
+                                // this._base.body.angle = newAngle;
+                                this._base.body.angle = this._base.body.angle + (currentMotion * 0.1);
+                                //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
+                                //newAngle = difference(currentMotion, this.prevMotion);
+                                /*this._text2.setText('newAngle: ' + newAngle);
+                                
+                                if (currentMotion > this.prevMotion) {
+                                    // turn ship clockwise
+                                    (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                                } else {
+                                    // turn ship anticlockwise
+                                    (<Phaser.Physics.P2.Body>this._base.body).rotateLeft(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                                }*/
+                                this.prevMotion = currentMotion;
                             }
                             else {
                                 this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
