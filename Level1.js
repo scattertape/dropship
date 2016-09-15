@@ -783,7 +783,8 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             var currentMotion = deviceMo.accelerationIncludingGravity.y;
