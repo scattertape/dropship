@@ -801,7 +801,7 @@ var Dropship;
                             //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                             //newAngle = difference(currentMotion, this.prevMotion);
                             //this._text2.setText('newAngle: ' + newAngle);
-                            this._base.body.rotateRight(currentMotion * 100);
+                            this._base.body.rotateRight(currentMotion * 1000);
                             /* if (currentMotion > this.prevMotion) {
                                  // turn ship clockwise
                                  (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(currentMotion));
