@@ -784,32 +784,32 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
+                            this._base.body.angularDamping = 0;
                             //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            //this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
-                            //var currentMotion = deviceMo.accelerationIncludingGravity.y;
-                            var currentMotion = deviceMo.accelerationIncludingGravity.y;
+                            var currentMotion;
                             if (this.landscapeLayout == true) {
-                                //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                                // this._base.body.angle = newAngle;
-                                this._base.body.angle = this._base.body.angle + (currentMotion * 2);
-                                //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
-                                //newAngle = difference(currentMotion, this.prevMotion);
-                                /*this._text2.setText('newAngle: ' + newAngle);
-                                
-                                if (currentMotion > this.prevMotion) {
-                                    // turn ship clockwise
-                                    (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(deviceMo.accelerationIncludingGravity.y));
-                                } else {
-                                    // turn ship anticlockwise
-                                    (<Phaser.Physics.P2.Body>this._base.body).rotateLeft(Math.abs(deviceMo.accelerationIncludingGravity.y));
-                                }*/
-                                this.prevMotion = currentMotion;
+                                currentMotion = deviceMo.accelerationIncludingGravity.y;
                             }
                             else {
-                                this._base.body.angle = this._base.body.angle + deviceMo.acceleration.x;
+                                currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
+                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
+                            // this._base.body.angle = newAngle;
+                            //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
+                            //newAngle = difference(currentMotion, this.prevMotion);
+                            //this._text2.setText('newAngle: ' + newAngle);
+                            if (currentMotion > this.prevMotion) {
+                                // turn ship clockwise
+                                this._base.body.rotateRight(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                            }
+                            else {
+                                // turn ship anticlockwise
+                                this._base.body.rotateLeft(Math.abs(deviceMo.accelerationIncludingGravity.y));
+                            }
+                            this.prevMotion = currentMotion;
                         }
                     }
                 }
@@ -1026,12 +1026,16 @@ var Dropship;
         Level1.prototype.pressLeft = function () {
             if (this._base.justCrashed == false) {
                 this._base.body.rotation -= this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+                // this._base.body.angularVelocity  -= this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 100 * (Math.PI / 4);
+                // this._base.body.rotateLeft((this.time.elapsedMS * this.SHIP_ROTATE_SPEED) * 0.5 );
                 this._base.rotationChanged(true);
             }
         };
         Level1.prototype.pressRight = function () {
             if (this._base.justCrashed == false) {
                 this._base.body.rotation += this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 1000 * (Math.PI / 4);
+                //  this._base.body.angularVelocity += this.time.elapsedMS * this.SHIP_ROTATE_SPEED / 100 * (Math.PI / 4);
+                //  this._base.body.rotateRight((this.time.elapsedMS * this.SHIP_ROTATE_SPEED) * 0.5 );
                 this._base.rotationChanged(false);
             }
         };
@@ -1669,8 +1673,8 @@ var Dropship;
     }
     // -------------------------------------------------------------------------
     window.onload = function () {
-        new Dropship.Game();
         window.addEventListener("devicemotion", onDeviceMotion, false);
+        new Dropship.Game();
     };
     // -------------------------------------------------------------------------
     var normalize = Phaser.Point.normalize;
@@ -1761,9 +1765,9 @@ var Dropship;
             // this.animations.add("kapow", Phaser.Animation.generateFrameNames("MineExp", 25, 40, "", 4));
             // play first animation as default
             //this.play("anim", 30, true);
+            this.body.angularDamping = 1;
         };
         Ship.prototype.normalGravity = function () {
-            this.body.angularDamping = 1;
             this.body.mass = 1;
             this.body.data.gravityScale = 1.0;
             this.body.damping = 0.0;
