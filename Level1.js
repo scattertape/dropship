@@ -789,11 +789,11 @@ var Dropship;
                             this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             //var currentMotion = deviceMo.accelerationIncludingGravity.y;
-                            var currentMotion = deviceMo.acceleration.y;
+                            var currentMotion = deviceMo.accelerationIncludingGravity.y;
                             if (this.landscapeLayout == true) {
                                 //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
                                 // this._base.body.angle = newAngle;
-                                this._base.body.angle = this._base.body.angle + (currentMotion * 5);
+                                this._base.body.angle = this._base.body.angle + (currentMotion * 2);
                                 //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                                 //newAngle = difference(currentMotion, this.prevMotion);
                                 /*this._text2.setText('newAngle: ' + newAngle);
