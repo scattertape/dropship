@@ -797,12 +797,12 @@ var Dropship;
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
                             //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            // this._base.body.angle = newAngle;
+                            //this._base.body.angle = newAngle;
                             //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                             //newAngle = difference(currentMotion, this.prevMotion);
                             //this._text2.setText('newAngle: ' + newAngle);
-                            this._base.body.angularVelocity += deviceMo.acceleration.y;
-                            this._text1.setText(this._base.body.angularVelocity);
+                            this._base.body.angularVelocity = deviceMo.accelerationIncludingGravity.y * 10;
+                            // this._text1.setText(this._base.body.angularVelocity);
                             //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity = currentMotion;
                             /* if (currentMotion > this.prevMotion) {
                                  // turn ship clockwise
