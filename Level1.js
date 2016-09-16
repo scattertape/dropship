@@ -809,12 +809,7 @@ var Dropship;
                             if (currentMotion < 0 && currentMotion > -0.5) {
                                 currentMotion = 0;
                             }*/
-                            if (currentMotion == 0) {
-                                this._base.body.angularVelocity = 0;
-                            }
-                            else {
-                                this._base.body.angularVelocity = currentMotion;
-                            }
+                            this._base.body.angularVelocity = currentMotion * 2;
                             this._text2.setText(currentMotion);
                             // this._text1.setText(this._base.body.angularVelocity);
                             //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity = currentMotion;
