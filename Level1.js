@@ -802,17 +802,18 @@ var Dropship;
                             //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                             //newAngle = difference(currentMotion, this.prevMotion);
                             //this._text2.setText('newAngle: ' + newAngle);
-                            if (currentMotion > 0 && currentMotion < 0.5) {
+                            /*if (currentMotion > 0 && currentMotion < 0.5) {
                                 currentMotion = 0;
                             }
+
                             if (currentMotion < 0 && currentMotion > -0.5) {
                                 currentMotion = 0;
-                            }
+                            }*/
                             if (currentMotion == 0) {
                                 this._base.body.angularVelocity = 0;
                             }
                             else {
-                                this._base.body.angularVelocity += currentMotion * 0.1;
+                                this._base.body.angularVelocity = currentMotion;
                             }
                             this._text2.setText(currentMotion);
                             // this._text1.setText(this._base.body.angularVelocity);
