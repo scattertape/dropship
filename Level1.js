@@ -784,7 +784,7 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0;
+                            this._base.body.angularDamping = 0.5;
                             //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
                             // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
@@ -796,12 +796,13 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;
-                            this._base.body.angle = newAngle;
+                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
+                            //this._base.body.angle = newAngle;
                             //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                             //newAngle = difference(currentMotion, this.prevMotion);
                             //this._text2.setText('newAngle: ' + newAngle);
-                            //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity += deviceMo.acceleration.y;
+                            this._base.body.angularVelocity += currentMotion * 0.1;
+                            this._text2.setText(this._base.body.angularVelocity);
                             // this._text1.setText(this._base.body.angularVelocity);
                             //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity = currentMotion;
                             /* if (currentMotion > this.prevMotion) {
