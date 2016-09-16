@@ -786,8 +786,8 @@ var Dropship;
                         if (deviceMo.acceleration.y != null) {
                             this._base.body.angularDamping = 0;
                             //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
+                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             var currentMotion;
                             if (this.landscapeLayout == true) {
@@ -801,8 +801,9 @@ var Dropship;
                             //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
                             //newAngle = difference(currentMotion, this.prevMotion);
                             //this._text2.setText('newAngle: ' + newAngle);
-                            //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity += (currentMotion);
-                            this._base.body.angularVelocity = currentMotion;
+                            this._base.body.angularVelocity += (currentMotion);
+                            this._text1.setText(this._base.body.angularVelocity);
+                            //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity = currentMotion;
                             /* if (currentMotion > this.prevMotion) {
                                  // turn ship clockwise
                                  (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(currentMotion));
