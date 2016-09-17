@@ -376,37 +376,41 @@ var Dropship;
                         var angleN = Math.atan2(vy, vx);
                         vx = Math.cos(angleN) * 0.15 * eventDuration;
                         vy = Math.sin(angleN) * 0.15 * eventDuration;
-                        var swipeDistanceX = difference(this.startPointx, this.endPointx);
-                        var swipeDistanceY = difference(this.startPointy, this.endPointy);
-                        var swipedLeft;
+                        /*var swipeDistanceX = difference(this.startPointx, this.endPointx);
+                        
+                        var swipedLeft: Boolean;
+
                         if (this.endPointx < this.startPointx - swipeMinDistance) {
                             // console.log("left: " + vx + 'duration: ' + eventDuration);
-                            //this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
-                            // this._base.body.rotateLeft(this.endPointy - this.startPointy);
                             swipedLeft = true;
-                        }
-                        else if (this.endPointx > this.startPointx + swipeMinDistance) {
+
+                        } else if (this.endPointx > this.startPointx + swipeMinDistance) {
                             //console.log("right: " + vx + 'duration: ' + eventDuration);
-                            // this.game.add.tween(this._base.body).to({ angle: vx }, eventDuration, Phaser.Easing.Bounce.Out, true);
-                            // this._base.body.rotateLeft(this.endPointy - this.startPointy);
                             swipedLeft = false;
+
+                        } else if (this.endPointy < this.startPointy - swipeMinDistance) {
+                            //console.log("up");
+                        } else if (this.endPointx > this.startPointy + swipeMinDistance) {
+                            //console.log("down");
                         }
-                        else if (this.endPointy < this.startPointy - swipeMinDistance) {
-                        }
-                        else if (this.endPointx > this.startPointy + swipeMinDistance) {
-                        }
+                        
                         var swipePercentX = Math.floor((swipeDistanceX / this.game.world.width) * 50);
-                        var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
+                        
                         if (swipedLeft == true) {
                             swipePercentX = 0 - swipePercentX;
                         }
-                        /*if (swipedLeft == true || swipedLeft == false) {
+
+                        if (swipedLeft == true || swipedLeft == false) {
                            this.game.tweens.removeFrom(this._base.body);
                            this.game.add.tween(this._base.body).to({ angle: this._base.body.angle + swipePercent }, eventDuration * 2, Phaser.Easing.Power1, true);
                             console.log('Swipe Percent ' + swipePercent + ' -' + swipedLeft);
                         }*/
+                        var swipeDistanceY = difference(this.startPointy, this.endPointy);
+                        var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
                         this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
-                        this.missileBtnDown();
+                        if (swipePercentY > 1) {
+                            this.missileBtnDown();
+                        }
                     }
                 }, this);
             }
@@ -802,13 +806,14 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            if (currentMotion > 0 && currentMotion < 0.3) {
+                            if (currentMotion > 0 && currentMotion < 0.1) {
                                 currentMotion = 0;
                             }
-                            if (currentMotion < 0 && currentMotion > -0.3) {
+                            if (currentMotion < 0 && currentMotion > -0.1) {
                                 currentMotion = 0;
                             }
                             newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
+                            newAngle = (Math.ceil(newAngle / 5) * 5);
                             //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
                             this._text1.setText(newAngle.toFixed(2));
                             if (currentMotion > 0) {
