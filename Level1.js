@@ -784,10 +784,10 @@ var Dropship;
                 if (deviceMo != null) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.acceleration.y != null) {
-                            this._base.body.angularDamping = 0.75;
+                            // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
                             //this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
                             // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             var currentMotion;
                             var adjustedMotion;
@@ -797,30 +797,20 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            //this._base.body.angle = newAngle;
-                            //this._base.body.rotateLeft(deviceMo.accelerationIncludingGravity.y);
-                            //newAngle = difference(currentMotion, this.prevMotion);
-                            //this._text2.setText('newAngle: ' + newAngle);
-                            /*if (currentMotion > 0 && currentMotion < 0.5) {
+                            if (currentMotion > 0 && currentMotion < 0.25) {
                                 currentMotion = 0;
                             }
-
-                            if (currentMotion < 0 && currentMotion > -0.5) {
+                            if (currentMotion < 0 && currentMotion > -0.25) {
                                 currentMotion = 0;
-                            }*/
-                            this._base.body.angularVelocity = currentMotion * 2;
-                            this._text2.setText(currentMotion);
-                            // this._text1.setText(this._base.body.angularVelocity);
-                            //(<Phaser.Physics.P2.Body>this._base.body).angularVelocity = currentMotion;
-                            /* if (currentMotion > this.prevMotion) {
-                                 // turn ship clockwise
-                                 (<Phaser.Physics.P2.Body>this._base.body).rotateRight(Math.abs(currentMotion));
-                             } else {
-                                 // turn ship anticlockwise
-                                 (<Phaser.Physics.P2.Body>this._base.body).rotateLeft(Math.abs(currentMotion));
-                             }*/
-                            this.prevMotion = currentMotion;
+                            }
+                            newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 90);
+                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
+                            if (currentMotion > 0) {
+                                this._base.body.angle = newAngle;
+                            }
+                            else {
+                                this._base.body.angle = 0 - newAngle;
+                            }
                         }
                     }
                 }
@@ -1674,6 +1664,10 @@ var Dropship;
         var current1 = aProgress * Math.PI * 2 * aPeriod1;
         var current2 = aProgress * Math.PI * 2 * aPeriod2;
         return Math.sin(current1) * Math.cos(current2);
+    }
+    // ------------------------------------------------------------------------
+    function map_range(value, low1, high1, low2, high2) {
+        return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
     }
     // ------------------------------------------------------------------------
     function difference(a, b) { return Math.abs(a - b); }
