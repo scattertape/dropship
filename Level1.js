@@ -806,26 +806,27 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            if (currentMotion > 0 && currentMotion < 0.1) {
+                            /*if (currentMotion > 0 && currentMotion < 0.1) {
                                 currentMotion = 0;
                             }
+
                             if (currentMotion < 0 && currentMotion > -0.1) {
                                 currentMotion = 0;
-                            }
+                            }*/
                             newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
                             newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var newArray1 = smoothOut(this.motionTracker, 0.85);
-                            var newArray2 = median(newArray1);
-                            this._text1.setText(newArray2);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.85);
+                            var smoothedMedian = median(smoothedArray);
+                            this._text1.setText(smoothedMedian);
                             //display(this.motionTracker, smoothOut(this.motionTracker, 0.85));
                             //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
                             if (currentMotion > 0) {
-                                this._base.body.angle = newArray2; //newAngle;
+                                this._base.body.angle = smoothedMedian; //newAngle;
                             }
                             else {
-                                this._base.body.angle = 0 - newArray2; //newAngle;
+                                this._base.body.angle = 0 - smoothedMedian; //newAngle;
                             }
                         }
                     }
