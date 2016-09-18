@@ -792,18 +792,18 @@ var Dropship;
                                 newAngle = map_range(currentMotion, -5, 0, -180, 0);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
-                            if (Math.abs(movementDifference) > 8) {
+                            if (Math.abs(movementDifference) > 10) {
                                 if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 8;
+                                    newAngle = this.motionTracker[0] + 10;
                                 }
                                 else {
-                                    newAngle = this.motionTracker[0] - 8;
+                                    newAngle = this.motionTracker[0] - 10;
                                 }
                             }
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.85);
                             var smoothedMedian = median(smoothedArray);
                             this._base.body.angle = smoothedMedian;
                         }
