@@ -813,14 +813,19 @@ var Dropship;
                                 currentMotion = 0;
                             }
                             newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
-                            //newAngle = (Math.ceil(newAngle / 5) * 5);
+                            newAngle = (Math.ceil(newAngle / 5) * 5);
+                            var oldestValue = this.motionTracker.pop();
+                            this.motionTracker.unshift(newAngle);
+                            var newArray1 = smoothOut(this.motionTracker, 0.85);
+                            var newArray2 = median(newArray1);
+                            this._text1.setText(newArray2);
+                            //display(this.motionTracker, smoothOut(this.motionTracker, 0.85));
                             //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            this._text1.setText(newAngle.toFixed(2));
                             if (currentMotion > 0) {
-                                this._base.body.angle = newAngle;
+                                this._base.body.angle = newArray2; //newAngle;
                             }
                             else {
-                                this._base.body.angle = 0 - newAngle;
+                                this._base.body.angle = 0 - newArray2; //newAngle;
                             }
                         }
                     }
@@ -1679,6 +1684,34 @@ var Dropship;
     // ------------------------------------------------------------------------
     function map_range(value, low1, high1, low2, high2) {
         return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+    }
+    function avg(v) {
+        return v.reduce(function (a, b) { return a + b; }, 0) / v.length;
+    }
+    function smoothOut(vector, variance) {
+        var t_avg = avg(vector) * variance;
+        var ret = Array(vector.length);
+        for (var i = 0; i < vector.length; i++) {
+            (function () {
+                var prev = i > 0 ? ret[i - 1] : vector[i];
+                var next = i < vector.length ? vector[i] : vector[i - 1];
+                ret[i] = avg([t_avg, prev, vector[i], next]);
+            })();
+        }
+        return ret;
+    }
+    function display(x, y) {
+        console.clear();
+        console.assert(x.length === y.length);
+        x.forEach(function (el, i) { return console.log(el + "\t\t" + y[i]); });
+    }
+    function median(values) {
+        values.sort(function (a, b) { return a - b; });
+        var half = Math.floor(values.length / 2);
+        if (values.length % 2)
+            return values[half];
+        else
+            return (values[half - 1] + values[half]) / 2.0;
     }
     // ------------------------------------------------------------------------
     function difference(a, b) { return Math.abs(a - b); }
