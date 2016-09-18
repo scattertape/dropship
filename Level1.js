@@ -792,12 +792,12 @@ var Dropship;
                                 newAngle = map_range(currentMotion, -5, 0, -180, 0);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
-                            if (Math.abs(movementDifference) > 2) {
+                            if (Math.abs(movementDifference) > 8) {
                                 if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 2;
+                                    newAngle = this.motionTracker[0] + 8;
                                 }
                                 else {
-                                    newAngle = this.motionTracker[0] - 2;
+                                    newAngle = this.motionTracker[0] - 8;
                                 }
                             }
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
