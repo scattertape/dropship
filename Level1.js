@@ -813,7 +813,12 @@ var Dropship;
                             if (currentMotion < 0 && currentMotion > -0.1) {
                                 currentMotion = 0;
                             }*/
-                            newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
+                            if (currentMotion > 0) {
+                                newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                            }
+                            else {
+                                newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                            }
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
@@ -822,12 +827,12 @@ var Dropship;
                             this._text1.setText(smoothedMedian);
                             //display(this.motionTracker, smoothOut(this.motionTracker, 0.85));
                             //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            if (currentMotion > 0) {
-                                this._base.body.angle = smoothedMedian; //newAngle;
-                            }
-                            else {
-                                this._base.body.angle = 0 - smoothedMedian; //newAngle;
-                            }
+                            /*if (currentMotion > 0) {
+                                this._base.body.angle = smoothedMedian;
+                            } else {
+                                this._base.body.angle = 0 - smoothedMedian;
+                            }*/
+                            this._base.body.angle = smoothedMedian;
                         }
                     }
                 }
