@@ -349,7 +349,8 @@ var Dropship;
                 // body.debug = true;
             }, this);
             if (this._swipeActive == true) {
-                var swipeMinDistance = this.game.world.width / 10;
+                //var swipeMinWidthDistance = this.game.world.width / 10;
+                //var swipeMinHeightDistance = this.game.world.height / 10;
                 // Math.floor((swipeDistance / this.game.world.width) * 100);
                 var startPointx = 0;
                 var startPointy = 0;
@@ -357,7 +358,12 @@ var Dropship;
                 var endPointy = 0;
                 this._swipeTimer = this.game.time.create(false);
                 this.game.input.onDown.add(function (pointer) {
-                    this.fire();
+                    if (pointer.clientX > (this.game.world.width * 0.5)) {
+                        this.fire();
+                    }
+                    else {
+                        this.igniteThruster();
+                    }
                     this._swipeTimer.start();
                     this.startPointx = pointer.clientX;
                     this.startPointy = pointer.clientY;
@@ -365,6 +371,11 @@ var Dropship;
                 this.game.input.onUp.add(function (pointer) {
                     var eventDuration = this._swipeTimer.ms;
                     this._swipeTimer.stop();
+                    if (pointer.clientX > (this.game.world.width * 0.5)) {
+                    }
+                    else {
+                        this.deactivateThruster();
+                    }
                     if (eventDuration > 333) {
                     }
                     else {
@@ -408,7 +419,7 @@ var Dropship;
                         var swipeDistanceY = difference(this.startPointy, this.endPointy);
                         var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
                         this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
-                        if (swipePercentY > 1) {
+                        if (swipePercentY > 0) {
                             this.missileBtnDown();
                         }
                     }
@@ -824,14 +835,6 @@ var Dropship;
                             this.motionTracker.unshift(newAngle);
                             var smoothedArray = smoothOut(this.motionTracker, 0.25);
                             var smoothedMedian = median(smoothedArray);
-                            this._text1.setText(smoothedMedian);
-                            //display(this.motionTracker, smoothOut(this.motionTracker, 0.85));
-                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            /*if (currentMotion > 0) {
-                                this._base.body.angle = smoothedMedian;
-                            } else {
-                                this._base.body.angle = 0 - smoothedMedian;
-                            }*/
                             this._base.body.angle = smoothedMedian;
                         }
                     }
