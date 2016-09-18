@@ -358,12 +358,13 @@ var Dropship;
                 var endPointy = 0;
                 this._swipeTimer = this.game.time.create(false);
                 this.game.input.onDown.add(function (pointer) {
-                    //if (pointer.clientX > (this.game.world.width * 0.5)) {
-                    this.fire();
-                    this._text1.setText(pointer.clientX + '; ' + this.game.world.width);
-                    /* } else {
-                         this.igniteThruster();
-                     }*/
+                    this._text1.setText(pointer.clientX + '; ' + this.game.camera.width);
+                    if (pointer.clientX > (this.game.camera.width * 0.5)) {
+                        this.fire();
+                    }
+                    else {
+                        this.igniteThruster();
+                    }
                     this._swipeTimer.start();
                     this.startPointx = pointer.clientX;
                     this.startPointy = pointer.clientY;
@@ -371,9 +372,9 @@ var Dropship;
                 this.game.input.onUp.add(function (pointer) {
                     var eventDuration = this._swipeTimer.ms;
                     this._swipeTimer.stop();
-                    /*if (pointer.clientX < (this.game.world.width * 0.5)) {
+                    if (pointer.clientX < (this.game.camera.width * 0.5)) {
                         this.deactivateThruster();
-                    }*/
+                    }
                     if (eventDuration > 333) {
                     }
                     else {
