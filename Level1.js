@@ -817,7 +817,7 @@ var Dropship;
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.85);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.25);
                             var smoothedMedian = median(smoothedArray);
                             this._text1.setText(smoothedMedian);
                             //display(this.motionTracker, smoothOut(this.motionTracker, 0.85));
