@@ -814,7 +814,7 @@ var Dropship;
                                 currentMotion = 0;
                             }*/
                             newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
-                            newAngle = (Math.ceil(newAngle / 5) * 5);
+                            //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
                             var smoothedArray = smoothOut(this.motionTracker, 0.85);
