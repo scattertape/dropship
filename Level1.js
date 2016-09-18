@@ -802,7 +802,7 @@ var Dropship;
                             }
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.85);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.15);
                             var smoothedMedian = median(smoothedArray);
                             newAngle = smoothedMedian;
                             this._base.body.angle = newAngle;
