@@ -23,7 +23,7 @@ var Dropship;
             this._shipDirection = 0;
             this._fireRate = 400;
             //private _shipMotionTween: Phaser.Tween;
-            this.motionTracker = [0, 0, 0];
+            this.motionTracker = [0, 0, 0, 0, 0, 0];
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
