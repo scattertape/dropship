@@ -549,7 +549,7 @@ var Dropship;
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
             // FLY THRU WALLS HACK:
-            //this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
+            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
