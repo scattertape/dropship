@@ -176,28 +176,6 @@ var Dropship;
             this._allGroup.add(this._thingsGroup);
             this._controlsGroup = this.game.add.group();
             this._allGroup.add(this._controlsGroup);
-            /* var defenderBMD = this.game.add.bitmapData(25,25);
-     
-             defenderBMD.ctx.beginPath();
-             defenderBMD.ctx.rect(0, 0, 25, 25);
-             defenderBMD.ctx.fillStyle = '#ffccff';
-             defenderBMD.ctx.fill();
-     
-             var defender: Phaser.Sprite = this.game.add.sprite(this.world.centerX, this.world.centerY + 200, defenderBMD);
-             defender.anchor.setTo(0.5, 0.5);
-     
-             this._thingsGroup.add(defender);*/
-            // set physiscs to P2 physics engin
-            /*this.game.physics.p2.enable(tile8);
-            this.game.physics.p2.enableBody(tile8, true);
-            var tBody: Phaser.Physics.P2.Body = tile8.body;
-            tBody.static = true;
-            tBody.clearShapes();
-            tBody.loadPolygon('physicsData', 'level1-8-1');
-            tBody.loadPolygon('physicsData', 'level1-8-2');
-            tBody.debug = true;*/
-            // cannon base - place over cannon, so it overlaps it
-            //this._base = this.game.add.sprite(this.world.centerX, this.world.height / 1.5, "Atlas", "base");
             this._base = new Ship(this.game, this.world.centerX, this.world.centerY);
             this.game.physics.p2.enable(this._base);
             this._base.setup(this);
@@ -206,22 +184,6 @@ var Dropship;
             // this._base = new DropShip(this.game, this.world.centerX, this.world.height / 1.5, 'imageKey');
             //  this._base.setUp();
             this._base.anchor.setTo(0.5, 0.5);
-            //this._base.scale.setTo(.65, .65);
-            // cannon - place it in the bottom center
-            //this._cannon = this.game.add.sprite(this.world.centerX, this.world.height / 2, "Atlas", "cannon");
-            // this._worldGroup.add(this._cannon);
-            //this._cannon = new Phaser.Sprite(this.game, 0, 0, "Atlas", "cannon");
-            ///this._base.addChild(this._cannon);
-            // this._cannon.x =0;
-            // this._cannon.y =0;
-            // offset it from position
-            //this._cannon.anchor.setTo(-0.75, 0.5);
-            // make it point straight up
-            //this._cannon.rotation = -Math.PI / 2;
-            //this._cannonTween = this.game.add.tween(this._cannon).to({ rotation: -Math.PI / 2 }, 100, Phaser.Easing.Power1, true);
-            //this._level1.x = 320;
-            //this._level1.anchor.setTo(0.5, 0.5);
-            //this._cannon.body.gravityScale = 0;
             this._base.body.setCircle(33);
             this._base.body.collideWorldBounds = false;
             //this._base.body.debug = true;
@@ -262,8 +224,8 @@ var Dropship;
             // create drones
             this._drones.classType = Dron;
             var dronPositions = [
-                [-80, -220],
-                [-150, -175]
+                [-80, -220], [-150, -175],
+                [20, 920], [-120, 820],
             ];
             for (var i = 0; i < dronPositions.length; i++) {
                 var aDron = new Dron(this.game, dronPositions[i][0], dronPositions[i][1]);
@@ -358,7 +320,6 @@ var Dropship;
                 var endPointy = 0;
                 this._swipeTimer = this.game.time.create(false);
                 this.game.input.onDown.add(function (pointer) {
-                    this._text1.setText(pointer.clientX + '; ' + this.game.camera.width);
                     if (pointer.clientX > (this.game.camera.width * 0.5)) {
                         this.fire();
                     }
@@ -417,7 +378,7 @@ var Dropship;
                         }*/
                         var swipeDistanceY = difference(this.startPointy, this.endPointy);
                         var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
-                        this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
+                        //this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
                         if (swipePercentY > 0) {
                             this.missileBtnDown();
                         }
@@ -441,6 +402,7 @@ var Dropship;
             this._fireBtn.anchor.setTo(2.8, 0.0);
             this._fireBtn.x = this.game.camera.width;
             this._fireBtn.inputEnabled = true;
+            this._fireBtn.animations.add("release", ["FireOn", "FireOn", "FireOn", "FireOn", "FireOn", "FireOff"], 15, false);
             this._fireBtn.events.onInputDown.add(this.fireBtnDown, this);
             this._fireBtn.events.onInputUp.add(this.fireBtnUp, this);
             this._missileBtn = this.game.add.sprite(0, 0, "Atlas", "BombOff");
@@ -475,8 +437,8 @@ var Dropship;
             //this._thingsGroup.add(this._sentries);
             //this._sentries.physicsBodyType = Phaser.Physics.P2JS;
             //this._sentries.enableBody = true;
-            var sentryPositions = [[-255, -260, 90, 0], [-775, 200, 90, 0], [-460, -360, 270, 0], [700, 1215, 0, 0], [-110, -540, 45, 0],
-                [-205, -340, 180, 1], [-775, -95, 90, 1]
+            var sentryPositions = [[735, -1160, 270, 0], [-775, 200, 90, 0], [-740, 570, 135, 0], [700, 1215, 0, 0], [-215, -588, 0, 0],
+                [-205, -335, 180, 1], [-775, -95, 90, 1]
             ];
             for (var i = 0; i < sentryPositions.length; i++) {
                 var sentry = new Sentry(this.game, this.world.centerX + sentryPositions[i][0], this.world.centerY + sentryPositions[i][1], sentryPositions[i][3]);
@@ -511,7 +473,7 @@ var Dropship;
                 [175, 145, 90, 1],
                 [-120, -360, 0, 2], [-90, -380, 180, 2], [-60, -360, 0, 2], [-30, -380, 180, 2], [0, -360, 0, 2], [30, -380, 180, 2], [60, -360, 0, 2], [90, -380, 180, 2],
                 [175, 185, 90, 3],
-                [-22, -222, 0, 4], [55, -111, 0, 4],
+                [593, -222, 0, 4], [483, -111, 0, 4],
             ];
             for (var i = 0; i < objectList.length; i++) {
                 var texture = '';
@@ -527,7 +489,7 @@ var Dropship;
                 }
                 ;
                 if (objectList[i][3] == 3) {
-                    texture = 'Sheild0010';
+                    texture = 'Tripper0000';
                     nameType = 'tripper';
                 }
                 ;
@@ -576,23 +538,24 @@ var Dropship;
                 object.body.setCollisionGroup(this._objectsCollisionGroup);
                 object.body.collides([this._shipCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup]);
             }
-            //this._level1.body.collides([this._levelCollisionGroup, this._shipCollisionGroup, this._lasersCollisionGroup]);
             this._tiles.forEach(function (tile) {
                 tile.body.collides([this._shipCollisionGroup, this._lasersCollisionGroup, this._missilesCollisionGroup]);
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
+            // FLY THRU WALLS HACK:
             this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
     
             this.createDoor();*/
-            var style1 = { font: "15px Arial", fill: "#ffcc00", align: "left" };
+            /*var style1 = { font: "15px Arial", fill: "#ffcc00", align: "left" };
             var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
             this._text1 = this.game.add.text(300, 300, 'accel', style1);
             this._text1.anchor.setTo(0.5, 0.5);
+    
             this._text2 = this.game.add.text(280, 280, 'accel+gravity', style2);
-            this._text2.anchor.setTo(0.5, 0.5);
+            this._text2.anchor.setTo(0.5, 0.5);*/
             /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
              door2.anchor.setTo(0.5, 0.5);
              door1.name = 'd2';*/
@@ -602,7 +565,7 @@ var Dropship;
                 antiGravPositions = [[140, 0, 0], [650, -175, 180]];
             }
             else {
-                antiGravPositions = [[-220, 150, 0], [-100, -1185, 180]];
+                antiGravPositions = [[-200, 142, 0], [-100, -1173, 180]];
             }
             for (var i = 0; i < antiGravPositions.length; i++) {
                 var poly = new Phaser.Polygon();
@@ -1021,7 +984,8 @@ var Dropship;
             if (this._base.justCrashed == true) {
                 return;
             }
-            this._fireBtn.loadTexture('Atlas', 'FireOn');
+            this._fireBtn.play('release');
+            //this._fireBtn.loadTexture('Atlas', 'FireOn');
             var laser = this._lasers.getFirstExists(false);
             if (laser) {
                 // calculate position of cannon tip. Put distance from cannon base along x axis and rotate it to cannon angle
@@ -1315,6 +1279,9 @@ var Dropship;
             console.log('! ' + this.name);
             if (this.name == 'sheildBonus') {
                 this.animations.add("main", Phaser.Animation.generateFrameNames("Sheild", 0, 19, "", 4), 30, true);
+            }
+            if (this.name == 'tripper') {
+                this.animations.add("main", Phaser.Animation.generateFrameNames("Tripper", 0, 19, "", 4), 30, true);
             }
             if (this.name == 'octoid') {
                 this.animations.add("main", Phaser.Animation.generateFrameNames("Octoid", 0, 3, "", 4), this.game.rnd.between(3, 8), true);
