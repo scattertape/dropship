@@ -319,13 +319,8 @@ var Dropship;
                 var endPointx = 0;
                 var endPointy = 0;
                 this._swipeTimer = this.game.time.create(false);
+                // Swipe detector:
                 this.game.input.onDown.add(function (pointer) {
-                    if (pointer.clientX > (this.game.camera.width * 0.5)) {
-                        this.fire();
-                    }
-                    else {
-                        this.igniteThruster();
-                    }
                     this._swipeTimer.start();
                     this.startPointx = pointer.clientX;
                     this.startPointy = pointer.clientY;
@@ -333,9 +328,6 @@ var Dropship;
                 this.game.input.onUp.add(function (pointer) {
                     var eventDuration = this._swipeTimer.ms;
                     this._swipeTimer.stop();
-                    if (pointer.clientX < (this.game.camera.width * 0.5)) {
-                        this.deactivateThruster();
-                    }
                     if (eventDuration > 333) {
                     }
                     else {
@@ -390,14 +382,28 @@ var Dropship;
             this._backgroundImage.cacheAsBitmap = true;
             this._backgroundImage.width = this.game.width;
             this._controlsGroup.add(this._backgroundImage);
-            this._thrustBtn = this.game.add.sprite(0, 0, "Atlas", "ThrustOff");
+            this._leftButton = this.game.add.button(0, 0);
+            this._controlsGroup.add(this._leftButton);
+            this._leftButton.width = this.game.camera.width * 0.5;
+            this._leftButton.height = this.game.camera.height;
+            this._leftButton.inputEnabled = true;
+            this._leftButton.events.onInputDown.add(this.leftBtnDown, this);
+            this._leftButton.events.onInputUp.add(this.leftBtnUp, this);
+            this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
+            this._controlsGroup.add(this._rightButton);
+            this._rightButton.width = this.game.camera.width * 0.5;
+            this._rightButton.height = this.game.camera.height;
+            this._rightButton.inputEnabled = true;
+            this._rightButton.events.onInputDown.add(this.rightBtnDown, this);
+            this._rightButton.events.onInputUp.add(this.rightBtnUp, this);
+            this._thrustBtn = this.game.add.sprite(0, this.game.camera.height - 25, "Atlas", "ThrustOff");
             this._controlsGroup.add(this._thrustBtn);
             this._thrustBtn.anchor.setTo(1.4, 0.0);
             this._thrustBtn.x = this.game.camera.width;
             this._thrustBtn.inputEnabled = true;
             this._thrustBtn.events.onInputDown.add(this.igniteThruster, this);
             this._thrustBtn.events.onInputUp.add(this.deactivateThruster, this);
-            this._fireBtn = this.game.add.sprite(0, 0, "Atlas", "FireOff");
+            this._fireBtn = this.game.add.sprite(0, this.game.camera.height - 25, "Atlas", "FireOff");
             this._controlsGroup.add(this._fireBtn);
             this._fireBtn.anchor.setTo(2.8, 0.0);
             this._fireBtn.x = this.game.camera.width;
@@ -405,7 +411,7 @@ var Dropship;
             this._fireBtn.animations.add("release", ["FireOn", "FireOn", "FireOn", "FireOn", "FireOn", "FireOff"], 15, false);
             this._fireBtn.events.onInputDown.add(this.fireBtnDown, this);
             this._fireBtn.events.onInputUp.add(this.fireBtnUp, this);
-            this._missileBtn = this.game.add.sprite(0, 0, "Atlas", "BombOff");
+            this._missileBtn = this.game.add.sprite(0, this.game.camera.height - 25, "Atlas", "BombOff");
             this._controlsGroup.add(this._missileBtn);
             this._missileBtn.anchor.setTo(4.2, 0.0);
             this._missileBtn.x = this.game.camera.width;
@@ -543,7 +549,7 @@ var Dropship;
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
             // FLY THRU WALLS HACK:
-            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
+            //this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
@@ -795,7 +801,7 @@ var Dropship;
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.25);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
                             this._base.body.angle = smoothedMedian;
                         }
@@ -1003,6 +1009,18 @@ var Dropship;
             console.log('fireBtnUp');
             this._fireBtn.loadTexture('Atlas', 'FireOff');
             this._fireTimer.stop();
+        };
+        Level1.prototype.leftBtnDown = function () {
+            this.igniteThruster();
+        };
+        Level1.prototype.leftBtnUp = function () {
+            this.deactivateThruster();
+        };
+        Level1.prototype.rightBtnDown = function () {
+            this.fire();
+        };
+        Level1.prototype.rightBtnUp = function () {
+            //this.deactivateThruster();
         };
         Level1.prototype.igniteThruster = function () {
             this._thrustBtn.loadTexture("Atlas", "ThrustOn");
