@@ -23,7 +23,7 @@ var Dropship;
             this._shipDirection = 0;
             this._fireRate = 400;
             //private _shipMotionTween: Phaser.Tween;
-            this.prevMotion = 0;
+            this.motionTracker = [0, 0, 0];
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -814,13 +814,17 @@ var Dropship;
                             }
                             newAngle = map_range(Math.abs(currentMotion), 0, 5, 0, 180);
                             newAngle = (Math.ceil(newAngle / 5) * 5);
-                            //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
-                            this._text1.setText(newAngle.toFixed(2));
-                            if (currentMotion > 0) {
-                                this._base.body.angle = newAngle;
-                            }
-                            else {
-                                this._base.body.angle = 0 - newAngle;
+                            var oldestValue = this.motionTracker.pop();
+                            this.motionTracker.unshift(newAngle);
+                            if ((this.motionTracker[1] == newAngle) && (this.motionTracker[2] == newAngle)) {
+                                //newAngle = (currentMotion * (Math.abs(currentMotion) * 0.333)) * 10;                                 
+                                this._text1.setText(newAngle.toFixed(2));
+                                if (currentMotion > 0) {
+                                    this._base.body.angle = newAngle;
+                                }
+                                else {
+                                    this._base.body.angle = 0 - newAngle;
+                                }
                             }
                         }
                     }
