@@ -785,18 +785,20 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            /*if (currentMotion > 0 && currentMotion < 0.1) {
-                                currentMotion = 0;
-                            }
-
-                            if (currentMotion < 0 && currentMotion > -0.1) {
-                                currentMotion = 0;
-                            }*/
                             if (currentMotion > 0) {
                                 newAngle = map_range(currentMotion, 0, 5, 0, 180);
                             }
                             else {
                                 newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                            }
+                            var movementDifference = difference(newAngle, this.motionTracker[0]);
+                            if (Math.abs(movementDifference) > 2) {
+                                if (newAngle > this.motionTracker[0]) {
+                                    newAngle = this.motionTracker[0] + 2;
+                                }
+                                else {
+                                    newAngle = this.motionTracker[0] - 2;
+                                }
                             }
                             //newAngle = (Math.ceil(newAngle / 5) * 5);
                             var oldestValue = this.motionTracker.pop();
