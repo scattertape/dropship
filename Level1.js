@@ -23,11 +23,16 @@ var Dropship;
             this._shipDirection = 0;
             this._fireRate = 400;
             //private _shipMotionTween: Phaser.Tween;
+            this.deviceMotionAvailable = false;
             this.motionTracker = [0, 0, 0, 0, 0, 0];
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
             //321Thrust
+            if (this.game.state.states['MainMenu'].deviceMoArray.length > 0) {
+                this.deviceMotionAvailable = true;
+            }
+            console.log('deviceMotionAvailable ' + this.deviceMotionAvailable);
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
@@ -310,73 +315,6 @@ var Dropship;
                 aMissile.animations.play("anim", 15, true, false);
                 // body.debug = true;
             }, this);
-            if (this._swipeActive == true) {
-                //var swipeMinWidthDistance = this.game.world.width / 10;
-                //var swipeMinHeightDistance = this.game.world.height / 10;
-                // Math.floor((swipeDistance / this.game.world.width) * 100);
-                var startPointx = 0;
-                var startPointy = 0;
-                var endPointx = 0;
-                var endPointy = 0;
-                this._swipeTimer = this.game.time.create(false);
-                // Swipe detector:
-                this.game.input.onDown.add(function (pointer) {
-                    this._swipeTimer.start();
-                    this.startPointx = pointer.clientX;
-                    this.startPointy = pointer.clientY;
-                }, this);
-                this.game.input.onUp.add(function (pointer) {
-                    var eventDuration = this._swipeTimer.ms;
-                    this._swipeTimer.stop();
-                    if (eventDuration > 333) {
-                    }
-                    else {
-                        this.endPointx = pointer.clientX;
-                        this.endPointy = pointer.clientY;
-                        var currVelocitySqr = (this.startPointx + this.endPointx) * (this.startPointx + this.endPointx) + (this.startPointy + this.endPointy) * (this.startPointy + this.endPointy);
-                        var vy = this.endPointy - this.startPointy;
-                        var vx = this.endPointx - this.startPointx;
-                        var angleN = Math.atan2(vy, vx);
-                        vx = Math.cos(angleN) * 0.15 * eventDuration;
-                        vy = Math.sin(angleN) * 0.15 * eventDuration;
-                        /*var swipeDistanceX = difference(this.startPointx, this.endPointx);
-                        
-                        var swipedLeft: Boolean;
-
-                        if (this.endPointx < this.startPointx - swipeMinDistance) {
-                            // console.log("left: " + vx + 'duration: ' + eventDuration);
-                            swipedLeft = true;
-
-                        } else if (this.endPointx > this.startPointx + swipeMinDistance) {
-                            //console.log("right: " + vx + 'duration: ' + eventDuration);
-                            swipedLeft = false;
-
-                        } else if (this.endPointy < this.startPointy - swipeMinDistance) {
-                            //console.log("up");
-                        } else if (this.endPointx > this.startPointy + swipeMinDistance) {
-                            //console.log("down");
-                        }
-                        
-                        var swipePercentX = Math.floor((swipeDistanceX / this.game.world.width) * 50);
-                        
-                        if (swipedLeft == true) {
-                            swipePercentX = 0 - swipePercentX;
-                        }
-
-                        if (swipedLeft == true || swipedLeft == false) {
-                           this.game.tweens.removeFrom(this._base.body);
-                           this.game.add.tween(this._base.body).to({ angle: this._base.body.angle + swipePercent }, eventDuration * 2, Phaser.Easing.Power1, true);
-                            console.log('Swipe Percent ' + swipePercent + ' -' + swipedLeft);
-                        }*/
-                        var swipeDistanceY = difference(this.startPointy, this.endPointy);
-                        var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
-                        //this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
-                        if (swipePercentY > 0) {
-                            this.missileBtnDown();
-                        }
-                    }
-                }, this);
-            }
             this._backgroundImage = this.add.image(0, 0, "BG");
             this._backgroundImage.anchor.setTo(0, 0);
             this._backgroundImage.cacheAsBitmap = true;
@@ -418,6 +356,75 @@ var Dropship;
             this._missileBtn.animations.add("release", ["BombOn", "BombOn", "BombOn", "BombOn", "BombOn", "BombOff"], 15, false);
             this._missileBtn.inputEnabled = true;
             this._missileBtn.events.onInputDown.add(this.missileBtnDown, this);
+            if (this._swipeActive == true) {
+                //var swipeMinWidthDistance = this.game.world.width / 10;
+                //var swipeMinHeightDistance = this.game.world.height / 10;
+                // Math.floor((swipeDistance / this.game.world.width) * 100);
+                var startPointx = 0;
+                var startPointy = 0;
+                var endPointx = 0;
+                var endPointy = 0;
+                this._swipeTimer = this.game.time.create(false);
+                // Swipe detector:
+                this.game.input.onDown.add(function (pointer) {
+                    this._swipeTimer.start();
+                    this.startPointx = pointer.clientX;
+                    this.startPointy = pointer.clientY;
+                }, this);
+                this.game.input.onUp.add(function (pointer) {
+                    var eventDuration = this._swipeTimer.ms;
+                    this._swipeTimer.stop();
+                    if (eventDuration > 333) {
+                    }
+                    else {
+                        this.endPointx = pointer.clientX;
+                        this.endPointy = pointer.clientY;
+                        if (this.startPointx > this.game.camera.width * 0.5 && this.endPointx > this.game.camera.width * 0.5) {
+                            var currVelocitySqr = (this.startPointx + this.endPointx) * (this.startPointx + this.endPointx) + (this.startPointy + this.endPointy) * (this.startPointy + this.endPointy);
+                            var vy = this.endPointy - this.startPointy;
+                            var vx = this.endPointx - this.startPointx;
+                            var angleN = Math.atan2(vy, vx);
+                            vx = Math.cos(angleN) * 0.15 * eventDuration;
+                            vy = Math.sin(angleN) * 0.15 * eventDuration;
+                            /*var swipeDistanceX = difference(this.startPointx, this.endPointx);
+                        
+                            var swipedLeft: Boolean;
+
+                            if (this.endPointx < this.startPointx - swipeMinDistance) {
+                                // console.log("left: " + vx + 'duration: ' + eventDuration);
+                                swipedLeft = true;
+
+                            } else if (this.endPointx > this.startPointx + swipeMinDistance) {
+                                //console.log("right: " + vx + 'duration: ' + eventDuration);
+                                swipedLeft = false;
+
+                            } else if (this.endPointy < this.startPointy - swipeMinDistance) {
+                                //console.log("up");
+                            } else if (this.endPointx > this.startPointy + swipeMinDistance) {
+                                //console.log("down");
+                            }
+                        
+                            var swipePercentX = Math.floor((swipeDistanceX / this.game.world.width) * 50);
+                        
+                            if (swipedLeft == true) {
+                                swipePercentX = 0 - swipePercentX;
+                            }
+
+                            if (swipedLeft == true || swipedLeft == false) {
+                               this.game.tweens.removeFrom(this._base.body);
+                               this.game.add.tween(this._base.body).to({ angle: this._base.body.angle + swipePercent }, eventDuration * 2, Phaser.Easing.Power1, true);
+                                console.log('Swipe Percent ' + swipePercent + ' -' + swipedLeft);
+                            }*/
+                            var swipeDistanceY = difference(this.startPointy, this.endPointy);
+                            var swipePercentY = Math.floor((swipeDistanceY / this.game.world.height) * 50);
+                            //this._text2.setText('Swipe: ' + swipePercentY + ' ' + swipeDistanceY);
+                            if (swipePercentY > 0) {
+                                this.missileBtnDown();
+                            }
+                        }
+                    }
+                }, this);
+            }
             // Sentry projectiles
             this._sentryBullets = this.add.group();
             // this._thingsGroup.add(this._sentryBullets);
@@ -663,9 +670,11 @@ var Dropship;
             this._objects.forEach(function (obj) {
                 obj.startTween();
             }, this);
-            this._joystick = new Joystick(this.game, 0, joystickY);
-            this._controlsGroup.add(this._joystick);
-            this._joystick.setup(this);
+            if (this.deviceMotionAvailable == false) {
+                this._joystick = new Joystick(this.game, 0, joystickY);
+                this._controlsGroup.add(this._joystick);
+                this._joystick.setup(this);
+            }
             this._allGroup.sendToBack(this._tiles);
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
@@ -770,53 +779,49 @@ var Dropship;
 
             }*/
             if (this._transitionTween.isRunning == false) {
-                if (deviceMo != null) {
-                    if (deviceMo.acceleration != null) {
-                        if (deviceMo.acceleration.y != null) {
-                            // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
-                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                            var newAngle = 0;
-                            var currentMotion;
-                            if (this.landscapeLayout == true) {
-                                currentMotion = deviceMo.accelerationIncludingGravity.y;
-                            }
-                            else {
-                                currentMotion = deviceMo.accelerationIncludingGravity.x;
-                            }
-                            var invertRotation = true;
-                            if (invertRotation) {
-                                if (currentMotion < 0) {
-                                    currentMotion = Math.abs(currentMotion);
-                                }
-                                else {
-                                    currentMotion = 0 - currentMotion;
-                                }
-                            }
-                            if (currentMotion > 0) {
-                                newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                            }
-                            else {
-                                newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                            }
-                            var movementDifference = difference(newAngle, this.motionTracker[0]);
-                            if (Math.abs(movementDifference) > 8) {
-                                if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 8;
-                                }
-                                else {
-                                    newAngle = this.motionTracker[0] - 8;
-                                }
-                            }
-                            var oldestValue = this.motionTracker.pop();
-                            this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
-                            var smoothedMedian = median(smoothedArray);
-                            newAngle = smoothedMedian;
-                            this._base.body.angle = newAngle;
+                if (this.deviceMotionAvailable) {
+                    // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
+                    // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                    // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
+                    // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                    var newAngle = 0;
+                    var currentMotion;
+                    if (this.landscapeLayout == true) {
+                        currentMotion = deviceMo.accelerationIncludingGravity.y;
+                    }
+                    else {
+                        currentMotion = deviceMo.accelerationIncludingGravity.x;
+                    }
+                    var invertRotation = true;
+                    if (invertRotation) {
+                        if (currentMotion < 0) {
+                            currentMotion = Math.abs(currentMotion);
+                        }
+                        else {
+                            currentMotion = 0 - currentMotion;
                         }
                     }
+                    if (currentMotion > 0) {
+                        newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                    }
+                    else {
+                        newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                    }
+                    var movementDifference = difference(newAngle, this.motionTracker[0]);
+                    if (Math.abs(movementDifference) > 8) {
+                        if (newAngle > this.motionTracker[0]) {
+                            newAngle = this.motionTracker[0] + 8;
+                        }
+                        else {
+                            newAngle = this.motionTracker[0] - 8;
+                        }
+                    }
+                    var oldestValue = this.motionTracker.pop();
+                    this.motionTracker.unshift(newAngle);
+                    var smoothedArray = smoothOut(this.motionTracker, 0.05);
+                    var smoothedMedian = median(smoothedArray);
+                    newAngle = smoothedMedian;
+                    this._base.body.angle = newAngle;
                 }
                 // SOLID DOOR SCRIPT:
                 /*for (var j = 0; j < this._doors.children.length; j++) {
@@ -1031,7 +1036,6 @@ var Dropship;
             this.fire();
         };
         Level1.prototype.rightBtnUp = function () {
-            //this.deactivateThruster();
         };
         Level1.prototype.igniteThruster = function () {
             this._thrustBtn.loadTexture("Atlas", "ThrustOn");
@@ -1722,7 +1726,6 @@ var Dropship;
     // -------------------------------------------------------------------------
     function onDeviceMotion(event) {
         deviceMo = event;
-        console.log('onDeviceMotion');
     }
     // -------------------------------------------------------------------------
     window.onload = function () {
