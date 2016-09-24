@@ -29,10 +29,10 @@ var Dropship;
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
             //321Thrust
-            if (this.game.state.states['MainMenu'].deviceMoArray.length > 0) {
+            if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
                 this.deviceMotionAvailable = true;
             }
-            alert('deviceMotionAvailable ' + this.deviceMotionAvailable + ' ' + this.game.state.states['MainMenu'].deviceMoArray.length);
+            alert('deviceMotionAvailable ' + this.deviceMotionAvailable + ' ' + this.game.state.states['MainMenu'].deviceMoArray);
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
