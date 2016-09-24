@@ -780,48 +780,52 @@ var Dropship;
             }*/
             if (this._transitionTween.isRunning == false) {
                 if (this.deviceMotionAvailable) {
-                    // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
-                    // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                    // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                    // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
-                    var newAngle = 0;
-                    var currentMotion;
-                    if (this.landscapeLayout == true) {
-                        currentMotion = deviceMo.accelerationIncludingGravity.y;
-                    }
-                    else {
-                        currentMotion = deviceMo.accelerationIncludingGravity.x;
-                    }
-                    var invertRotation = true;
-                    if (invertRotation) {
-                        if (currentMotion < 0) {
-                            currentMotion = Math.abs(currentMotion);
+                    if (deviceMo.acceleration != null) {
+                        if (deviceMo.accelerationIncludingGravity.y != null) {
+                            // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
+                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
+                            // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
+                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
+                            var newAngle = 0;
+                            var currentMotion;
+                            if (this.landscapeLayout == true) {
+                                currentMotion = deviceMo.accelerationIncludingGravity.y;
+                            }
+                            else {
+                                currentMotion = deviceMo.accelerationIncludingGravity.x;
+                            }
+                            var invertRotation = true;
+                            if (invertRotation) {
+                                if (currentMotion < 0) {
+                                    currentMotion = Math.abs(currentMotion);
+                                }
+                                else {
+                                    currentMotion = 0 - currentMotion;
+                                }
+                            }
+                            if (currentMotion > 0) {
+                                newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                            }
+                            else {
+                                newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                            }
+                            var movementDifference = difference(newAngle, this.motionTracker[0]);
+                            if (Math.abs(movementDifference) > 8) {
+                                if (newAngle > this.motionTracker[0]) {
+                                    newAngle = this.motionTracker[0] + 8;
+                                }
+                                else {
+                                    newAngle = this.motionTracker[0] - 8;
+                                }
+                            }
+                            var oldestValue = this.motionTracker.pop();
+                            this.motionTracker.unshift(newAngle);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
+                            var smoothedMedian = median(smoothedArray);
+                            newAngle = smoothedMedian;
+                            this._base.body.angle = newAngle;
                         }
-                        else {
-                            currentMotion = 0 - currentMotion;
-                        }
                     }
-                    if (currentMotion > 0) {
-                        newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                    }
-                    else {
-                        newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                    }
-                    var movementDifference = difference(newAngle, this.motionTracker[0]);
-                    if (Math.abs(movementDifference) > 8) {
-                        if (newAngle > this.motionTracker[0]) {
-                            newAngle = this.motionTracker[0] + 8;
-                        }
-                        else {
-                            newAngle = this.motionTracker[0] - 8;
-                        }
-                    }
-                    var oldestValue = this.motionTracker.pop();
-                    this.motionTracker.unshift(newAngle);
-                    var smoothedArray = smoothOut(this.motionTracker, 0.05);
-                    var smoothedMedian = median(smoothedArray);
-                    newAngle = smoothedMedian;
-                    this._base.body.angle = newAngle;
                 }
                 // SOLID DOOR SCRIPT:
                 /*for (var j = 0; j < this._doors.children.length; j++) {
