@@ -785,6 +785,15 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
+                            var invertRotation = true;
+                            if (invertRotation) {
+                                if (currentMotion < 0) {
+                                    currentMotion = Math.abs(currentMotion);
+                                }
+                                else {
+                                    currentMotion = 0 - currentMotion;
+                                }
+                            }
                             if (currentMotion > 0) {
                                 newAngle = map_range(currentMotion, 0, 5, 0, 180);
                             }
@@ -802,7 +811,7 @@ var Dropship;
                             }
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.15);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
                             newAngle = smoothedMedian;
                             this._base.body.angle = newAngle;
