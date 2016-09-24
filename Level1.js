@@ -32,7 +32,7 @@ var Dropship;
             if (this.game.state.states['MainMenu'].deviceMoArray.length > 0) {
                 this.deviceMotionAvailable = true;
             }
-            console.log('deviceMotionAvailable ' + this.deviceMotionAvailable);
+            alert('deviceMotionAvailable ' + this.deviceMotionAvailable + ' ' + this.game.state.states['MainMenu'].deviceMoArray.length);
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
