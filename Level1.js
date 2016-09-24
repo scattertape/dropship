@@ -783,7 +783,7 @@ var Dropship;
                                 currentMotion = deviceMo.accelerationIncludingGravity.y;
                             }
                             else {
-                                currentMotion = deviceMo.accelerationIncludingGravity.z; //x
+                                currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
                             var invertRotation = true;
                             if (invertRotation) {
