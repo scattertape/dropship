@@ -8,8 +8,6 @@ var Dropship;
     var moArray = [];
     window.addEventListener("devicemotion", onDeviceMotionTest, false);
     function onDeviceMotionTest(event) {
-        console.log('onDeviceMotionTest');
-        alert('dmo');
         if (event.acceleration != null) {
             if (event.accelerationIncludingGravity.y != null) {
                 moArray.push(event.accelerationIncludingGravity.y);
