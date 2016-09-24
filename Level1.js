@@ -787,11 +787,11 @@ var Dropship;
                             }
                             if (currentMotion > 0) {
                                 //newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                                newAngle = map_range(currentMotion, 0, 5, -180, 0);
+                                newAngle = map_range(currentMotion, 0, 5, 0, -180);
                             }
                             else {
                                 //newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                                newAngle = map_range(currentMotion, -5, 0, 0, 180);
+                                newAngle = map_range(currentMotion, -5, 0, 180, 0);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 8) {
