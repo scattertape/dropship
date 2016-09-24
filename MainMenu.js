@@ -24,6 +24,7 @@ var Dropship;
         };
         MainMenu.prototype.onDeviceMotionTest = function (event) {
             console.log('onDeviceMotionTest');
+            alert('mo');
             if (event.acceleration != null) {
                 if (event.accelerationIncludingGravity.y != null) {
                     this.deviceMoArray.push(event.accelerationIncludingGravity.y);
