@@ -827,7 +827,7 @@ var Dropship;
                     }
                     else {
                         // newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                        newAngle = logslider(currentMotion, -5, 0, -180, 0);
+                        newAngle = 0 - logslider(currentMotion, 0, 5, 0, 180);
                     }
                     var movementDifference = difference(newAngle, this.motionTracker[0]);
                     if (Math.abs(movementDifference) > 8) {
