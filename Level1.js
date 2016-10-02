@@ -24,7 +24,7 @@ var Dropship;
             this._fireRate = 400;
             //private _shipMotionTween: Phaser.Tween;
             this.deviceMotionAvailable = false;
-            this.motionTracker = [0, 0, 0, 0, 0, 0];
+            this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -826,23 +826,20 @@ var Dropship;
                     else {
                         newAngle = map_range(currentMotion, -5, 0, -180, 0);
                     }
-                    /*var movementDifference = difference(newAngle, this.motionTracker[0]);
-
+                    var movementDifference = difference(newAngle, this.motionTracker[0]);
                     if (Math.abs(movementDifference) > 8) {
                         if (newAngle > this.motionTracker[0]) {
                             newAngle = this.motionTracker[0] + 8;
-                        } else {
+                        }
+                        else {
                             newAngle = this.motionTracker[0] - 8;
                         }
                     }
-
                     var oldestValue = this.motionTracker.pop();
                     this.motionTracker.unshift(newAngle);
-
                     var smoothedArray = smoothOut(this.motionTracker, 0.05);
                     var smoothedMedian = median(smoothedArray);
-
-                    newAngle = smoothedMedian;*/
+                    newAngle = smoothedMedian;
                     this._base.body.angle = newAngle;
                 }
                 // SOLID DOOR SCRIPT:
