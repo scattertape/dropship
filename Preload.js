@@ -18,6 +18,7 @@ var Dropship;
             //  Load our actual games assets
             this.load.image('titlepage', 'assets/titlepage.jpg');
             this.load.image('logo', 'assets/logo.png');
+            this.load.image('complete', 'assets/complete.png');
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
             this.game.load.image("BG", "assets/bg.png");
