@@ -137,8 +137,9 @@ var Dropship;
             this._tiles.add(tile3);
             this.game.physics.startSystem(Phaser.Physics.P2JS);
             this.game.physics.p2.gravity.y = 200;
-            this.game.physics.p2.restitution = 0;
+            this.game.physics.p2.restitution = 0.0;
             this.game.physics.p2.friction = 0.95;
+            this.game.physics.p2.applyDamping = true;
             if (this.game.physics.p2.paused) {
                 this.game.physics.p2.resume();
             }
@@ -573,7 +574,7 @@ var Dropship;
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
             // FLY THRU WALLS HACK:
-            // this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
+            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
@@ -1874,9 +1875,9 @@ var Dropship;
             this.body.angularDamping = 1;
         };
         Ship.prototype.normalGravity = function () {
-            this.body.mass = 1;
+            this.body.mass = 1.0;
             this.body.data.gravityScale = 1.0;
-            this.body.damping = 0.0;
+            this.body.damping = 0.2;
         };
         Ship.prototype.antiGravity = function (upward) {
             this.body.damping = 0.75;
