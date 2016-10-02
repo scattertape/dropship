@@ -463,7 +463,6 @@ var Dropship;
                 //var poly: Phaser.Polygon = new Phaser.Polygon();
                 // [x,y]
                 var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
-                //poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
                 body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
                 body.setCollisionGroup(this._sentriesCollisionGroup);
                 body.collides([this._missilesCollisionGroup]);
@@ -486,6 +485,10 @@ var Dropship;
                 [-120, -360, 0, 2], [-90, -380, 180, 2], [-60, -360, 0, 2], [-30, -380, 180, 2], [0, -360, 0, 2], [30, -380, 180, 2], [60, -360, 0, 2], [90, -380, 180, 2],
                 [175, 185, 90, 3],
                 [593, -222, 0, 4], [483, -111, 0, 4],
+                [-620, -1205, 90, 5], [-620, -1165, 90, 5], [-620, -1125, 90, 5], [-620, -1085, 90, 5],
+                [-650, -1185, 90, 5], [-650, -1145, 90, 5], [-650, -1105, 90, 5],
+                [-590, -1185, 90, 5], [-590, -1145, 90, 5], [-590, -1105, 90, 5],
+                [-310, -1105, 270, 6]
             ];
             for (var i = 0; i < objectList.length; i++) {
                 var texture = '';
@@ -510,6 +513,16 @@ var Dropship;
                     nameType = 'drone';
                 }
                 ;
+                if (objectList[i][3] == 5) {
+                    texture = 'hexoid0000';
+                    nameType = 'hexoid';
+                }
+                ;
+                if (objectList[i][3] == 6) {
+                    texture = 'Crystal0000';
+                    nameType = 'crystal';
+                }
+                ;
                 var xPos = objectList[i][0] + this.world.centerX;
                 var yPos = objectList[i][1] + this.world.centerY;
                 var object = new Item(this.game, xPos, yPos, 'Atlas', texture);
@@ -518,7 +531,7 @@ var Dropship;
                 object.anchor.setTo(0.5, 0.5);
                 object.autoCull = true;
                 this.game.physics.p2.enable(object);
-                if (nameType == 'octoid') {
+                if (nameType == 'octoid' || nameType == 'hexoid') {
                     object.body.setCircle(18);
                 }
                 //object.body.mass = 0;
@@ -545,6 +558,11 @@ var Dropship;
                         object.body.angle = -90;
                     }
                 }
+                if (objectList[i][3] == 6) {
+                    // [x,y]
+                    var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
+                    object.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                }
                 //object.body.debug = true;
                 this._objects.add(object);
                 object.body.setCollisionGroup(this._objectsCollisionGroup);
@@ -555,7 +573,7 @@ var Dropship;
             }, this);
             this._base.body.setCollisionGroup(this._shipCollisionGroup);
             // FLY THRU WALLS HACK:
-            this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
+            // this._base.body.collides([this._objectsCollisionGroup, this._tilesCollisionGroup, this._sentryBulletsCollisionGroup, this._sentriesCollisionGroup]);
             /*this._doors = this.game.add.group();
     
             this._thingsGroup.add(this._doors);
@@ -809,14 +827,13 @@ var Dropship;
                         newAngle = map_range(currentMotion, -5, 0, -180, 0);
                     }
                     var movementDifference = difference(newAngle, this.motionTracker[0]);
-                    if (Math.abs(movementDifference) > 8) {
+                    /*if (Math.abs(movementDifference) > 8) {
                         if (newAngle > this.motionTracker[0]) {
                             newAngle = this.motionTracker[0] + 8;
-                        }
-                        else {
+                        } else {
                             newAngle = this.motionTracker[0] - 8;
                         }
-                    }
+                    }*/
                     var oldestValue = this.motionTracker.pop();
                     this.motionTracker.unshift(newAngle);
                     var smoothedArray = smoothOut(this.motionTracker, 0.05);
@@ -948,7 +965,7 @@ var Dropship;
             if (objectHit.name == 'antiGravGenerator') {
                 objectHit.successfulHit(weapon);
             }
-            if (objectHit.name == 'sheildBonus' || objectHit.name == 'octoid' || objectHit.name == 'tripper' || objectHit.name == 'drone') {
+            if (objectHit.name == 'sheildBonus' || objectHit.name == 'octoid' || objectHit.name == 'tripper' || objectHit.name == 'drone' || objectHit.name == 'crystal') {
                 objectHit.successfulHit(weapon, objectHit.name);
             }
             if (laser) {
@@ -1090,7 +1107,7 @@ var Dropship;
             this.game.physics.p2.pause();
             var cameraX = this.game.camera.x;
             var cameraY = this.game.camera.y;
-            console.log('camera moving from: ' + cameraX + ',' + cameraY);
+            console.log('camera moving ' + direction + ' from: ' + cameraX + ',' + cameraY);
             if (direction == 'up') {
                 cameraY = this.game.camera.y - (this.game.camera.height - this._cameraOverlap);
             }
@@ -1135,34 +1152,40 @@ var Dropship;
             // If it will be outside the world, then don't do it.
             var cameraStaysWithinWorld = true;
             var maxLeft = 0 - (this.game.camera.width + (this.game.camera.width * 0.5));
-            var maxRight = this.game.camera.width + this.game.camera.width;
+            var maxRight = this.game.camera.width;
             var maxTop = 0 - (this.game.camera.height + (this.game.camera.height * 0.5));
             var maxBottom = (0 - (this.game.camera.height * 0.5)) + this.game.camera.height;
             //console.log('max ' + maxLeft + ',' + maxTop + ',' + maxRight + ',' + maxBottom);
             if (cameraX < maxLeft) {
                 cameraStaysWithinWorld = false;
+                console.log('camError1');
             }
             ;
             if (cameraX > maxRight) {
                 cameraStaysWithinWorld = false;
+                console.log('camError2');
             }
             ;
             if (cameraY < maxTop) {
                 cameraStaysWithinWorld = false;
+                console.log('camError3');
             }
             ;
             if (cameraY > maxBottom) {
                 cameraStaysWithinWorld = false;
+                console.log('camError4');
             }
             ;
             if (cameraStaysWithinWorld) {
                 var tileToUnhide = this._tiles.getByName('tile' + this._newSubLevel);
+                console.log('cam TileToUnhide ' + this._newSubLevel);
                 tileToUnhide.visible = true;
                 this._transitionTween = this.game.add.tween(this.game.camera).to({ y: cameraY, x: cameraX }, 250, Phaser.Easing.Linear.None, true);
                 this._transitionTween.onComplete.add(this.transitionComplete, this);
             }
             else {
                 console.log('camera error? ' + this.game.world.getBounds() + ', camX ' + cameraX + ', camY ' + cameraY);
+                this.game.state.start('LevelComplete', true, false);
             }
         };
         Level1.prototype.transitionComplete = function () {
@@ -1323,6 +1346,14 @@ var Dropship;
             if (this.name == 'drone') {
                 this.animations.add("main", Phaser.Animation.generateFrameNames("Drone", 0, 5, "", 4), 30, true);
             }
+            if (this.name == 'hexoid') {
+                this.animations.add("main", Phaser.Animation.generateFrameNames("hexoid", 0, 3, "", 4), this.game.rnd.between(3, 8), true);
+                this.animations.add("dissolve", Phaser.Animation.generateFrameNames("hexoid", 4, 10, "", 4), 30, false);
+            }
+            if (this.name == 'crystal') {
+                this.animations.add("main", Phaser.Animation.generateFrameNames("Crystal", 0, 9, "", 4), 30, true);
+                this.animations.add("blowup", Phaser.Animation.generateFrameNames("Crystal", 10, 20, "", 4), 30, false);
+            }
             this.animations.play('main');
         };
         Item.prototype.startTween = function () {
@@ -1352,6 +1383,23 @@ var Dropship;
                 }
                 if (this.name == 'drone') {
                     this.kill();
+                }
+                if (this.name == 'crystal') {
+                    console.log('crystal kill');
+                    this.animations.play("blowup", 30, false, true);
+                    for (var i = 0; i < this.stateInstance._objects.length; i++) {
+                        var obj = this.stateInstance._objects.getChildAt(i);
+                        if (obj.name == 'hexoid') {
+                            var hexTween = this.game.add.tween(obj);
+                            hexTween.to({ alpha: 1 }, 100, Phaser.Easing.Linear.None, false, this.game.rnd.between(100, 350));
+                            hexTween.onComplete.add(hexKill, obj);
+                            function hexKill() {
+                                this.animations.play("dissolve", 30, false, true);
+                            }
+                            ;
+                            hexTween.start();
+                        }
+                    }
                 }
                 if (this.name == 'tripper') {
                     this.stateInstance.puff(this.position);
@@ -1746,7 +1794,7 @@ var Dropship;
             this.contactDamage = false;
             this.contactDamageCount = 0;
             this.thrusting = false;
-            this.thrustPower = 450;
+            this.thrustPower = 500;
             this.justCrashed = false;
             this.justCoasted = false;
             this.drainSheild = false;
