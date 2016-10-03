@@ -822,8 +822,7 @@ var Dropship;
                         }
                     }
                     if (currentMotion > 0) {
-                        //newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                        newAngle = logslider(currentMotion, 0, 5, 0, 250);
+                        newAngle = map_range(currentMotion, 0, 5, 0, 180);
                     }
                     else {
                         newAngle = map_range(currentMotion, -5, 0, -180, 0);
