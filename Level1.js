@@ -823,21 +823,10 @@ var Dropship;
                     }
                     if (currentMotion > 0) {
                         //newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                        if (currentMotion < 1) {
-                            newAngle = map_range(currentMotion, 0, 1, 0, 25);
-                        }
-                        else {
-                            newAngle = map_range(currentMotion, 1, 5, 25, 220);
-                        }
+                        newAngle = logslider(currentMotion, 0, 5, 0, 250);
                     }
                     else {
                         newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                        if (currentMotion > -1) {
-                            newAngle = map_range(currentMotion, -1, 0, -25, 0);
-                        }
-                        else {
-                            newAngle = map_range(currentMotion, -5, -1, -220, -25);
-                        }
                     }
                     var movementDifference = difference(newAngle, this.motionTracker[0]);
                     if (Math.abs(movementDifference) > 8) {
