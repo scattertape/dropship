@@ -581,7 +581,7 @@ var Dropship;
             this._thingsGroup.add(this._doors);
     
             this.createDoor();*/
-            var style1 = { font: "15px Arial", fill: "#ffcc00", align: "left" };
+            var style1 = { font: "15px Arial", fill: "#00cc00", align: "left" };
             var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
             this._text1 = this.game.add.text(300, 300, String(this.deviceMotionAvailable), style1);
             this._text1.anchor.setTo(0.5, 0.5);
@@ -814,9 +814,7 @@ var Dropship;
                             }
                             this._text2.setText(currentMotion.toFixed(1));
                             var invertRotation = true;
-                            if (invertRotation) {
-                                return;
-                            }
+                            //if (invertRotation) { return }
                             if (invertRotation) {
                                 if (currentMotion < 0) {
                                     currentMotion = Math.abs(currentMotion);
