@@ -30,6 +30,7 @@ var Dropship;
         Level1.prototype.create = function () {
             //321Thrust
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
+                this.deviceMotionAvailable = true;
             }
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
@@ -582,7 +583,7 @@ var Dropship;
             this.createDoor();*/
             var style1 = { font: "15px Arial", fill: "#ffcc00", align: "left" };
             var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
-            this._text1 = this.game.add.text(300, 300, 'accel', style1);
+            this._text1 = this.game.add.text(300, 300, String(this.deviceMotionAvailable), style1);
             this._text1.anchor.setTo(0.5, 0.5);
             this._text2 = this.game.add.text(280, 280, 'accel+gravity', style2);
             this._text2.anchor.setTo(0.5, 0.5);
@@ -813,6 +814,9 @@ var Dropship;
                             }
                             this._text2.setText(currentMotion.toFixed(1));
                             var invertRotation = true;
+                            if (invertRotation) {
+                                return;
+                            }
                             if (invertRotation) {
                                 if (currentMotion < 0) {
                                     currentMotion = Math.abs(currentMotion);
