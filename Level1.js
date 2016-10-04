@@ -30,7 +30,6 @@ var Dropship;
         Level1.prototype.create = function () {
             //321Thrust
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
-                this.deviceMotionAvailable = true;
             }
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
@@ -823,12 +822,10 @@ var Dropship;
                                 }
                             }
                             if (currentMotion > 0) {
-                                //newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                                newAngle = logslider(currentMotion, 0, 5, 0, 250);
+                                newAngle = map_range(currentMotion, 0, 5, 0, 180);
                             }
                             else {
-                                //newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                                newAngle = 0 - logslider(Math.abs(currentMotion), 0, 5, 0, 250);
+                                newAngle = map_range(currentMotion, -5, 0, -180, 0);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 8) {
