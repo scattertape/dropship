@@ -822,10 +822,12 @@ var Dropship;
                         }
                     }
                     if (currentMotion > 0) {
-                        newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                        //newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                        newAngle = logslider(currentMotion, 0, 5, 0, 250);
                     }
                     else {
-                        newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                        //newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                        newAngle = 0 - logslider(Math.abs(currentMotion), 0, 5, 0, 250);
                     }
                     var movementDifference = difference(newAngle, this.motionTracker[0]);
                     if (Math.abs(movementDifference) > 8) {
@@ -1744,7 +1746,9 @@ var Dropship;
     function map_range(value, low1, high1, low2, high2) {
         return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
     }
-    function logslider(position, minp, maxp, minv, maxv) {
+    function logslider(position, minp, maxp, _minv, _maxv) {
+        var minv = Math.log(_minv);
+        var maxv = Math.log(_maxv);
         // calculate adjustment factor
         var scale = (maxv - minv) / (maxp - minp);
         return Math.exp(minv + scale * (position - minp));
