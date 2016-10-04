@@ -368,8 +368,8 @@ var Dropship;
                 // Swipe detector:
                 this.game.input.onDown.add(function (pointer) {
                     this._swipeTimer.start();
-                    this.startPointx = pointer.clientX;
-                    this.startPointy = pointer.clientY;
+                    this.startPointx = pointer.x;
+                    this.startPointy = pointer.y;
                 }, this);
                 this.game.input.onUp.add(function (pointer) {
                     var eventDuration = this._swipeTimer.ms;
@@ -377,9 +377,10 @@ var Dropship;
                     if (eventDuration > 333) {
                     }
                     else {
-                        this.endPointx = pointer.clientX;
-                        this.endPointy = pointer.clientY;
+                        this.endPointx = pointer.x;
+                        this.endPointy = pointer.y;
                         if (this.startPointx > (this.game.camera.width * 0.5) && this.endPointx > (this.game.camera.width * 0.5)) {
+                            console.log('moo ' + this.game.camera.width + ' ' + this.endPointx);
                             var currVelocitySqr = (this.startPointx + this.endPointx) * (this.startPointx + this.endPointx) + (this.startPointy + this.endPointy) * (this.startPointy + this.endPointy);
                             var vy = this.endPointy - this.startPointy;
                             var vx = this.endPointx - this.startPointx;
@@ -822,10 +823,12 @@ var Dropship;
                                 }
                             }
                             if (currentMotion > 0) {
-                                newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                                //newAngle = map_range(currentMotion, 0, 5, 0, 180);
+                                newAngle = logslider(currentMotion, 0, 5, 0, 250);
                             }
                             else {
-                                newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                                //newAngle = map_range(currentMotion, -5, 0, -180, 0);
+                                newAngle = 0 - logslider(Math.abs(currentMotion), 0, 5, 0, 250);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 8) {
