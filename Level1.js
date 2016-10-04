@@ -30,7 +30,6 @@ var Dropship;
         Level1.prototype.create = function () {
             //321Thrust
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
-                this.deviceMotionAvailable = true;
             }
             this.game.stage.backgroundColor = "#4488AA";
             this.game.time.advancedTiming = true;
