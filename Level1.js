@@ -804,9 +804,6 @@ var Dropship;
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.accelerationIncludingGravity.y != null) {
                             // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
-                            // this._text1.setText("y:" + deviceMo.acceleration.y.toFixed(3) + ", x:" + deviceMo.acceleration.x.toFixed(3) + ", z:" + deviceMo.acceleration.z.toFixed(3));
-                            // this._text1.setText("alpha:" + deviceMo.rotationRate.alpha.toFixed(3) + ", beta:" + deviceMo.rotationRate.beta.toFixed(3) + ", gamma:" + deviceMo.rotationRate.gamma.toFixed(3));
-                            // this._text2.setText("y:" + deviceMo.accelerationIncludingGravity.y.toFixed(3) + ", x:" + deviceMo.accelerationIncludingGravity.x.toFixed(3) + ", z:" + deviceMo.accelerationIncludingGravity.z.toFixed(3));
                             var newAngle = 0;
                             var currentMotion;
                             if (this.landscapeLayout == true) {
@@ -815,7 +812,7 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            var invertRotation = true;
+                            var invertRotation = false;
                             //if (invertRotation) { return }
                             if (invertRotation) {
                                 if (currentMotion < 0) {
@@ -826,19 +823,19 @@ var Dropship;
                                 }
                             }
                             var multiplier = 1;
-                            var minMultiplier = 0.5;
+                            var minMultiplier = 0.4;
                             var maxMultiplier = 1.25;
                             var maxTilt = 3.5;
                             if (currentMotion > 0) {
                                 currentMotion = Math.min(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, 0, maxTilt, minMultiplier, maxMultiplier);
-                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 224);
+                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 220);
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
                                 currentMotion = Math.max(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, minMultiplier);
-                                newAngle = map_range(currentMotion, maxTilt, 0, -224, 0);
+                                newAngle = map_range(currentMotion, maxTilt, 0, -220, 0);
                             }
                             newAngle = newAngle * multiplier;
                             this._text2.setText(newAngle.toFixed(1));
