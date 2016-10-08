@@ -824,17 +824,18 @@ var Dropship;
                                 }
                             }
                             var multiplier = 1;
+                            var minMultiplier = 0.5;
                             var maxMultiplier = 1.5;
                             var maxTilt = 3.5;
                             if (currentMotion > 0) {
                                 currentMotion = Math.min(currentMotion, maxTilt);
-                                multiplier = map_range(currentMotion, 0, maxTilt, 1, maxMultiplier);
+                                multiplier = map_range(currentMotion, 0, maxTilt, minMultiplier, maxMultiplier);
                                 newAngle = map_range(currentMotion, 0, maxTilt, 0, 140);
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
                                 currentMotion = Math.max(currentMotion, maxTilt);
-                                multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, 1);
+                                multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, minMultiplier);
                                 newAngle = map_range(currentMotion, maxTilt, 0, -140, 0);
                             }
                             newAngle = newAngle * multiplier;
