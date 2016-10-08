@@ -823,7 +823,7 @@ var Dropship;
                                 }
                             }
                             var multiplier = 1;
-                            var minMultiplier = 0.5;
+                            var minMultiplier = 0.75;
                             var maxMultiplier = 1.25;
                             var maxTilt = 3.5;
                             if (currentMotion > 0) {
