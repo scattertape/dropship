@@ -581,15 +581,18 @@ var Dropship;
             this._thingsGroup.add(this._doors);
     
             this.createDoor();*/
-            var style1 = { font: "15px Arial", fill: "#00cc00", align: "left" };
-            var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
-            this._text1 = this.game.add.text(300, 300, String(this.deviceMotionAvailable), style1);
-            this._text1.anchor.setTo(0.5, 0.5);
-            this._text2 = this.game.add.text(280, 280, 'accel+gravity', style2);
-            this._text2.anchor.setTo(0.5, 0.5);
             /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
              door2.anchor.setTo(0.5, 0.5);
              door1.name = 'd2';*/
+            var createText = false;
+            if (createText) {
+                var style1 = { font: "15px Arial", fill: "#00cc00", align: "left" };
+                var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
+                this._text1 = this.game.add.text(300, 300, String(this.deviceMotionAvailable), style1);
+                this._text1.anchor.setTo(0.5, 0.5);
+                this._text2 = this.game.add.text(280, 280, 'accel+gravity', style2);
+                this._text2.anchor.setTo(0.5, 0.5);
+            }
             this._antiGravities = this.game.add.group();
             var antiGravPositions;
             if (this.landscapeLayout == true) {
@@ -812,7 +815,6 @@ var Dropship;
                             else {
                                 currentMotion = deviceMo.accelerationIncludingGravity.x;
                             }
-                            this._text2.setText(currentMotion.toFixed(1));
                             var invertRotation = true;
                             //if (invertRotation) { return }
                             if (invertRotation) {
@@ -839,7 +841,8 @@ var Dropship;
                                 newAngle = map_range(currentMotion, maxTilt, 0, -180, 0);
                             }
                             newAngle = newAngle * multiplier;
-                            this._text1.setText(multiplier.toFixed(1));
+                            // this._text2.setText(currentMotion.toFixed(1));
+                            // this._text1.setText(multiplier.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 9) {
                                 if (newAngle > this.motionTracker[0]) {
