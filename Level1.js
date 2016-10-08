@@ -833,7 +833,7 @@ var Dropship;
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
-                                currentMotion = Math.min(currentMotion, maxTilt);
+                                currentMotion = Math.max(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, 1);
                                 newAngle = map_range(currentMotion, maxTilt, 0, -120, 0);
                             }
