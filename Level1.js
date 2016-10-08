@@ -830,23 +830,23 @@ var Dropship;
                             if (currentMotion > 0) {
                                 currentMotion = Math.min(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, 0, maxTilt, minMultiplier, maxMultiplier);
-                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 140);
+                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 180);
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
                                 currentMotion = Math.max(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, minMultiplier);
-                                newAngle = map_range(currentMotion, maxTilt, 0, -140, 0);
+                                newAngle = map_range(currentMotion, maxTilt, 0, -180, 0);
                             }
                             newAngle = newAngle * multiplier;
-                            this._text1.setText(newAngle.toFixed(1));
+                            this._text1.setText(multiplier.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
-                            if (Math.abs(movementDifference) > 8) {
+                            if (Math.abs(movementDifference) > 9) {
                                 if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 8;
+                                    newAngle = this.motionTracker[0] + 9;
                                 }
                                 else {
-                                    newAngle = this.motionTracker[0] - 8;
+                                    newAngle = this.motionTracker[0] - 9;
                                 }
                             }
                             var oldestValue = this.motionTracker.pop();
