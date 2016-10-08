@@ -829,13 +829,13 @@ var Dropship;
                             if (currentMotion > 0) {
                                 currentMotion = Math.min(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, 0, maxTilt, 1, maxMultiplier);
-                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 150);
+                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 120);
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
                                 currentMotion = Math.max(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, 1);
-                                newAngle = map_range(currentMotion, maxTilt, 0, -150, 0);
+                                newAngle = map_range(currentMotion, maxTilt, 0, -120, 0);
                             }
                             newAngle = newAngle * multiplier;
                             this._text1.setText(newAngle.toFixed(1));
@@ -850,10 +850,9 @@ var Dropship;
                             }
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
+                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
-
-                            newAngle = smoothedMedian;*/
+                            newAngle = smoothedMedian;
                             this._base.body.angle = newAngle;
                         }
                     }
