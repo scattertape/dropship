@@ -848,11 +848,13 @@ var Dropship;
                                     newAngle = this.motionTracker[0] - 8;
                                 }
                             }
-                            var oldestValue = this.motionTracker.pop();
+                            /*var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
+
                             var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
-                            newAngle = smoothedMedian;
+
+                            newAngle = smoothedMedian;*/
                             this._base.body.angle = newAngle;
                         }
                     }
