@@ -836,6 +836,7 @@ var Dropship;
                                 newAngle = map_range(currentMotion, maxTilt, 0, -120, 0);
                             }
                             newAngle = newAngle * multiplier;
+                            this._text1.setText(newAngle.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 8) {
                                 if (newAngle > this.motionTracker[0]) {
