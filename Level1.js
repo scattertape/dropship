@@ -824,12 +824,10 @@ var Dropship;
                                 }
                             }
                             if (currentMotion > 0) {
-                                //newAngle = map_range(currentMotion, 0, 5, 0, 180);
-                                newAngle = logslider(currentMotion, 0, 5, 0, 250);
+                                newAngle = map_range(currentMotion, 0, 6, 0, 230);
                             }
                             else {
-                                //newAngle = map_range(currentMotion, -5, 0, -180, 0);
-                                newAngle = 0 - logslider(Math.abs(currentMotion), 0, 5, 0, 250);
+                                newAngle = map_range(currentMotion, -6, 0, -230, 0);
                             }
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 8) {
