@@ -25,6 +25,7 @@ var Dropship;
             //private _shipMotionTween: Phaser.Tween;
             this.deviceMotionAvailable = false;
             this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            this.motionAcceleration = 0;
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -841,19 +842,26 @@ var Dropship;
                             this._text2.setText(newAngle.toFixed(1));
                             this._text1.setText(multiplier.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
-                            if (Math.abs(movementDifference) > 9) {
+                            if (Math.abs(movementDifference) > this.motionAcceleration) {
+                                if (this.motionAcceleration < 8) {
+                                    this.motionAcceleration = this.motionAcceleration + 0.1;
+                                }
                                 if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 8;
+                                    newAngle = this.motionTracker[0] + this.motionAcceleration;
                                 }
                                 else {
-                                    newAngle = this.motionTracker[0] - 8;
+                                    newAngle = this.motionTracker[0] - this.motionAcceleration;
+                                }
+                            }
+                            else {
+                                if (this.motionAcceleration > 0) {
+                                    this.motionAcceleration = this.motionAcceleration - 0.1;
                                 }
                             }
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
                             /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
-
                             newAngle = smoothedMedian;*/
                             newAngle = unGlitch(newAngle, this.motionTracker, 100);
                             this._base.body.angle = newAngle;
