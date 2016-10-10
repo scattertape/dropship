@@ -851,9 +851,11 @@ var Dropship;
                             }
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
-                            var smoothedArray = smoothOut(this.motionTracker, 0.05);
+                            /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
                             var smoothedMedian = median(smoothedArray);
-                            newAngle = smoothedMedian;
+
+                            newAngle = smoothedMedian;*/
+                            newAngle = unGlitch(newAngle, 100);
                             this._base.body.angle = newAngle;
                         }
                     }
@@ -1785,6 +1787,17 @@ var Dropship;
         console.clear();
         console.assert(x.length === y.length);
         x.forEach(function (el, i) { return console.log(el + "\t\t" + y[i]); });
+    }
+    function unGlitch(thisValue, someThreshold) {
+        var averageOfLast10Values = 0;
+        for (var i = 0; i < this.motionTracker.length; i++) {
+            averageOfLast10Values = averageOfLast10Values + this.motionTracker[i];
+        }
+        averageOfLast10Values = averageOfLast10Values / this.motionTracker.length;
+        /*if (Math.abs(thisValue - averageOfLast10Values) > someThreshold) {
+            thisValue = averageOfLast10Values;
+        }*/
+        return thisValue;
     }
     function median(values) {
         values.sort(function (a, b) { return a - b; });
