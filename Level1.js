@@ -829,13 +829,13 @@ var Dropship;
                             if (currentMotion > 0) {
                                 currentMotion = Math.min(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, 0, maxTilt, minMultiplier, maxMultiplier);
-                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 208);
+                                newAngle = map_range(currentMotion, 0, maxTilt, 0, 144);
                             }
                             else {
                                 maxTilt = 0 - maxTilt;
                                 currentMotion = Math.max(currentMotion, maxTilt);
                                 multiplier = map_range(currentMotion, maxTilt, 0, maxMultiplier, minMultiplier);
-                                newAngle = map_range(currentMotion, maxTilt, 0, -208, 0);
+                                newAngle = map_range(currentMotion, maxTilt, 0, -144, 0);
                             }
                             newAngle = newAngle * multiplier;
                             this._text2.setText(newAngle.toFixed(1));
