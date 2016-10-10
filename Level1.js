@@ -855,7 +855,7 @@ var Dropship;
                             var smoothedMedian = median(smoothedArray);
 
                             newAngle = smoothedMedian;*/
-                            newAngle = unGlitch(newAngle, 100);
+                            newAngle = unGlitch(newAngle, this.motionTracker, 100);
                             this._base.body.angle = newAngle;
                         }
                     }
@@ -1788,16 +1788,17 @@ var Dropship;
         console.assert(x.length === y.length);
         x.forEach(function (el, i) { return console.log(el + "\t\t" + y[i]); });
     }
-    function unGlitch(thisValue, someThreshold) {
+    function unGlitch(thisValue, list, someThreshold) {
         var averageOfLast10Values = 0;
-        for (var i = 0; i < this.motionTracker.length; i++) {
-            averageOfLast10Values = averageOfLast10Values + this.motionTracker[i];
+        for (var i = 0; i < list.length; i++) {
+            averageOfLast10Values = averageOfLast10Values + list[i];
         }
-        averageOfLast10Values = averageOfLast10Values / this.motionTracker.length;
+        averageOfLast10Values = averageOfLast10Values / list.length;
         /*if (Math.abs(thisValue - averageOfLast10Values) > someThreshold) {
             thisValue = averageOfLast10Values;
         }*/
-        return thisValue;
+        return averageOfLast10Values;
+        //return thisValue;
     }
     function median(values) {
         values.sort(function (a, b) { return a - b; });
