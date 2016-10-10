@@ -24,7 +24,7 @@ var Dropship;
             this._fireRate = 400;
             //private _shipMotionTween: Phaser.Tween;
             this.deviceMotionAvailable = false;
-            this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -843,10 +843,10 @@ var Dropship;
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > 9) {
                                 if (newAngle > this.motionTracker[0]) {
-                                    newAngle = this.motionTracker[0] + 9;
+                                    newAngle = this.motionTracker[0] + 8;
                                 }
                                 else {
-                                    newAngle = this.motionTracker[0] - 9;
+                                    newAngle = this.motionTracker[0] - 8;
                                 }
                             }
                             var oldestValue = this.motionTracker.pop();
