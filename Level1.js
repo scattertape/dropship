@@ -25,7 +25,7 @@ var Dropship;
             //private _shipMotionTween: Phaser.Tween;
             this.deviceMotionAvailable = false;
             this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            this.motionAcceleration = 0;
+            this.motionAcceleration = 4;
         }
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
@@ -840,7 +840,7 @@ var Dropship;
                             }
                             newAngle = newAngle * multiplier;
                             this._text2.setText(newAngle.toFixed(1));
-                            this._text1.setText(multiplier.toFixed(1));
+                            //this._text1.setText(multiplier.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > this.motionAcceleration) {
                                 if (this.motionAcceleration < 8) {
@@ -854,10 +854,11 @@ var Dropship;
                                 }
                             }
                             else {
-                                if (this.motionAcceleration > 0) {
+                                if (this.motionAcceleration > 4) {
                                     this.motionAcceleration = this.motionAcceleration - 0.1;
                                 }
                             }
+                            this._text1.setText(this.motionAcceleration.toFixed(1));
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
                             /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
