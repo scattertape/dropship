@@ -585,7 +585,7 @@ var Dropship;
             /* var door2: Phaser.Sprite = this._doors.create(this.world.centerX, this.game.camera.y - 30, bmd2);
              door2.anchor.setTo(0.5, 0.5);
              door1.name = 'd2';*/
-            var createText = true;
+            var createText = false;
             if (createText) {
                 var style1 = { font: "15px Arial", fill: "#00cc00", align: "left" };
                 var style2 = { font: "15px Arial", fill: "#00ccff", align: "left" };
@@ -839,7 +839,7 @@ var Dropship;
                                 newAngle = map_range(currentMotion, maxTilt, 0, -144, 0);
                             }
                             newAngle = newAngle * multiplier;
-                            this._text2.setText(newAngle.toFixed(1));
+                            //this._text2.setText(newAngle.toFixed(1));
                             //this._text1.setText(multiplier.toFixed(1));
                             var movementDifference = difference(newAngle, this.motionTracker[0]);
                             if (Math.abs(movementDifference) > this.motionAcceleration) {
@@ -858,7 +858,7 @@ var Dropship;
                                     this.motionAcceleration = this.motionAcceleration - 0.1;
                                 }
                             }
-                            this._text1.setText(this.motionAcceleration.toFixed(1));
+                            //this._text1.setText(this.motionAcceleration.toFixed(1));
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
                             /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
