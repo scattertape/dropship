@@ -316,7 +316,7 @@ var Dropship;
                 aMissile.animations.play("anim", 15, true, false);
                 // body.debug = true;
             }, this);
-            this._backgroundImage = this.add.image(0, 0, "BG");
+            this._backgroundImage = this.add.image(0, this.game.camera.height - 25, "BG");
             this._backgroundImage.anchor.setTo(0, 0);
             this._backgroundImage.cacheAsBitmap = true;
             this._backgroundImage.width = this.game.width;
@@ -452,7 +452,7 @@ var Dropship;
             //this._thingsGroup.add(this._sentries);
             //this._sentries.physicsBodyType = Phaser.Physics.P2JS;
             //this._sentries.enableBody = true;
-            var sentryPositions = [[735, -1160, 270, 0], [-775, 200, 90, 0], [-740, 570, 135, 0], [700, 1215, 0, 0], [-215, -588, 0, 0],
+            var sentryPositions = [[735, -1160, 270, 1], [-775, 200, 90, 1], [-740, 570, 135, 0], [700, 1215, 0, 0], [-215, -588, 0, 0],
                 [-205, -335, 180, 1], [-775, -95, 90, 1]
             ];
             for (var i = 0; i < sentryPositions.length; i++) {
@@ -858,7 +858,6 @@ var Dropship;
                                     this.motionAcceleration = this.motionAcceleration - 0.1;
                                 }
                             }
-                            //this._text1.setText(this.motionAcceleration.toFixed(1));
                             var oldestValue = this.motionTracker.pop();
                             this.motionTracker.unshift(newAngle);
                             /*var smoothedArray = smoothOut(this.motionTracker, 0.05);
@@ -900,22 +899,6 @@ var Dropship;
         // -------------------------------------------------------------------------
         Level1.prototype.render = function () {
             // uncomment to visual debug, also uncommnet "body.debug = true;" when creating missiles and drones
-            this._drones.forEach(function (aDron) {
-                this.game.debug.body(aDron);
-            }, this);
-            this._missiles.forEach(function (aMissile) {
-                this.game.debug.body(aMissile);
-            }, this);
-            this.game.debug.body(this._base);
-            /*this.game.debug.body(this._tiles.getByName('tile1'));
-            this.game.debug.body(this._tiles.getByName('tile2'));
-            this.game.debug.body(this._tiles.getByName('tile3'));
-            this.game.debug.body(this._tiles.getByName('tile4'));
-            this.game.debug.body(this._tiles.getByName('tile5'));
-            this.game.debug.body(this._tiles.getByName('tile6'));
-            this.game.debug.body(this._tiles.getByName('tile7'));
-            this.game.debug.body(this._tiles.getByName('tile8'));
-            this.game.debug.body(this._tiles.getByName('tile9'));*/
             this.game.debug.text(this.game.time.fps.toString() || '--', 2, 14, "#00ff00");
             //  this.game.debug.text(this._joystick.mydebug.toString(), 0, 80);
             // this.game.debug.cameraInfo(this.game.camera, 32, 32);     
@@ -1431,6 +1414,7 @@ var Dropship;
                 }
                 if (this.name == 'tripper') {
                     this.stateInstance.puff(this.position);
+                    this.kill();
                 }
             }
         };
@@ -1500,15 +1484,16 @@ var Dropship;
             this.autoCull = true;
             this.awake = false;
             this.name = 'prox';
-            this.TURN_RATE = 4;
-            this.SPEED = 50;
+            this.TURN_RATE = this.game.rnd.between(3, 5);
+            this.MAX_SPEED = this.game.rnd.between(60, 90);
+            this.INIT_SPEED = this.game.rnd.between(1, 10);
         };
         Prox.prototype.update = function () {
             if (this.inCamera) {
                 if (this.awake) {
-                    if (this.TURN_RATE > 1) {
+                    /*if (this.TURN_RATE > 1) {
                         this.TURN_RATE = this.TURN_RATE - 0.5;
-                    }
+                    }*/
                     var targetAngle = Math.atan2(this.stateInstance._base.body.y - this.body.y, this.stateInstance._base.body.x - this.body.x);
                     // Gradually (this.TURN_RATE) aim the missile towards the target angle
                     if (this.rotation !== targetAngle) {
@@ -1536,8 +1521,11 @@ var Dropship;
                         }
                     }
                     // Calculate velocity vector based on this.rotation and this.SPEED
-                    this.body.velocity.x = Math.cos(this.body.rotation) * this.SPEED;
-                    this.body.velocity.y = Math.sin(this.body.rotation) * this.SPEED;
+                    if (this.INIT_SPEED < this.MAX_SPEED) {
+                        this.INIT_SPEED = this.INIT_SPEED + 1;
+                    }
+                    this.body.velocity.x = Math.cos(this.body.rotation) * this.INIT_SPEED;
+                    this.body.velocity.y = Math.sin(this.body.rotation) * this.INIT_SPEED;
                 }
             }
         };
@@ -1550,11 +1538,12 @@ var Dropship;
         Prox.prototype.launch = function (sentry) {
             this.reset(sentry.x, sentry.y);
             this.body.angle = sentry.angle - 90;
-            var range = 50;
-            var duration = 1100;
-            var newPoint = this.findNewPoint(sentry.x, sentry.y, sentry.body.angle - 90, range);
+            var offsetAngle = this.game.rnd.between(77, 103);
+            var range = this.game.rnd.between(45, 55);
+            var duration = this.game.rnd.between(900, 1100);
+            var newPoint = this.findNewPoint(sentry.x, sentry.y, sentry.body.angle - offsetAngle, range);
             var launchTween = this.game.add.tween(this.body);
-            launchTween.to({ x: newPoint.x, y: newPoint.y }, duration);
+            launchTween.to({ x: newPoint.x, y: newPoint.y }, duration, Phaser.Easing.Back.Out, true);
             launchTween.onComplete.add(doSomething, this);
             function doSomething() {
                 this.awake = true;
@@ -1600,48 +1589,64 @@ var Dropship;
             this.destroyed = false;
             this.name = 'sentry';
             this.sentryType = _sentryType;
+            this.inRange = false;
+            this.cannonExtended = false;
         }
         Sentry.prototype.update = function () {
             if (this.inCamera) {
                 if (this.sleeping) {
                     if (this.destroyed == false) {
-                        var distanceFromShip = Math.sqrt((this.x - this.base.x) * (this.x - this.base.x) + (this.y - this.base.y) * (this.y - this.base.y));
-                        if (distanceFromShip < 333) {
-                            this.sleeping = false;
-                            this.fireTimer = this.game.time.create(false);
-                            if (this.sentryType == 0) {
-                                this.fireTimer.loop(2000, this.fire, this);
-                                this.fireTimer.start();
-                                this.baseTop.play("sheildsDown", 30, false);
-                            }
-                            else {
-                                this.releaseProx();
-                                this.fireTimer.repeat(2000, 4, this.releaseProx, this);
-                                this.fireTimer.start();
+                        if (this.stateInstance._transitionTween.isRunning == false) {
+                            var distanceFromShip = Math.sqrt((this.x - this.base.x) * (this.x - this.base.x) + (this.y - this.base.y) * (this.y - this.base.y));
+                            if (distanceFromShip < 333) {
+                                this.sleeping = false;
+                                this.fireTimer = this.game.time.create(false);
+                                if (this.sentryType == 0) {
+                                    this.fireTimer.loop(2000, this.fire, this);
+                                    this.fireTimer.start();
+                                    this.baseTop.play("sheildsDown", 30, false);
+                                }
+                                else {
+                                    this.releaseProx();
+                                    this.fireTimer.repeat(2000, 4, this.releaseProx, this);
+                                    this.fireTimer.start();
+                                }
                             }
                         }
                     }
                 }
                 else {
                     if (this.sentryType == 0) {
-                        var angleRadians = (Math.atan2(this.base.y - this.cannon.y, this.base.x - this.cannon.x));
-                        var angleDegrees = angleRadians * (180 / Math.PI);
-                        var normalisedAngleDegrees = this.normalise(angleDegrees);
-                        // 0 or 360 = 3 o clock
-                        // 90 = 6 o clock
-                        // 180 = 9 o clock
-                        // 270 = 12 o clock
-                        var calculatedAngle = this.normalise(normalisedAngleDegrees - this.body.angle);
-                        //console.log(calculatedAngle);
-                        var inRange = false;
-                        if (calculatedAngle > 190 && calculatedAngle < 350) {
-                            inRange = true;
-                        }
-                        if (inRange) {
-                            this.cannon.rotation = angleRadians;
-                        }
+                        this.updateCannonAngle();
                     }
                 }
+            }
+        };
+        Sentry.prototype.updateCannonAngle = function () {
+            var angleRadians = (Math.atan2(this.base.y - this.cannon.y, this.base.x - this.cannon.x));
+            var angleDegrees = angleRadians * (180 / Math.PI);
+            var normalisedAngleDegrees = this.normalise(angleDegrees);
+            // 0 or 360 = 3 o clock
+            // 90 = 6 o clock
+            // 180 = 9 o clock
+            // 270 = 12 o clock
+            var calculatedAngle = this.normalise(normalisedAngleDegrees - this.body.angle);
+            //console.log('aRad: ' + angleRadians.toFixed(2) + ' aDeg: ' + angleDegrees.toFixed(1) + ' nDeg: ' + normalisedAngleDegrees.toFixed(1) + ' cDeg: ' + calculatedAngle.toFixed(1));
+            if (calculatedAngle > 190 && calculatedAngle < 350) {
+                this.inRange = true;
+            }
+            else {
+                this.inRange = false;
+            }
+            if (this.inRange) {
+                this.extendCannon();
+                this.cannon.rotation = angleRadians;
+            }
+        };
+        Sentry.prototype.extendCannon = function () {
+            if (this.cannonExtended == false) {
+                this.cannon.play("extend", 10, false);
+                this.cannonExtended = true;
             }
         };
         Sentry.prototype.normalise = function (angle) {
@@ -1679,7 +1684,8 @@ var Dropship;
             this.stateInstance = si;
             if (this.sentryType == 0) {
                 this.cannon = this.game.add.sprite(this.x, this.y, "Atlas", "cannon0000");
-                this.cannon.anchor.setTo(0.25, 0.5);
+                this.cannon.animations.add("extend", Phaser.Animation.generateFrameNames("cannon", 0, 15, "", 4));
+                this.cannon.anchor.setTo(0.333, 0.5);
                 this.baseTop = this.game.add.sprite(this.x, this.y, "Atlas", "Sentry0000");
             }
             else {
@@ -1721,7 +1727,7 @@ var Dropship;
             prox.launch(this);
         };
         Sentry.prototype.fire = function () {
-            if (this.inCamera) {
+            if (this.inCamera && this.inRange && this.cannon.animations.getAnimation('extend').isFinished) {
                 this.baseTop.play("lightsOn", 30, true);
                 // get firtst missile from pool
                 var bullet = this.sentryBullets.getFirstExists(false);
