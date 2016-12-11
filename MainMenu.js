@@ -26,12 +26,17 @@ var Dropship;
             this.background.anchor.setTo(0.5, 0.5);
             this.logo = this.add.sprite(this.game.width * 0.5, this.game.height - 300, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
+            this.instruction = this.add.sprite(this.game.width * 0.5, this.game.height - 200, 'instruction01');
+            this.instruction.anchor.setTo(0.5, 0.5);
+            this.instruction.alpha = 0.5;
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
-            this.add.tween(this.logo).to({ y: 220 }, 200, Phaser.Easing.Elastic.Out, true, 200);
+            this.add.tween(this.logo).to({ y: 220, alpha: 1 }, 250, Phaser.Easing.Elastic.Out, true, 200);
+            this.add.tween(this.instruction).to({ y: 280, alpha: 1 }, 300, Phaser.Easing.Elastic.Out, true, 200);
             this.input.onDown.addOnce(this.fadeOut, this);
         };
         MainMenu.prototype.fadeOut = function () {
             this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
+            this.add.tween(this.instruction).to({ y: 850 }, 150, Phaser.Easing.Linear.None, true);
             var tween = this.add.tween(this.logo).to({ y: 800 }, 150, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(this.startGame, this);
         };

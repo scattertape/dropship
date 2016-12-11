@@ -27,9 +27,17 @@ var Dropship;
             this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             this.motionAcceleration = 4;
         }
+        Level1.prototype.soundsDecoded = function () {
+            console.log('snddecoded');
+        };
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
             //321Thrust
+            this.laserSnd = this.game.add.audio('laser');
+            this.bombSnd = this.game.add.audio('bomb');
+            this.explodeSnd = this.game.add.audio('explode');
+            this.proxSnd = this.game.add.audio('prox');
+            this.game.sound.setDecodedCallback([this.laserSnd, this.bombSnd, this.explodeSnd, this.proxSnd], this.soundsDecoded, this);
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
                 this.deviceMotionAvailable = true;
             }
@@ -182,6 +190,9 @@ var Dropship;
             this._allGroup.add(this._thingsGroup);
             this._controlsGroup = this.game.add.group();
             this._allGroup.add(this._controlsGroup);
+            // Ensure bombs are added underneath ship:
+            this._missiles = this.add.group();
+            this._allGroup.add(this._missiles);
             this._base = new Ship(this.game, this.world.centerX, this.world.centerY);
             this.game.physics.p2.enable(this._base);
             this._base.setup(this);
@@ -241,7 +252,7 @@ var Dropship;
                 body.kinematic = true; // does not respond to forces
                 body.setCollisionGroup(this._objectsCollisionGroup);
                 body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
-                aDron.setUp(dronPositions[i][0], dronPositions[i][1]);
+                aDron.setUp(dronPositions[i][0], dronPositions[i][1], this);
                 this._drones.add(aDron);
             }
             // proximity mines group
@@ -293,7 +304,6 @@ var Dropship;
                 // body.debug = true;
             }, this);
             // missiles group
-            this._missiles = this.add.group();
             this._missiles.physicsBodyType = Phaser.Physics.P2JS;
             this._missiles.enableBody = true;
             // create 10 missiles
@@ -621,12 +631,12 @@ var Dropship;
                 if (antiGravPositions[i][2] == 0) {
                     //upward
                     antiGravBody.offset.y = 140;
-                    antiGrav.setup(true);
+                    antiGrav.setup(true, this);
                 }
                 else {
                     antiGravBody.offset.y = -140;
                     //downward
-                    antiGrav.setup(false);
+                    antiGrav.setup(false, this);
                 }
                 antiGravBody.data.shapes[0].sensor = true;
                 antiGravBody.kinematic = false;
@@ -924,6 +934,9 @@ var Dropship;
         Level1.prototype.dosomething = function () {
             console.log('ds');
         };
+        Level1.prototype.somethingDied = function () {
+            this.explodeSnd.play();
+        };
         Level1.prototype.puff = function (pos) {
             for (var i = 0; i < 4; i++) {
                 var bullet = this._sentryBullets.getFirstExists(false);
@@ -1016,12 +1029,13 @@ var Dropship;
                 missile.lifespan = 5000;
                 var mBody = missile.body;
                 mBody.damping = 0;
-                missile.reset(this._base.body.x, this._base.body.y);
+                missile.reset(this._base.body.x, this._base.body.y + 15);
                 missile.animations.play("anim", 15, true, false);
                 mBody.angle = 90;
                 //mBody.mass = 50;
                 mBody.velocity.x = this._base.body.velocity.x * 0.1;
                 mBody.velocity.y = this._base.body.velocity.y + 100;
+                this.bombSnd.play();
             }
         };
         Level1.prototype.fireBtnDown = function () {
@@ -1048,6 +1062,7 @@ var Dropship;
                 laser.lifespan = 1500;
                 laser.body.rotation = this._base.body.rotation;
                 laser.body.moveForward(600);
+                this.laserSnd.play();
             }
         };
         Level1.prototype.fireBtnUp = function () {
@@ -1274,7 +1289,8 @@ var Dropship;
             this.autoCull = true;
             this.anchor.setTo(0.5, 0.5);
         }
-        AntiGrav.prototype.setup = function (upward) {
+        AntiGrav.prototype.setup = function (upward, si) {
+            this.stateInstance = si;
             var yOffset = -80;
             if (upward) {
                 yOffset = 210;
@@ -1312,6 +1328,7 @@ var Dropship;
         };
         AntiGravGenerator.prototype.successfulHit = function (weapon) {
             if (this.inCamera) {
+                this.antiGrav.stateInstance.somethingDied();
                 //  this.antiGrav.destroy(true);
                 this.tractorBeam.destroy();
                 this.destroy(true);
@@ -1386,6 +1403,7 @@ var Dropship;
                 this.damageTaken = this.damageTaken + 1;
             }
             if (this.damageTaken > 0) {
+                this.stateInstance.somethingDied();
                 if (this.name == 'sheildBonus') {
                     this.stateInstance._base.newSheild();
                 }
@@ -1432,11 +1450,12 @@ var Dropship;
             this.anchor.setTo(0.5, 0.5);
         }
         // -------------------------------------------------------------------------
-        Dron.prototype.setUp = function (xStart, yStart) {
+        Dron.prototype.setUp = function (xStart, yStart, si) {
             this.anchor.setTo(0.5, 0.5);
             this.autoCull = true;
             // random position
             this.reset(xStart, yStart);
+            this.stateInstance = si;
             // random movement range
             var range = this.game.rnd.between(60, 120);
             // random duration of complete move
@@ -1465,6 +1484,7 @@ var Dropship;
         };
         // -------------------------------------------------------------------------
         Dron.prototype.explode = function () {
+            this.stateInstance.somethingDied();
             // remove movement tweens
             this.game.tweens.removeFrom(this.body);
             // explode dron and kill it on complete
@@ -1555,12 +1575,14 @@ var Dropship;
             this.animations.add("anim", ["Prox0000", "Prox0001", "Prox0002", "Prox0003", "Prox0004", "Prox0005", "Prox0006", "Prox0007",
                 "Prox0006", "Prox0005", "Prox0004", "Prox0003", "Prox0002", "Prox0001"
             ], 30, true);
+            this.stateInstance.proxSnd.play();
             this.animations.add("kapow", Phaser.Animation.generateFrameNames("MineExp", 25, 40, "", 4));
             // play first animation as default
             this.play("anim", 30, true);
         };
         // -------------------------------------------------------------------------
         Prox.prototype.explode = function () {
+            this.stateInstance.somethingDied();
             // remove movement tweens
             this.game.tweens.removeFrom(this.body);
             // explode dron and kill it on complete
@@ -1718,6 +1740,7 @@ var Dropship;
                 this.damageTaken = this.damageTaken + 1;
             }
             if (this.damageTaken > 3) {
+                this.stateInstance.somethingDied();
                 this.blowUp();
             }
         };
@@ -1940,6 +1963,7 @@ var Dropship;
             }
         };
         Ship.prototype.crashed = function () {
+            this.stateInstance.somethingDied();
             this.justCrashed = true;
             this.play("explode", 30, false);
             this.jets.animations.play('coasting', 15, false, false);

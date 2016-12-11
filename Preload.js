@@ -18,6 +18,7 @@ var Dropship;
             //  Load our actual games assets
             this.load.image('titlepage', 'assets/titlepage.jpg');
             this.load.image('logo', 'assets/logo.png');
+            this.load.image('instruction01', 'assets/instruction01.png');
             this.load.image('complete', 'assets/complete.png');
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
@@ -33,6 +34,10 @@ var Dropship;
             this.game.load.image('level1-7', 'assets/level1_07.jpg');
             this.game.load.image('level1-8', 'assets/level1_08.jpg');
             this.game.load.image('level1-9', 'assets/level1_09.jpg');
+            this.game.load.audio('laser', 'assets/laser.mp3');
+            this.game.load.audio('prox', 'assets/prox.mp3');
+            this.game.load.audio('bomb', 'assets/bomb.mp3');
+            this.game.load.audio('explode', 'assets/explode.mp3');
         };
         Preloader.prototype.create = function () {
             var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
