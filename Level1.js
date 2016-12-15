@@ -22,6 +22,7 @@ var Dropship;
             this._hangar = 1;
             this._shipDirection = 0;
             this._fireRate = 400;
+            this.transitionCount = 0;
             //private _shipMotionTween: Phaser.Tween;
             this.deviceMotionAvailable = false;
             this.motionTracker = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -33,6 +34,7 @@ var Dropship;
         // -------------------------------------------------------------------------
         Level1.prototype.create = function () {
             //321Thrust
+            this.game.world.visible = false;
             this.laserSnd = this.game.add.audio('laser');
             this.bombSnd = this.game.add.audio('bomb');
             this.explodeSnd = this.game.add.audio('explode');
@@ -41,7 +43,7 @@ var Dropship;
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
                 this.deviceMotionAvailable = true;
             }
-            this.game.stage.backgroundColor = "#4488AA";
+            this.game.stage.backgroundColor = "#111111";
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
             this.game.world.setBounds((0 - this.game.width) - (this.game.width / 2), (0 - this.game.height) - (this.game.height / 2), this.game.width * 3, this.game.height * 3);
@@ -77,7 +79,7 @@ var Dropship;
             console.log('world center x: ' + this.world.centerX + ', world center y: ' + this.world.centerY);
             var cameraStartX = this.world.centerX - (this.game.width * 0.5);
             var cameraStartY = this.world.centerY - (this.game.height * 0.5);
-            this._transitionTween = this.game.add.tween(this.game.camera).to({ x: cameraStartX, y: cameraStartY }, 10, Phaser.Easing.Power1, true);
+            this._transitionTween = this.game.add.tween(this.game.camera).to({ x: cameraStartX, y: cameraStartY }, 1, Phaser.Easing.Power1, true);
             //this.game.camera.view = new Phaser.Rectangle(cameraStartX, cameraStartY, constructorWidth, constructorHeight);
             this._allGroup = this.game.add.group();
             this._currentSubLevel = 5;
@@ -214,7 +216,7 @@ var Dropship;
             this.game.input.keyboard.addKey(Phaser.Keyboard.COMMA);
             this.game.input.keyboard.addKey(Phaser.Keyboard.PERIOD);
             this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-            this._b = this.game.input.keyboard.addKey(Phaser.Keyboard.B);
+            this._down = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
             this._space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             this._up = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
             // following keys will not be propagated to browser
@@ -710,9 +712,12 @@ var Dropship;
             this._allGroup.sendToBack(this._tiles);
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
-            this.game.time.events.add(Phaser.Timer.SECOND * 1, suggestFPS, this);
+            this.game.time.events.add(Phaser.Timer.SECOND * 1.5, suggestFPS, this);
             //this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: 0 }, 1, Phaser.Easing.Linear.None, true);
             // this.game.physics.p2.setPostBroadphaseCallback(this.checkOverlap2, this);
+            this.game.physics.p2.paused = true;
+            this.game.time.events.add(Phaser.Timer.SECOND * 0.05, begin1, this);
+            this.game.time.events.add(Phaser.Timer.SECOND * 0.1, begin2, this);
         };
         // -------------------------------------------------------------------------
         Level1.prototype.update = function () {
@@ -759,7 +764,7 @@ var Dropship;
             }
             else if (keyboard.isDown(Phaser.Keyboard.PERIOD)) {
             }
-            if (this._b.justDown) {
+            if (this._down.justDown) {
                 // get firtst missile from pool
                 this.missileBtnDown();
             }
@@ -1775,8 +1780,17 @@ var Dropship;
         return Sentry;
     }(Phaser.Sprite));
     // -------------------------------------------------------------------------
+    function begin1() {
+        console.log('begin1');
+        this.game.world.visible = true;
+    }
+    function begin2() {
+        console.log('begin2');
+        this.game.physics.p2.paused = false;
+    }
     function suggestFPS() {
         this.game.time.suggestedFps = 60;
+        console.log('suggestFPS');
     }
     // -------------------------------------------------------------------------
     function getManualBounds(object) {
