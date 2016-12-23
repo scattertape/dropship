@@ -18,9 +18,14 @@ var Dropship;
         __extends(MainMenu, _super);
         function MainMenu() {
             _super.apply(this, arguments);
+            this.level = 1;
             this.deviceMoArray = 0;
+            this.landscapeLayout = false;
         }
         MainMenu.prototype.create = function () {
+            if (this.game.width > this.game.height) {
+                this.landscapeLayout = true;
+            }
             this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
             this.background.alpha = 0;
             this.background.anchor.setTo(0.5, 0.5);
@@ -32,6 +37,20 @@ var Dropship;
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.add.tween(this.logo).to({ y: 220, alpha: 1 }, 250, Phaser.Easing.Elastic.Out, true, 200);
             this.add.tween(this.instruction).to({ y: 280, alpha: 1 }, 300, Phaser.Easing.Elastic.Out, true, 200);
+            var style1 = { font: "15px Arial", fill: "#00cc00", align: 'center' };
+            this.text1 = this.game.add.text(this.game.width * 0.5, this.game.height * 0.75, String(''), style1);
+            var orientationStr1 = 'landscape';
+            if (this.landscapeLayout == false) {
+                orientationStr1 = 'portrait';
+            }
+            var orientationStr2 = 'Starting game in ' + orientationStr1 + ' mode.';
+            if (moArray.length > 0) {
+                this.text1.setText('Accelerometer controls activated.' + '\n' + orientationStr2);
+            }
+            else {
+                this.text1.setText('Keyboard controls activated.' + '\n' + orientationStr2);
+            }
+            this.text1.anchor.setTo(0.5, 0.5);
             this.input.onDown.addOnce(this.fadeOut, this);
         };
         MainMenu.prototype.fadeOut = function () {
