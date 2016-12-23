@@ -38,6 +38,10 @@ var Dropship;
             this.game.load.audio('prox', 'assets/prox.mp3');
             this.game.load.audio('bomb', 'assets/bomb.mp3');
             this.game.load.audio('explode', 'assets/explode.mp3');
+            this.game.load.audio('laser2', 'assets/laser2.mp3');
+            this.game.load.audio('thrust', 'assets/thrust.mp3');
+            this.game.load.audio('impact', 'assets/impact.mp3');
+            this.game.load.audio('impact2', 'assets/impact2.mp3');
         };
         Preloader.prototype.create = function () {
             var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);

@@ -9,7 +9,7 @@ var Dropship;
         __extends(Level1, _super);
         function Level1() {
             _super.apply(this, arguments);
-            this.landscapeLayout = false;
+            //private landscapeLayout = false;
             this.CANNON_SPEED = 2;
             this.MISSILE_SPEED = 20;
             this.SHIP_ROTATE_SPEED = 4;
@@ -39,7 +39,11 @@ var Dropship;
             this.bombSnd = this.game.add.audio('bomb');
             this.explodeSnd = this.game.add.audio('explode');
             this.proxSnd = this.game.add.audio('prox');
-            this.game.sound.setDecodedCallback([this.laserSnd, this.bombSnd, this.explodeSnd, this.proxSnd], this.soundsDecoded, this);
+            this.thrustSnd = this.game.add.audio('thrust');
+            this.laser2Snd = this.game.add.audio('laser2');
+            this.impactSnd = this.game.add.audio('impact');
+            this.impact2Snd = this.game.add.audio('impact2');
+            this.game.sound.setDecodedCallback([this.laserSnd, this.bombSnd, this.explodeSnd, this.proxSnd, this.thrustSnd, this.laser2Snd, this.impactSnd, this.impact2Snd], this.soundsDecoded, this);
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
                 this.deviceMotionAvailable = true;
             }
@@ -47,9 +51,6 @@ var Dropship;
             this.game.time.advancedTiming = true;
             this.game.time.desiredFps = 60;
             this.game.world.setBounds((0 - this.game.width) - (this.game.width / 2), (0 - this.game.height) - (this.game.height / 2), this.game.width * 3, this.game.height * 3);
-            if (this.game.width > this.game.height) {
-                this.landscapeLayout = true;
-            }
             // this.game.world.setBounds(0, 0, 500, 500);
             //  this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             // Set a minimum and maximum size for the game
@@ -178,6 +179,7 @@ var Dropship;
                     tileBody.data.sleep();
                 }
                 else {
+                    //tileBody.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
                     tileBody.data.wakeUp();
                 }
             }
@@ -242,55 +244,50 @@ var Dropship;
             this._drones.enableBody = true;
             // create drones
             this._drones.classType = Dron;
-            var dronPositions = [
-                [-80, -220], [-150, -175],
-                [20, 920], [-120, 820],
+            var dronList = [
+                { "x": -80, "y": -220, "rotation": 0, "type": 1, "level": 1 },
+                { "x": -150, "y": -175, "rotation": 0, "type": 1, "level": 1 },
+                { "x": 20, "y": 920, "rotation": 0, "type": 1, "level": 1 },
+                { "x": -120, "y": 820, "rotation": 0, "type": 1, "level": 1 },
             ];
-            for (var i = 0; i < dronPositions.length; i++) {
-                var aDron = new Dron(this.game, dronPositions[i][0], dronPositions[i][1]);
-                this.game.physics.p2.enable(aDron);
-                var body = aDron.body;
-                body.setCircle(20);
-                body.kinematic = true; // does not respond to forces
-                body.setCollisionGroup(this._objectsCollisionGroup);
-                body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
-                aDron.setUp(dronPositions[i][0], dronPositions[i][1], this);
-                this._drones.add(aDron);
+            for (var i = 0; i < dronList.length; i++) {
+                if (dronList[i].level == this.game.state.states['MainMenu'].level) {
+                    var aDron = new Dron(this.game, dronList[i].x, dronList[i].y);
+                    this.game.physics.p2.enable(aDron);
+                    var body = aDron.body;
+                    body.x = dronList[i].x;
+                    body.y = dronList[i].y;
+                    body.setCircle(20);
+                    body.kinematic = true; // does not respond to forces
+                    body.setCollisionGroup(this._objectsCollisionGroup);
+                    body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
+                    this._drones.add(aDron);
+                }
             }
             // proximity mines group
             this._proxMines = this.add.group();
             this._proxMines.physicsBodyType = Phaser.Physics.P2JS;
             this._proxMines.enableBody = true;
-            // create proximity mines
             this._proxMines.classType = Prox;
-            this._proxMines.createMultiple(20, "Atlas", "Prox0000");
-            this._proxMines.forEach(function (aDron) {
-                aDron.setUp(this);
-                var body = aDron.body;
-                body.setCircle(17);
-                body.kinematic = true; // does not respond to forces
-                body.setCollisionGroup(this._objectsCollisionGroup);
-                body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
-                //body.debug = true;
-            }, this);
             // Laser group
             this._lasers = this.add.group();
             this._lasers.physicsBodyType = Phaser.Physics.P2JS;
             this._lasers.enableBody = true;
-            // create 30 lasers
-            this._lasers.createMultiple(15, "Atlas", "Bullet0025");
-            this._lasers.forEach(function (aLaser) {
+            for (var i = 0; i < 15; i++) {
+                var aLaser = new Laser(this.game, 0, 0);
+                this._lasers.add(aLaser);
+                //}*/            
+                //this._lasers.createMultiple(15, "Atlas", "Bullet0025");
+                //this._lasers.forEach(function (aLaser: Laser) {
+                aLaser.setUp(this);
                 aLaser.anchor.setTo(0.5, 0.5);
-                //aLaser.height = aLaser.height * 0.25;
-                //aLaser.width = aLaser.width * 0.25;
                 aLaser.name = 'laser';
                 aLaser.autoCull = true;
-                aLaser.lifespan = 1500;
+                aLaser.lifespan = 1;
                 aLaser.animations.add("goodHit", Phaser.Animation.generateFrameNames("Bullet", 25, 40, "", 4));
                 aLaser.animations.add("badHit", Phaser.Animation.generateFrameNames("Bullet", 35, 40, "", 4));
                 // physics
                 var body = aLaser.body;
-                //body.setRectangle(aLaser.width, aLaser.height);
                 body.setCircle(5);
                 //body.debug = true;
                 body.kinematic = false;
@@ -303,16 +300,20 @@ var Dropship;
                 body.collides(this._aggCollisionGroup);
                 //body.collides(this._levelCollisionGroup, this.laserHitLevel, this);
                 body.onBeginContact.add(this.weaponContactHandler);
-                // body.debug = true;
-            }, this);
+            } //, this);
             // missiles group
             this._missiles.physicsBodyType = Phaser.Physics.P2JS;
             this._missiles.enableBody = true;
             // create 10 missiles
-            this._missiles.createMultiple(10, "Atlas", "Bomb0000");
-            this._missiles.forEach(function (aMissile) {
+            for (var i = 0; i < 10; i++) {
+                var aMissile = new Missile(this.game, 0, 0);
+                this._missiles.add(aMissile);
+                //this._missiles.createMultiple(10, "Atlas", "Bomb0000");            
+                //this._missiles.forEach(function (aMissile: Phaser.Sprite) {
+                aMissile.setUp(this);
                 aMissile.anchor.setTo(0.5, 0.5);
                 aMissile.name = 'missile';
+                aMissile.lifespan = 1;
                 // physics
                 var body = aMissile.body;
                 //body.setRectangle(aMissile.width, aMissile.height);
@@ -326,8 +327,7 @@ var Dropship;
                 aMissile.animations.add("anim", Phaser.Animation.generateFrameNames("Bomb", 0, 9, "", 4));
                 aMissile.animations.add("blowup", Phaser.Animation.generateFrameNames("Bomb", 10, 25, "", 4));
                 aMissile.animations.play("anim", 15, true, false);
-                // body.debug = true;
-            }, this);
+            } //, this);
             this._backgroundImage = this.add.image(0, this.game.camera.height - 25, "BG");
             this._backgroundImage.anchor.setTo(0, 0);
             this._backgroundImage.cacheAsBitmap = true;
@@ -444,8 +444,8 @@ var Dropship;
             // this._thingsGroup.add(this._sentryBullets);
             this._sentryBullets.physicsBodyType = Phaser.Physics.P2JS;
             this._sentryBullets.enableBody = true;
-            // create 20 bullets
-            this._sentryBullets.createMultiple(20, "Atlas", "Bullet0025");
+            // create 10 bullets
+            this._sentryBullets.createMultiple(10, "Atlas", "Bullet0025");
             this._sentryBullets.forEach(function (aBullet) {
                 aBullet.anchor.setTo(0.5, 0.5);
                 aBullet.autoCull = true;
@@ -464,124 +464,156 @@ var Dropship;
             //this._thingsGroup.add(this._sentries);
             //this._sentries.physicsBodyType = Phaser.Physics.P2JS;
             //this._sentries.enableBody = true;
-            var sentryPositions = [[735, -1160, 270, 1], [-775, 200, 90, 1], [-740, 570, 135, 0], [700, 1215, 0, 0], [-215, -588, 0, 0],
-                [-205, -335, 180, 1], [-775, -95, 90, 1]
+            var sentryList = [
+                { "x": 735, "y": -1160, "rotation": 270, "type": 1, "level": 1 },
+                { "x": -775, "y": 200, "rotation": 90, "type": 1, "level": 1 },
+                { "x": -740, "y": 570, "rotation": 135, "type": 0, "level": 1 },
+                { "x": 700, "y": 1215, "rotation": 0, "type": 0, "level": 1 },
+                { "x": -215, "y": -588, "rotation": 0, "type": 0, "level": 1 },
+                { "x": -205, "y": -335, "rotation": 180, "type": 1, "level": 1 },
+                { "x": -775, "y": -95, "rotation": 90, "type": 1, "level": 1 }
             ];
-            for (var i = 0; i < sentryPositions.length; i++) {
-                var sentry = new Sentry(this.game, this.world.centerX + sentryPositions[i][0], this.world.centerY + sentryPositions[i][1], sentryPositions[i][3]);
-                //sentry.inputEnabled = true;
-                //sentry.events.onInputDown.add(function (currentSprite) { this._facingTarget = false; this._targetDrone = currentSprite; }, this);
-                this.game.physics.p2.enable(sentry);
-                var body = sentry.body;
-                body.kinematic = true;
-                //body.setRectangle(sentry.width, sentry.height);
-                //var poly: Phaser.Polygon = new Phaser.Polygon();
-                // [x,y]
-                var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
-                body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
-                body.setCollisionGroup(this._sentriesCollisionGroup);
-                body.collides([this._missilesCollisionGroup]);
-                body.collides([this._lasersCollisionGroup]);
-                body.collides([this._shipCollisionGroup]);
-                body.angle = sentryPositions[i][2];
-                sentry.setup(this._base, this._sentryBullets, this);
-                //sentry.alpha = 0.5;
-                //sentry.baseTop.alpha = 0.51;
-                //body.debug = true;
-                this._sentries.add(sentry);
+            for (var i = 0; i < sentryList.length; i++) {
+                if (sentryList[i].level == this.game.state.states['MainMenu'].level) {
+                    var sentry = new Sentry(this.game, this.world.centerX + sentryList[i].x, this.world.centerY + sentryList[i].y, sentryList[i].type);
+                    //sentry.inputEnabled = true;
+                    //sentry.events.onInputDown.add(function (currentSprite) { this._facingTarget = false; this._targetDrone = currentSprite; }, this);
+                    this.game.physics.p2.enable(sentry);
+                    var body = sentry.body;
+                    body.kinematic = true;
+                    //body.setRectangle(sentry.width, sentry.height);
+                    //var poly: Phaser.Polygon = new Phaser.Polygon();
+                    // [x,y]
+                    var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
+                    body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                    body.setCollisionGroup(this._sentriesCollisionGroup);
+                    body.collides([this._missilesCollisionGroup]);
+                    body.collides([this._lasersCollisionGroup]);
+                    body.collides([this._shipCollisionGroup]);
+                    body.angle = sentryList[i].rotation;
+                    sentry.setup(this._base, this._sentryBullets, this);
+                    //sentry.alpha = 0.5;
+                    //sentry.baseTop.alpha = 0.51;
+                    //body.debug = true;
+                    this._sentries.add(sentry);
+                }
             }
+            // Create 5 proximity mines for each type 1 sentry on the current level
+            this._sentries.forEach(function (aSentry) {
+                if (aSentry.sentryType == 1) {
+                    this._proxMines.createMultiple(5, "Atlas", "Prox0000");
+                    this._proxMines.forEach(function (aProx) {
+                        aProx.setUp(this);
+                        var body = aProx.body;
+                        body.setCircle(17);
+                        body.kinematic = true; // does not respond to forces
+                        body.setCollisionGroup(this._objectsCollisionGroup);
+                        //body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
+                        //body.debug = true;
+                    }, this);
+                }
+            }, this);
             this._objects = this.game.add.group();
             this._allGroup.add(this._objects);
             this._objects.enableBody = true;
             this._objects.physicsBodyType = Phaser.Physics.P2JS;
-            // x,y,angle,type
-            var objectList = [
-                [175, 145, 90, 1],
-                [-120, -360, 0, 2], [-90, -380, 180, 2], [-60, -360, 0, 2], [-30, -380, 180, 2], [0, -360, 0, 2], [30, -380, 180, 2], [60, -360, 0, 2], [90, -380, 180, 2],
-                [175, 185, 90, 3],
-                [593, -222, 0, 4], [483, -111, 0, 4],
-                [-620, -1205, 90, 5], [-620, -1165, 90, 5], [-620, -1125, 90, 5], [-620, -1085, 90, 5],
-                [-650, -1185, 90, 5], [-650, -1145, 90, 5], [-650, -1105, 90, 5],
-                [-590, -1185, 90, 5], [-590, -1145, 90, 5], [-590, -1105, 90, 5],
-                [-310, -1105, 270, 6]
+            var objectsList = [
+                { "x": 175, "y": 145, "rotation": 90, "type": 'sheildBonus', "level": 1 },
+                { "x": -120, "y": -360, "rotation": 0, "type": 'octoid', "level": 1 },
+                { "x": -90, "y": -380, "rotation": 180, "type": 'octoid', "level": 1 },
+                { "x": -60, "y": -360, "rotation": 0, "type": 'octoid', "level": 1 },
+                { "x": -30, "y": -380, "rotation": 180, "type": 'octoid', "level": 1 },
+                { "x": 0, "y": -360, "rotation": 0, "type": 'octoid', "level": 1 },
+                { "x": 30, "y": -380, "rotation": 180, "type": 'octoid', "level": 1 },
+                { "x": 60, "y": -360, "rotation": 0, "type": 'octoid', "level": 1 },
+                { "x": 90, "y": -380, "rotation": 180, "type": 'octoid', "level": 1 },
+                { "x": 175, "y": 185, "rotation": 90, "type": 'tripper', "level": 1 },
+                { "x": 593, "y": -222, "rotation": 0, "type": 'drone', "level": 1 },
+                { "x": 483, "y": -111, "rotation": 0, "type": 'drone', "level": 1 },
+                { "x": -620, "y": -1205, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -620, "y": -1165, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -620, "y": -1125, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -620, "y": -1085, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -650, "y": -1185, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -650, "y": -1145, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -650, "y": -1105, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -590, "y": -1185, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -590, "y": -1145, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -590, "y": -1105, "rotation": 90, "type": 'hexoid', "level": 1 },
+                { "x": -310, "y": -1105, "rotation": 270, "type": 'crystal', "level": 1 }
             ];
-            for (var i = 0; i < objectList.length; i++) {
-                var texture = '';
-                var nameType = '';
-                if (objectList[i][3] == 1) {
-                    texture = 'Sheild0000';
-                    nameType = 'sheildBonus';
-                }
-                ;
-                if (objectList[i][3] == 2) {
-                    texture = 'Octoid0000';
-                    nameType = 'octoid';
-                }
-                ;
-                if (objectList[i][3] == 3) {
-                    texture = 'Tripper0000';
-                    nameType = 'tripper';
-                }
-                ;
-                if (objectList[i][3] == 4) {
-                    texture = 'Drone0000';
-                    nameType = 'drone';
-                }
-                ;
-                if (objectList[i][3] == 5) {
-                    texture = 'hexoid0000';
-                    nameType = 'hexoid';
-                }
-                ;
-                if (objectList[i][3] == 6) {
-                    texture = 'Crystal0000';
-                    nameType = 'crystal';
-                }
-                ;
-                var xPos = objectList[i][0] + this.world.centerX;
-                var yPos = objectList[i][1] + this.world.centerY;
-                var object = new Item(this.game, xPos, yPos, 'Atlas', texture);
-                object.name = nameType;
-                object.setup(this);
-                object.anchor.setTo(0.5, 0.5);
-                object.autoCull = true;
-                this.game.physics.p2.enable(object);
-                if (nameType == 'octoid' || nameType == 'hexoid') {
-                    object.body.setCircle(18);
-                }
-                //object.body.mass = 0;
-                //object.outOfBoundsKill = true;
-                //object.body.data.gravityScale = 0.0;
-                //object.body.setRectangle(30, 30);
-                // = -90;
-                object.body.angle = objectList[i][2];
-                /*if (objectList[i][3] == 3) {
-                    object.body.kinematic = false;
-                    object.body.data.gravityScale = 0.01;
-                    object.body.mass = 50;
-                } else {*/
-                object.body.kinematic = true;
-                //}
-                if (objectList[i][3] == 4) {
-                    //var poly: Phaser.Polygon = new Phaser.Polygon();
-                    var polyNumbers = [[100, 5], [102, 5], [135, 25], [65, 25]];
-                    //poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
-                    object.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
-                    object.body.x = xPos;
-                    object.body.y = yPos;
-                    if (this.landscapeLayout == true) {
-                        object.body.angle = -90;
+            for (var i = 0; i < objectsList.length; i++) {
+                if (objectsList[i].level == this.game.state.states['MainMenu'].level) {
+                    var texture = '';
+                    if (objectsList[i].type == 'sheildBonus') {
+                        texture = 'Sheild0000';
                     }
+                    ;
+                    if (objectsList[i].type == 'octoid') {
+                        texture = 'Octoid0000';
+                    }
+                    ;
+                    if (objectsList[i].type == 'tripper') {
+                        texture = 'Tripper0000';
+                    }
+                    ;
+                    if (objectsList[i].type == 'drone') {
+                        texture = 'Drone0000';
+                    }
+                    ;
+                    if (objectsList[i].type == 'hexoid') {
+                        texture = 'hexoid0000';
+                    }
+                    ;
+                    if (objectsList[i].type == 'crystal') {
+                        texture = 'Crystal0000';
+                    }
+                    ;
+                    var xPos = objectsList[i].x + this.world.centerX;
+                    var yPos = objectsList[i].y + this.world.centerY;
+                    var object = new Item(this.game, xPos, yPos, 'Atlas', texture);
+                    object.name = objectsList[i].type;
+                    object.setup(this);
+                    object.anchor.setTo(0.5, 0.5);
+                    object.autoCull = true;
+                    this.game.physics.p2.enable(object);
+                    if (objectsList[i].type == 'octoid' || objectsList[i].type == 'hexoid') {
+                        object.body.setCircle(18);
+                    }
+                    //object.body.mass = 0;
+                    //object.outOfBoundsKill = true;
+                    //object.body.data.gravityScale = 0.0;
+                    //object.body.setRectangle(30, 30);
+                    // = -90;
+                    object.body.angle = objectsList[i].rotation;
+                    /*if (objectList[i][3] == 3) {
+                        object.body.kinematic = false;
+                        object.body.data.gravityScale = 0.01;
+                        object.body.mass = 50;
+                    } else {*/
+                    object.body.kinematic = true;
+                    //}
+                    if (objectsList[i].type == 'drone') {
+                        //var poly: Phaser.Polygon = new Phaser.Polygon();
+                        var polyNumbers = [[100, 5], [102, 5], [135, 25], [65, 25]];
+                        //poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
+                        object.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                        object.body.x = xPos;
+                        object.body.y = yPos;
+                        if (this.game.state.states['MainMenu'].landscapeLayout == true) {
+                            object.body.angle = -90;
+                        }
+                    }
+                    if (objectsList[i].type == 'crystal') {
+                        // [x,y]
+                        var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
+                        object.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                    }
+                    //object.body.debug = true;
+                    this._objects.add(object);
+                    object.body.setCollisionGroup(this._objectsCollisionGroup);
+                    object.body.collides([this._shipCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup]);
                 }
-                if (objectList[i][3] == 6) {
-                    // [x,y]
-                    var polyNumbers = [[-20, -15], [-40, 20], [40, 20], [20, -15]];
-                    object.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
-                }
-                //object.body.debug = true;
-                this._objects.add(object);
-                object.body.setCollisionGroup(this._objectsCollisionGroup);
-                object.body.collides([this._shipCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup]);
             }
             this._tiles.forEach(function (tile) {
                 tile.body.collides([this._shipCollisionGroup, this._lasersCollisionGroup, this._missilesCollisionGroup]);
@@ -607,64 +639,67 @@ var Dropship;
                 this._text2.anchor.setTo(0.5, 0.5);
             }
             this._antiGravities = this.game.add.group();
-            var antiGravPositions;
-            if (this.landscapeLayout == true) {
-                antiGravPositions = [[140, 0, 0], [650, -175, 180]];
-            }
-            else {
-                antiGravPositions = [[-200, 142, 0], [-100, -1173, 180]];
-            }
-            for (var i = 0; i < antiGravPositions.length; i++) {
-                var poly = new Phaser.Polygon();
-                var polyNumbers = [[0, 0], [200, 0], [100, 200], [99, 200]];
-                poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
-                /*var graphics: Phaser.Graphics = new Phaser.Graphics(this.game, 0, 0);
-                graphics.beginFill(0xFF33ff);
-                graphics.drawPolygon(poly.points);
-                graphics.endFill();*/
-                //var antiGrav: AntiGrav = this.game.add.sprite(antiGravPositions[i][0], antiGravPositions[i][1], graphics.generateTexture());
-                var antiGrav = new AntiGrav(this.game, this.world.centerX + antiGravPositions[i][0], this.world.centerY + antiGravPositions[i][1]);
-                antiGrav.name = 'antiGrav';
-                this.game.physics.p2.enable(antiGrav, true);
-                this.game.physics.p2.enableBody(antiGrav, true);
-                var antiGravBody = antiGrav.body;
-                antiGravBody.static = true;
-                antiGravBody.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
-                if (antiGravPositions[i][2] == 0) {
-                    //upward
-                    antiGravBody.offset.y = 140;
-                    antiGrav.setup(true, this);
+            var antiGravsList = [
+                { "x": 140, "y": 0, "rotation": 0, "landscape": true, "level": 1 },
+                { "x": 650, "y": -175, "rotation": 180, "landscape": true, "level": 1 },
+                { "x": -200, "y": 142, "rotation": 0, "landscape": false, "level": 1 },
+                { "x": -100, "y": -1173, "rotation": 180, "landscape": false, "level": 1 },
+            ];
+            for (var i = 0; i < antiGravsList.length; i++) {
+                if (antiGravsList[i].level == this.game.state.states['MainMenu'].level) {
+                    if (antiGravsList[i].landscape == this.game.state.states['MainMenu'].landscapeLayout) {
+                        var poly = new Phaser.Polygon();
+                        var polyNumbers = [[0, 0], [200, 0], [100, 200], [99, 200]];
+                        poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
+                        /*var graphics: Phaser.Graphics = new Phaser.Graphics(this.game, 0, 0);
+                        graphics.beginFill(0xFF33ff);
+                        graphics.drawPolygon(poly.points);
+                        graphics.endFill();*/
+                        //var antiGrav: AntiGrav = this.game.add.sprite(antiGravPositions[i][0], antiGravPositions[i][1], graphics.generateTexture());
+                        var antiGrav = new AntiGrav(this.game, this.world.centerX + antiGravsList[i].x, this.world.centerY + antiGravsList[i].y);
+                        antiGrav.name = 'antiGrav';
+                        this.game.physics.p2.enable(antiGrav, true);
+                        this.game.physics.p2.enableBody(antiGrav, true);
+                        var antiGravBody = antiGrav.body;
+                        antiGravBody.static = true;
+                        antiGravBody.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                        if (antiGravsList[i].rotation == 0) {
+                            //upward
+                            antiGravBody.offset.y = 140;
+                            antiGrav.setup(true, this);
+                        }
+                        else {
+                            antiGravBody.offset.y = -140;
+                            //downward
+                            antiGrav.setup(false, this);
+                        }
+                        antiGravBody.data.shapes[0].sensor = true;
+                        antiGravBody.kinematic = false;
+                        //antiGravBody.debug = true;
+                        antiGravBody.setCollisionGroup(this._antiGravCollisionGroup);
+                        antiGravBody.collides([this._shipCollisionGroup]);
+                        antiGravBody.angle = antiGravsList[i].rotation;
+                        this._antiGravities.add(antiGrav);
+                        antiGrav.generator.base = this._base;
+                        //antiGrav.generator.body.setCircle(antiGrav.generator.width / 2);
+                        var poly = new Phaser.Polygon();
+                        // [x,y]
+                        var polyNumbers = [[-20, -15], [-10, 29], [10, 29], [20, -15]];
+                        poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
+                        antiGrav.generator.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
+                        antiGrav.generator.body.angle = antiGravsList[i].rotation;
+                        //antiGrav.generator.body.debug = true;
+                        antiGrav.generator.body.kinematic = true; // does not respond to forces
+                        antiGrav.generator.body.setCollisionGroup(this._aggCollisionGroup);
+                        antiGrav.generator.body.collides([this._aggCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
+                    }
                 }
-                else {
-                    antiGravBody.offset.y = -140;
-                    //downward
-                    antiGrav.setup(false, this);
-                }
-                antiGravBody.data.shapes[0].sensor = true;
-                antiGravBody.kinematic = false;
-                //antiGravBody.debug = true;
-                antiGravBody.setCollisionGroup(this._antiGravCollisionGroup);
-                antiGravBody.collides([this._shipCollisionGroup]);
-                antiGravBody.angle = antiGravPositions[i][2];
-                this._antiGravities.add(antiGrav);
-                antiGrav.generator.base = this._base;
-                //antiGrav.generator.body.setCircle(antiGrav.generator.width / 2);
-                var poly = new Phaser.Polygon();
-                // [x,y]
-                var polyNumbers = [[-20, -15], [-10, 29], [10, 29], [20, -15]];
-                poly.setTo([new Phaser.Point(polyNumbers[0][0], polyNumbers[0][1]), new Phaser.Point(polyNumbers[1][0], polyNumbers[1][1]), new Phaser.Point(polyNumbers[2][0], polyNumbers[2][1]), new Phaser.Point(polyNumbers[3][0], polyNumbers[3][1])]);
-                antiGrav.generator.body.addPolygon({ optimalDecomp: false, skipSimpleCheck: false, removeCollinearPoints: false }, polyNumbers);
-                antiGrav.generator.body.angle = antiGravPositions[i][2];
-                //antiGrav.generator.body.debug = true;
-                antiGrav.generator.body.kinematic = true; // does not respond to forces
-                antiGrav.generator.body.setCollisionGroup(this._aggCollisionGroup);
-                antiGrav.generator.body.collides([this._aggCollisionGroup, this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
             }
             this._base.body.collides([this._antiGravCollisionGroup, this._aggCollisionGroup]);
             var joystickY = 890;
             this._controlsGroup.fixedToCamera = true;
             this._controlsGroup.cameraOffset.setTo(0, this.game.height - this._controlsGroup.height);
-            if (this.landscapeLayout == true) {
+            if (this.game.state.states['MainMenu'].landscapeLayout == true) {
                 // this._level1.body.angle = 90;
                 // this._thingsGroup.angle = 90;
                 // this._tiles.angle = 90;
@@ -704,19 +739,28 @@ var Dropship;
             this._objects.forEach(function (obj) {
                 obj.startTween();
             }, this);
+            this._drones.forEach(function (drone) {
+                drone.setUp(this);
+            }, this);
             if (this.deviceMotionAvailable == false) {
                 this._joystick = new Joystick(this.game, 0, joystickY);
                 this._controlsGroup.add(this._joystick);
                 this._joystick.setup(this);
             }
             this._allGroup.sendToBack(this._tiles);
+            for (var i = 0; i < this._tiles.length; i++) {
+                var tileobj = this._tiles.getChildAt(i);
+                tileobj.body.removeCollisionGroup([this._shipCollisionGroup, this._lasersCollisionGroup, this._missilesCollisionGroup], false);
+            }
+            //tileobj = this._tiles.getChildAt(this._currentSubLevel) as Phaser.Sprite;  
+            tile5.body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
             this._fireTimer = this.time.create(false);
             this._contactDamageTimer = this.time.create(false);
             this.game.time.events.add(Phaser.Timer.SECOND * 1.5, suggestFPS, this);
             //this._shipMotionTween = this.game.add.tween(this._base.body).to({ angle: 0 }, 1, Phaser.Easing.Linear.None, true);
             // this.game.physics.p2.setPostBroadphaseCallback(this.checkOverlap2, this);
             this.game.physics.p2.paused = true;
-            this.game.time.events.add(Phaser.Timer.SECOND * 0.05, begin1, this);
+            this.game.time.events.add(Phaser.Timer.SECOND * 0.1, begin1, this);
             this.game.time.events.add(Phaser.Timer.SECOND * 0.1, begin2, this);
         };
         // -------------------------------------------------------------------------
@@ -822,7 +866,7 @@ var Dropship;
                             // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
                             var newAngle = 0;
                             var currentMotion;
-                            if (this.landscapeLayout == true) {
+                            if (this.game.state.states['MainMenu'].landscapeLayout == true) {
                                 currentMotion = deviceMo.accelerationIncludingGravity.y;
                             }
                             else {
@@ -977,10 +1021,12 @@ var Dropship;
             if (weaponName == 'laser') {
                 laser = shape2.body.parent.sprite;
                 weapon = laser;
+                laser.madeImpact();
             }
             else if (weaponName == 'missile') {
                 missile = shape2.body.parent.sprite;
                 weapon = missile;
+                missile.madeImpact();
             }
             if (objectHit.name == 'dron') {
                 objectHit.explode();
@@ -1013,8 +1059,9 @@ var Dropship;
                 }
             }
             else if (missile) {
-                missile.body.setZeroVelocity();
-                missile.body.damping = 1;
+                var mBody = missile.body;
+                mBody.setZeroVelocity();
+                mBody.damping = 1;
                 missile.animations.play('blowup', 30, false, true);
             }
         };
@@ -1035,6 +1082,7 @@ var Dropship;
                 var mBody = missile.body;
                 mBody.damping = 0;
                 missile.reset(this._base.body.x, this._base.body.y + 15);
+                missile.body.data.shapes[0].sensor = false;
                 missile.animations.play("anim", 15, true, false);
                 mBody.angle = 90;
                 //mBody.mass = 50;
@@ -1064,6 +1112,7 @@ var Dropship;
                 laser.loadTexture('Atlas', 'Bullet0025');
                 laser.body.damping = 0;
                 laser.reset(this._base.body.x, this._base.body.y);
+                laser.body.data.shapes[0].sensor = false;
                 laser.lifespan = 1500;
                 laser.body.rotation = this._base.body.rotation;
                 laser.body.moveForward(600);
@@ -1211,6 +1260,11 @@ var Dropship;
                 var tileToUnhide = this._tiles.getByName('tile' + this._newSubLevel);
                 console.log('cam TileToUnhide ' + this._newSubLevel);
                 tileToUnhide.visible = true;
+                // Clear all tiles from their collision group? Add required one post tween? 
+                for (var i = 0; i < this._tiles.length; i++) {
+                    var tileobj = this._tiles.getChildAt(i);
+                    tileobj.body.removeCollisionGroup([this._shipCollisionGroup, this._lasersCollisionGroup, this._missilesCollisionGroup], false);
+                }
                 this._transitionTween = this.game.add.tween(this.game.camera).to({ y: cameraY, x: cameraX }, 250, Phaser.Easing.Linear.None, true);
                 this._transitionTween.onComplete.add(this.transitionComplete, this);
             }
@@ -1251,6 +1305,7 @@ var Dropship;
             console.log('_newSubLevel tile' + this._newSubLevel + ' was sleepState ' + tileToHide.body.data.sleepState);
             newTile.body.data.wakeUp();
             console.log('_newSubLevel tile' + this._newSubLevel + ' now sleepState ' + tileToHide.body.data.sleepState);
+            newTile.body.collides([this._missilesCollisionGroup, this._lasersCollisionGroup, this._shipCollisionGroup]);
             this._currentSubLevel = this._newSubLevel;
             this.game.physics.p2.resume();
             console.log('camera view width: ' + this.camera.width + ', camera view height: ' + this.camera.height + 'this.camera.x: ' + this.camera.x + 'this.camera.y: ' + this.camera.y);
@@ -1278,10 +1333,52 @@ var Dropship;
     var deviceMo;
     var Laser = (function (_super) {
         __extends(Laser, _super);
-        function Laser() {
-            _super.apply(this, arguments);
+        function Laser(game, x, y) {
+            if (x === void 0) { x = 0; }
+            if (y === void 0) { y = 0; }
+            console.log('laser constructor...');
+            _super.call(this, game, x, y, 'Atlas', 'Bullet0025');
         }
+        /*public zap() {
+             this.animations.add("explosion", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
+             // play first animation as default
+             this.play("explosion")
+     
+         }*/
+        Laser.prototype.setUp = function (si) {
+            this.stateInstance = si;
+        };
+        Laser.prototype.madeImpact = function () {
+            //this.lifespan = 1;
+            this.body.data.shapes[0].sensor = true;
+            this.stateInstance.impactSnd.play();
+        };
         return Laser;
+    }(Phaser.Sprite));
+    // -------------------------------------------------------------------------
+    var Missile = (function (_super) {
+        __extends(Missile, _super);
+        function Missile(game, x, y) {
+            if (x === void 0) { x = 0; }
+            if (y === void 0) { y = 0; }
+            console.log('misile constructor...');
+            _super.call(this, game, x, y, 'Atlas', 'Bomb0000');
+        }
+        /*public zap() {
+             this.animations.add("explosion", Phaser.Animation.generateFrameNames("explosion", 1, 6, "", 3));
+             // play first animproxation as default
+             this.play("explosion")
+     
+         }*/
+        Missile.prototype.setUp = function (si) {
+            this.stateInstance = si;
+        };
+        Missile.prototype.madeImpact = function () {
+            //this.lifespan = 1;
+            this.body.data.shapes[0].sensor = true;
+            this.stateInstance.impact2Snd.play();
+        };
+        return Missile;
     }(Phaser.Sprite));
     // -------------------------------------------------------------------------
     var AntiGrav = (function (_super) {
@@ -1455,11 +1552,11 @@ var Dropship;
             this.anchor.setTo(0.5, 0.5);
         }
         // -------------------------------------------------------------------------
-        Dron.prototype.setUp = function (xStart, yStart, si) {
+        Dron.prototype.setUp = function (si) {
             this.anchor.setTo(0.5, 0.5);
             this.autoCull = true;
             // random position
-            this.reset(xStart, yStart);
+            //this.reset(xStart, yStart);
             this.stateInstance = si;
             // random movement range
             var range = this.game.rnd.between(60, 120);
@@ -1472,11 +1569,11 @@ var Dropship;
             var yPeriod2 = this.game.rnd.between(2, 13);
             // set tweens for horizontal and vertical movement
             var xTween = this.game.add.tween(this.body);
-            xTween.to({ x: this.position.x + range }, duration, function (aProgress) {
+            xTween.to({ x: this.body.x + range }, duration, function (aProgress) {
                 return wiggle(aProgress, xPeriod1, xPeriod2);
             }, true, 0, -1);
             var yTween = this.game.add.tween(this.body);
-            yTween.to({ y: this.position.y + range }, duration, function (aProgress) {
+            yTween.to({ y: this.body.y + range }, duration, function (aProgress) {
                 return wiggle(aProgress, yPeriod1, yPeriod2);
             }, true, 0, -1);
             // define animations
@@ -1561,6 +1658,7 @@ var Dropship;
             return result;
         };
         Prox.prototype.launch = function (sentry) {
+            this.body.collides([this.stateInstance._missilesCollisionGroup, this.stateInstance._lasersCollisionGroup, this.stateInstance._shipCollisionGroup]);
             this.reset(sentry.x, sentry.y);
             this.body.angle = sentry.angle - 90;
             var offsetAngle = this.game.rnd.between(77, 103);
@@ -1588,6 +1686,12 @@ var Dropship;
         // -------------------------------------------------------------------------
         Prox.prototype.explode = function () {
             this.stateInstance.somethingDied();
+            this.awake = false;
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+            //this.body.data.shapes[0].sensor = true;
+            //this.body.clearCollision(false);
+            this.body.removeCollisionGroup([this.stateInstance._missilesCollisionGroup, this.stateInstance._lasersCollisionGroup, this.stateInstance._shipCollisionGroup], false);
             // remove movement tweens
             this.game.tweens.removeFrom(this.body);
             // explode dron and kill it on complete
@@ -1760,6 +1864,7 @@ var Dropship;
                 // get firtst missile from pool
                 var bullet = this.sentryBullets.getFirstExists(false);
                 if (bullet) {
+                    this.stateInstance.laser2Snd.play();
                     // calculate position of cannon tip. Put distance from cannon base along x axis and rotate it to cannon angle
                     this.cannonTip.setTo(this.cannon.width * 2, 0);
                     this.cannonTip.rotate(0, 0, this.cannon.rotation);
@@ -1912,11 +2017,15 @@ var Dropship;
                     this.body.thrust(this.thrustPower);
                     //this.animations.play('trusting', 30, true, false);
                     this.jets.animations.play('trusting', 30, true, false);
+                    if (this.stateInstance.thrustSnd.isPlaying == false) {
+                        this.stateInstance.thrustSnd.play();
+                    }
                     this.justCoasted = false;
                 }
                 else {
                     if (this.justCoasted == false) {
                         this.jets.animations.play('coasting', 15, false, false);
+                        this.stateInstance.thrustSnd.stop();
                         this.justCoasted = true;
                     }
                 }
@@ -1979,6 +2088,7 @@ var Dropship;
         Ship.prototype.crashed = function () {
             this.stateInstance.somethingDied();
             this.justCrashed = true;
+            this.stateInstance.thrustSnd.stop();
             this.play("explode", 30, false);
             this.jets.animations.play('coasting', 15, false, false);
             //this.game.physics.p2.pause();
@@ -2048,6 +2158,7 @@ var Dropship;
         Ship.prototype.gameOver = function () {
             //this.game.state.start(game.state.current);
             //this.game.state.restart();
+            //this.game.state.states['MainMenu'].level++;
             this.game.state.start('MainMenu', true, false);
         };
         return Ship;
