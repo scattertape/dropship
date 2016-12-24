@@ -491,7 +491,7 @@ var Dropship;
                     body.collides([this._lasersCollisionGroup]);
                     body.collides([this._shipCollisionGroup]);
                     body.angle = sentryList[i].rotation;
-                    sentry.setup(this._base, this._sentryBullets, this);
+                    sentry.setup(this);
                     //sentry.alpha = 0.5;
                     //sentry.baseTop.alpha = 0.51;
                     //body.debug = true;
@@ -1728,7 +1728,7 @@ var Dropship;
                 if (this.sleeping) {
                     if (this.destroyed == false) {
                         if (this.stateInstance._transitionTween.isRunning == false) {
-                            var distanceFromShip = Math.sqrt((this.x - this.base.x) * (this.x - this.base.x) + (this.y - this.base.y) * (this.y - this.base.y));
+                            var distanceFromShip = Math.sqrt((this.x - this.stateInstance._base.x) * (this.x - this.stateInstance._base.x) + (this.y - this.stateInstance._base.y) * (this.y - this.stateInstance._base.y));
                             if (distanceFromShip < 333) {
                                 this.sleeping = false;
                                 this.fireTimer = this.game.time.create(false);
@@ -1754,7 +1754,7 @@ var Dropship;
             }
         };
         Sentry.prototype.updateCannonAngle = function () {
-            var angleRadians = (Math.atan2(this.base.y - this.cannon.y, this.base.x - this.cannon.x));
+            var angleRadians = (Math.atan2(this.stateInstance._base.y - this.cannon.y, this.stateInstance._base.x - this.cannon.x));
             var angleDegrees = angleRadians * (180 / Math.PI);
             var normalisedAngleDegrees = this.normalise(angleDegrees);
             // 0 or 360 = 3 o clock
@@ -1806,9 +1806,7 @@ var Dropship;
             this.baseTop.angle = this.body.angle;
         };
         // -------------------------------------------------------------------------
-        Sentry.prototype.setup = function (bse, sBullets, si) {
-            this.base = bse;
-            this.sentryBullets = sBullets;
+        Sentry.prototype.setup = function (si) {
             this.bulletSpeed = 6;
             this.cannonTip = new Phaser.Point();
             this.sleeping = true;
@@ -1862,7 +1860,7 @@ var Dropship;
             if (this.inCamera && this.inRange && this.cannon.animations.getAnimation('extend').isFinished) {
                 this.baseTop.play("lightsOn", 30, true);
                 // get firtst missile from pool
-                var bullet = this.sentryBullets.getFirstExists(false);
+                var bullet = this.stateInstance._sentryBullets.getFirstExists(false);
                 if (bullet) {
                     this.stateInstance.laser2Snd.play();
                     // calculate position of cannon tip. Put distance from cannon base along x axis and rotate it to cannon angle
