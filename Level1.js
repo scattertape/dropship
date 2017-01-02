@@ -42,10 +42,11 @@ var Dropship;
             this.impact2Snd = this.game.add.audio('impact2');
             this.game.sound.setDecodedCallback([this.laserSnd, this.bombSnd, this.explodeSnd, this.proxSnd, this.thrustSnd, this.laser2Snd, this.impactSnd, this.impact2Snd], this.soundsDecoded, this);
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
-                if (this.game.state.states['Options'].useJoystick == false) {
-                    this.deviceMotionAvailable = true;
-                }
+                this.deviceMotionAvailable = true;
                 this._swipeActive = true;
+            }
+            if (this.game.state.states['Options'].useJoystick == true) {
+                this.deviceMotionAvailable = false;
             }
             if (this.game.state.states['Options'].damage == true) {
                 this.shipDamage = true;
