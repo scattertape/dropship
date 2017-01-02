@@ -830,7 +830,7 @@ var Dropship;
 
             }*/
             if (this._transitionTween.isRunning == false) {
-                if (this.deviceMotionAvailable) {
+                if (this.deviceMotionAvailable == true) {
                     if (deviceMo.acceleration != null) {
                         if (deviceMo.accelerationIncludingGravity.y != null) {
                             // (<Phaser.Physics.P2.Body>this._base.body).angularDamping = 0.75;
