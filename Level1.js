@@ -302,22 +302,26 @@ var Dropship;
                 this._leftButton.height = this.game.camera.height;
                 this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
                 this._rightButton.height = this.game.camera.height;
+                this._controlsGroup.add(this._leftButton);
+                this._controlsGroup.add(this._rightButton);
             }
             else {
                 this._leftButton = this.game.add.button(this.game.camera.width * 0.5, this.game.camera.height * 0.5);
                 this._leftButton.height = this.game.camera.height * 0.5;
                 this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
                 this._rightButton.height = this.game.camera.height * 0.5;
+                this._controlsGroup.add(this._rightButton);
+                this._controlsGroup.add(this._leftButton);
             }
-            this._controlsGroup.add(this._leftButton);
+            //this._controlsGroup.add(this._leftButton);
             this._leftButton.width = this.game.camera.width * 0.5;
-            this._leftButton.height = this.game.camera.height;
+            // this._leftButton.height = this.game.camera.height;
             this._leftButton.inputEnabled = true;
             this._leftButton.events.onInputDown.add(this.leftBtnDown, this);
             this._leftButton.events.onInputUp.add(this.leftBtnUp, this);
-            this._controlsGroup.add(this._rightButton);
+            //this._controlsGroup.add(this._rightButton);
             this._rightButton.width = this.game.camera.width * 0.5;
-            this._rightButton.height = this.game.camera.height;
+            //this._rightButton.height = this.game.camera.height;
             this._rightButton.inputEnabled = true;
             this._rightButton.events.onInputDown.add(this.rightBtnDown, this);
             this._rightButton.events.onInputUp.add(this.rightBtnUp, this);
@@ -343,6 +347,15 @@ var Dropship;
             this._missileBtn.animations.add("release", ["BombOn", "BombOn", "BombOn", "BombOn", "BombOn", "BombOff"], 15, false);
             this._missileBtn.inputEnabled = true;
             this._missileBtn.events.onInputDown.add(this.missileBtnDown, this);
+            if (this.game.state.states['Options'].useJoystick == true) {
+                this._joystick = new Joystick(this.game, 0, 0);
+                this._controlsGroup.add(this._joystick);
+                //this._joystick.anchor.setTo(0,0.0);
+                this._joystick.setup(this);
+                //this.anchor.setTo(0.0, 0.0);
+                this._joystick.fixedToCamera = true;
+                this._joystick.cameraOffset.setTo(0, this.game.camera.height - 70);
+            }
             if (this._swipeActive == true) {
                 //var swipeMinWidthDistance = this.game.world.width / 10;
                 //var swipeMinHeightDistance = this.game.world.height / 10;
@@ -715,21 +728,8 @@ var Dropship;
             this._drones.forEach(function (drone) {
                 drone.setUp(this);
             }, this);
-            var showJoystick = false;
-            if (this.game.state.states['Options'].useJoystick == true) {
-                showJoystick = true;
-            }
-            ;
-            if (this.game.state.states['Options'].useJoystick == false) {
-                showJoystick = false;
-            }
-            ;
-            if (showJoystick) {
-                this._joystick = new Joystick(this.game, 0, joystickY);
-                this._controlsGroup.add(this._joystick);
-                this._joystick.setup(this);
-            }
             this._allGroup.sendToBack(this._tiles);
+            this._allGroup.bringToTop(this._controlsGroup);
             for (var i = 0; i < this._tiles.length; i++) {
                 var tileobj = this._tiles.getChildAt(i);
                 tileobj.body.removeCollisionGroup([this._shipCollisionGroup, this._lasersCollisionGroup, this._missilesCollisionGroup], false);
@@ -2184,9 +2184,9 @@ var Dropship;
             if (y === void 0) { y = 0; }
             console.log('joystick construcy...');
             _super.call(this, game, x, y, 'Atlas', 'joystick0001');
-            this.anchor.setTo(0.0, 0.0);
-            this.fixedToCamera = true;
-            this.cameraOffset.setTo(x, y);
+            //this.anchor.setTo(0.0, 0.0);
+            //this.fixedToCamera = true;
+            //this.cameraOffset.setTo(x, y);
             this.direction = new Phaser.Point(0, 0);
             this.distance = 0;
             this.pinAngle = 0;
@@ -2235,10 +2235,6 @@ var Dropship;
         Joystick.prototype.setup = function (si) {
             this.stateInstance = si;
             this.game.add.existing(this);
-            this.extend = new Phaser.Image(this.game, this.stateInstance._controlsGroup.x, this.stateInstance._controlsGroup.y - 100, 'Atlas', 'joystick0001');
-            //this.generator.setup(this.game, this.tractorBeam);
-            //this.tractorBeam.anchor.setTo(0.5, 0.0);
-            this.game.add.existing(this.extend);
             this.inputEnabled = true;
             this.events.onInputDown.add(onDown2, this);
             this.events.onInputUp.add(onUp, this);
