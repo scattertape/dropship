@@ -1,0 +1,80 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Dropship;
+(function (Dropship) {
+    var Options = (function (_super) {
+        __extends(Options, _super);
+        function Options() {
+            _super.apply(this, arguments);
+            this.damage = true;
+            this.useJoystick = false;
+        }
+        Options.prototype.create = function () {
+            this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
+            this.background.alpha = 0;
+            this.background.anchor.setTo(0.5, 0.5);
+            this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
+            this.group1 = this.game.add.group();
+            var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
+            //////////////////////////////////////////
+            var damageButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.5, 'button', this.damageToggle, this, 1, 0, 1, 0);
+            damageButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(damageButton);
+            this.damageText = this.game.add.text(this.game.width * 0.5, this.game.height * 0.5, "Damage on", style1, this.group1);
+            this.damageText.anchor.setTo(0.5, 0.375);
+            if (this.damage == false) {
+                this.damageText.setText('Damage off');
+            }
+            ////////////////////////////////////////
+            var joystickButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.6, 'button', this.joystickToggle, this, 1, 0, 1, 0);
+            joystickButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(joystickButton);
+            this.joystickText = this.game.add.text(joystickButton.x, joystickButton.y, "Use tilt", style1, this.group1);
+            this.joystickText.anchor.setTo(0.5, 0.375);
+            if (this.useJoystick == true) {
+                this.joystickText.setText('Use joystick');
+            }
+            ////////////////////////////////////////
+            var exitButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.7, 'button', this.exitOptions, this, 1, 0, 1, 0);
+            exitButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(exitButton);
+            var exitText = this.game.add.text(exitButton.x, exitButton.y, "Exit", style1, this.group1);
+            exitText.anchor.setTo(0.5, 0.375);
+        };
+        Options.prototype.damageToggle = function () {
+            if (this.damage) {
+                this.damage = false;
+                this.damageText.setText('Damage off');
+            }
+            else {
+                this.damage = true;
+                this.damageText.setText('Damage on');
+            }
+        };
+        Options.prototype.joystickToggle = function () {
+            if (this.useJoystick) {
+                this.useJoystick = false;
+                this.joystickText.setText('Use tilt');
+            }
+            else {
+                this.useJoystick = true;
+                this.joystickText.setText('Use joystick');
+            }
+        };
+        Options.prototype.exitOptions = function () {
+            //this.game.world.remove(this.group1);
+            // group.destroy();
+            var tween = this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(this.returnToMenu, this);
+        };
+        Options.prototype.returnToMenu = function () {
+            this.game.state.start('MainMenu', true, false);
+        };
+        return Options;
+    }(Phaser.State));
+    Dropship.Options = Options;
+})(Dropship || (Dropship = {}));
+//# sourceMappingURL=Options.js.map

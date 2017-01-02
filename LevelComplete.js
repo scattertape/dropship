@@ -26,6 +26,9 @@ var Dropship;
             tween.onComplete.add(this.showMenu, this);
         };
         LevelComplete.prototype.showMenu = function () {
+            if (this.game.state.states['MainMenu'].level == 0) {
+                this.game.state.states['MainMenu'].level++;
+            }
             this.game.state.start('MainMenu', true, false);
         };
         return LevelComplete;

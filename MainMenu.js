@@ -29,16 +29,29 @@ var Dropship;
             this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
             this.background.alpha = 0;
             this.background.anchor.setTo(0.5, 0.5);
-            this.logo = this.add.sprite(this.game.width * 0.5, this.game.height - 300, 'logo');
+            //////////////////////////////////////////////
+            this.group1 = this.game.add.group();
+            var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
+            //////////////////////////////////////////////
+            var playButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.5, 'button', this.fadeOut, this, 1, 0, 1, 0);
+            playButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(playButton);
+            var playText = this.game.add.text(playButton.x, playButton.y, "Play", style1, this.group1);
+            playText.anchor.setTo(0.5, 0.375);
+            //////////////////////////////////////////////
+            var optionsButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.6, 'button', this.showOptions, this, 1, 0, 1, 0);
+            optionsButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(optionsButton);
+            var optionsText = this.game.add.text(optionsButton.x, optionsButton.y, "Options", style1, this.group1);
+            optionsText.anchor.setTo(0.5, 0.375);
+            //////////////////////////////////////////////
+            this.logo = this.add.sprite(this.game.width * 0.5, 0, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
-            this.instruction = this.add.sprite(this.game.width * 0.5, this.game.height - 200, 'instruction01');
-            this.instruction.anchor.setTo(0.5, 0.5);
-            this.instruction.alpha = 0.5;
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.add.tween(this.logo).to({ y: 220, alpha: 1 }, 250, Phaser.Easing.Elastic.Out, true, 200);
-            this.add.tween(this.instruction).to({ y: 280, alpha: 1 }, 300, Phaser.Easing.Elastic.Out, true, 200);
-            var style1 = { font: "15px Arial", fill: "#00cc00", align: 'center' };
-            this.text1 = this.game.add.text(this.game.width * 0.5, this.game.height * 0.75, String(''), style1);
+            var style2 = { font: "15px Arial", fill: "#0f999c", align: 'center' };
+            this.text1 = this.game.add.text(this.game.width * 0.5, this.game.height * 0.85, String(''), style2);
+            this.text1.anchor.setTo(0.5, 0.5);
             var orientationStr1 = 'landscape';
             if (this.landscapeLayout == false) {
                 orientationStr1 = 'portrait';
@@ -50,13 +63,13 @@ var Dropship;
             else {
                 this.text1.setText('Keyboard controls activated.' + '\n' + orientationStr2);
             }
-            this.text1.anchor.setTo(0.5, 0.5);
-            this.input.onDown.addOnce(this.fadeOut, this);
+        };
+        MainMenu.prototype.showOptions = function () {
+            this.game.state.start('Options', true, false);
         };
         MainMenu.prototype.fadeOut = function () {
             this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
-            this.add.tween(this.instruction).to({ y: 850 }, 150, Phaser.Easing.Linear.None, true);
-            var tween = this.add.tween(this.logo).to({ y: 800 }, 150, Phaser.Easing.Linear.None, true);
+            var tween = this.add.tween(this.logo).to({ y: -100 }, 150, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(this.startGame, this);
         };
         MainMenu.prototype.startGame = function () {
