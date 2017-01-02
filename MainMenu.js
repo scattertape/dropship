@@ -71,9 +71,11 @@ var Dropship;
             }
         };
         MainMenu.prototype.showOptions = function () {
+            this.deviceMoArray = moArray.length;
             this.game.state.start('Options', true, false);
         };
         MainMenu.prototype.showInstructions = function () {
+            this.deviceMoArray = moArray.length;
             this.game.state.start('Instructions', true, false);
         };
         MainMenu.prototype.fadeOut = function () {
