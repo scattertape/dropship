@@ -45,6 +45,12 @@ var Dropship;
             var optionsText = this.game.add.text(optionsButton.x, optionsButton.y, "Options", style1, this.group1);
             optionsText.anchor.setTo(0.5, 0.375);
             //////////////////////////////////////////////
+            var instructionsButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.7, 'button', this.showInstructions, this, 1, 0, 1, 0);
+            instructionsButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(instructionsButton);
+            var instructionsText = this.game.add.text(instructionsButton.x, instructionsButton.y, "Instructions", style1, this.group1);
+            instructionsText.anchor.setTo(0.5, 0.375);
+            //////////////////////////////////////////////
             this.logo = this.add.sprite(this.game.width * 0.5, 0, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
@@ -66,6 +72,9 @@ var Dropship;
         };
         MainMenu.prototype.showOptions = function () {
             this.game.state.start('Options', true, false);
+        };
+        MainMenu.prototype.showInstructions = function () {
+            this.game.state.start('Instructions', true, false);
         };
         MainMenu.prototype.fadeOut = function () {
             this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);

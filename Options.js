@@ -9,6 +9,8 @@ var Dropship;
         __extends(Options, _super);
         function Options() {
             _super.apply(this, arguments);
+            this.joyTextA = 'Tilt to steer';
+            this.joyTextB = 'Joystick to steer';
             this.damage = true;
             this.useJoystick = false;
         }
@@ -16,7 +18,7 @@ var Dropship;
             this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
             this.background.alpha = 0;
             this.background.anchor.setTo(0.5, 0.5);
-            this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
+            this.add.tween(this.background).to({ alpha: 0.3 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.group1 = this.game.add.group();
             var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
             //////////////////////////////////////////
@@ -29,13 +31,15 @@ var Dropship;
                 this.damageText.setText('Damage off');
             }
             ////////////////////////////////////////
-            var joystickButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.6, 'button', this.joystickToggle, this, 1, 0, 1, 0);
-            joystickButton.anchor.setTo(0.5, 0.5);
-            this.group1.add(joystickButton);
-            this.joystickText = this.game.add.text(joystickButton.x, joystickButton.y, "Use tilt", style1, this.group1);
-            this.joystickText.anchor.setTo(0.5, 0.375);
-            if (this.useJoystick == true) {
-                this.joystickText.setText('Use joystick');
+            if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
+                var joystickButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.6, 'button', this.joystickToggle, this, 1, 0, 1, 0);
+                joystickButton.anchor.setTo(0.5, 0.5);
+                this.group1.add(joystickButton);
+                this.joystickText = this.game.add.text(joystickButton.x, joystickButton.y, this.joyTextA, style1, this.group1);
+                this.joystickText.anchor.setTo(0.5, 0.375);
+                if (this.useJoystick == true) {
+                    this.joystickText.setText(this.joyTextB);
+                }
             }
             ////////////////////////////////////////
             var exitButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.7, 'button', this.exitOptions, this, 1, 0, 1, 0);
@@ -57,11 +61,11 @@ var Dropship;
         Options.prototype.joystickToggle = function () {
             if (this.useJoystick) {
                 this.useJoystick = false;
-                this.joystickText.setText('Use tilt');
+                this.joystickText.setText(this.joyTextA);
             }
             else {
                 this.useJoystick = true;
-                this.joystickText.setText('Use joystick');
+                this.joystickText.setText(this.joyTextB);
             }
         };
         Options.prototype.exitOptions = function () {

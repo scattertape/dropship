@@ -194,6 +194,7 @@ var Dropship;
             this._down = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
             this._space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             this._up = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+            this._b = this.game.input.keyboard.addKey(Phaser.Keyboard.B);
             // following keys will not be propagated to browser
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.B, Phaser.Keyboard.COMMA, Phaser.Keyboard.PERIOD, Phaser.Keyboard.SPACEBAR]);
             // allow inpact events
@@ -791,6 +792,10 @@ var Dropship;
             else if (keyboard.isDown(Phaser.Keyboard.PERIOD)) {
             }
             if (this._down.justDown) {
+                // get firtst missile from pool
+                this.missileBtnDown();
+            }
+            if (this._b.justDown) {
                 // get firtst missile from pool
                 this.missileBtnDown();
             }
