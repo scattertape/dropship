@@ -42,6 +42,7 @@ var Dropship;
             this.impact2Snd = this.game.add.audio('impact2');
             this.game.sound.setDecodedCallback([this.laserSnd, this.bombSnd, this.explodeSnd, this.proxSnd, this.thrustSnd, this.laser2Snd, this.impactSnd, this.impact2Snd], this.soundsDecoded, this);
             if (this.game.state.states['MainMenu'].deviceMoArray > 0) {
+                // Tablet only settings:
                 this.deviceMotionAvailable = true;
                 this._swipeActive = true;
             }
@@ -296,14 +297,24 @@ var Dropship;
             this._backgroundImage.cacheAsBitmap = true;
             this._backgroundImage.width = this.game.width;
             this._controlsGroup.add(this._backgroundImage);
-            this._leftButton = this.game.add.button(0, 0);
+            if (this.game.state.states['Options'].useJoystick == false) {
+                this._leftButton = this.game.add.button(0, 0);
+                this._leftButton.height = this.game.camera.height;
+                this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
+                this._rightButton.height = this.game.camera.height;
+            }
+            else {
+                this._leftButton = this.game.add.button(this.game.camera.width * 0.5, this.game.camera.height * 0.5);
+                this._leftButton.height = this.game.camera.height * 0.5;
+                this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
+                this._rightButton.height = this.game.camera.height * 0.5;
+            }
             this._controlsGroup.add(this._leftButton);
             this._leftButton.width = this.game.camera.width * 0.5;
             this._leftButton.height = this.game.camera.height;
             this._leftButton.inputEnabled = true;
             this._leftButton.events.onInputDown.add(this.leftBtnDown, this);
             this._leftButton.events.onInputUp.add(this.leftBtnUp, this);
-            this._rightButton = this.game.add.button(this.game.camera.width * 0.5, 0);
             this._controlsGroup.add(this._rightButton);
             this._rightButton.width = this.game.camera.width * 0.5;
             this._rightButton.height = this.game.camera.height;
@@ -2224,119 +2235,13 @@ var Dropship;
         Joystick.prototype.setup = function (si) {
             this.stateInstance = si;
             this.game.add.existing(this);
-            /* var width = 60 // example;
-             var height = 60 // example;
-             var bmd = this.game.add.bitmapData(width, height);
-             
-             bmd.ctx.beginPath();
-             bmd.ctx.rect(0, 0, width, height);
-             bmd.ctx.fillStyle = '#ffcc00';
-             bmd.ctx.fill();*/
-            //this.dragger = this.game.add.sprite(0, 0, bmd);
-            //this.dragger.anchor.setTo(0.5, 0.5);
-            //this.dragger.width = this.dragger.height = 50;
-            //this.dragger.inputEnabled = true;
-            //this.dragger.input.enableDrag();
-            //this.dragger.input.allowVerticalDrag = false;
-            //this.game.input.pollRate = 0;
-            // this.addChild(this.dragger);
+            this.extend = new Phaser.Image(this.game, this.stateInstance._controlsGroup.x, this.stateInstance._controlsGroup.y - 100, 'Atlas', 'joystick0001');
+            //this.generator.setup(this.game, this.tractorBeam);
+            //this.tractorBeam.anchor.setTo(0.5, 0.0);
+            this.game.add.existing(this.extend);
             this.inputEnabled = true;
-            // this.input.enableDrag();
-            // this.dragger.events.onDragUpdate.add(onDragUpdate, this);
-            // this.events.onInputDown.add(onDown, { param1: this, param2: myBase });
             this.events.onInputDown.add(onDown2, this);
             this.events.onInputUp.add(onUp, this);
-            // this.events.onInputOut.add(onOut, this);
-            /*function onDragUpdate(sprite: Joystick, pointer: Phaser.Pointer) {
-    
-                sprite.mydebug = 'dragging';
-                
-                var deltaX: any = (pointer.x - pointer.positionDown.x);
-    
-                if (sprite.previousDelta == null) {
-                    sprite.previousDelta = deltaX;
-                   
-                }
-                
-    
-               // console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-                sprite.mydebug = '3deltaX: ' + deltaX + ', pID: ' + pointer.id;
-               
-                var mrNum: any = Math.abs(deltaX);
-                
-                if (deltaX < sprite.previousDelta) {
-                    this.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
-                    //sprite.base.body.rotation -= mrNum * 2 / 1000 * (Math.PI / 4);
-                } else if (deltaX > sprite.previousDelta) {
-                    this.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
-                   // sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
-                }
-    
-                sprite.previousDelta = deltaX;
-    
-    
-            }*/
-            // function onDown(sprite:Joystick, pointer:Phaser.Pointer, pri:Number, myBase:Phaser.Sprite) {
-            /* function onDown() {
-     
-                 //if an input down event (thruster or fire) is currently active, need a way to ignore them
-                 var sprite: Joystick = this.param1;
-     
-                 sprite.mydebug = 'onDown, gpID: ' + globalPointerID;
-     
-                 var myBase:Phaser.Sprite = this.param2;
-                            
-                 console.log('joystick onDown... ' + myBase.name);
-                // sprite.myPointer = pointer;
-                 sprite.isBeingDragged = true;
-                            
-                 
-                sprite.game.input.addMoveCallback(function (pointer: Phaser.Pointer, x, y, myBase:Phaser.Sprite) {
-                    // move callbacks will be triggered by thrust & fire buttons
-                    // but they will have different pointer IDs, so ignore them.
-     
-                    sprite.mydebug = 'addMoveCallback, gpID: ' + globalPointerID;
-     
-                    if (globalPointerID == -1) {
-                        globalPointerID = pointer.id;
-                    }
-     
-                    if (globalPointerID == pointer.id){
-     
-                        if (sprite.isBeingDragged == true) {
-                            //console.log('move callback: ' + pointer.positionDown.x + ',' + pointer.x);
-                            //console.log('joystick movecallback... ' + sprite.base.name);
-     
-                            var deltaX: any = (pointer.x - pointer.positionDown.x);
-     
-                            if (sprite.previousDelta == null) {
-                                sprite.previousDelta = deltaX;
-                                //sprite.activePointerId = pointer.id;
-                            }
-     
-                            console.log('deltaX: ' + deltaX + ' ,pID: ' + pointer.id);
-                            sprite.mydebug = '2deltaX: ' + deltaX + ' ,pID: ' + pointer.id;
-     
-     
-                            var mrNum: any = Math.abs(deltaX);
-     
-                            if (deltaX < sprite.previousDelta) {
-                                sprite.base.body.angle = sprite.base.body.angle - 1; // -= mrNum * 2 / 1000 * (Math.PI / 4);
-                            } else if (deltaX > sprite.previousDelta) {
-                                sprite.base.body.angle = sprite.base.body.angle + 1;
-                                //sprite.base.body.rotation += mrNum * 2 / 1000 * (Math.PI / 4);
-                            }
-     
-                            sprite.previousDelta = deltaX;
-     
-                        }
-                        
-                        //sprite.base.body.rotation = sprite.base.body.rotation + (deltaX);
-                    }
-                                   
-                 }, this);
-             
-             }*/
             function onDown2(sprite, pointer) {
                 sprite.isBeingDragged = true;
                 sprite.myPointer = pointer;
