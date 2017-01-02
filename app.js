@@ -28,6 +28,7 @@ var Dropship;
             this.state.add('Boot', Dropship.Boot, false);
             this.state.add('Preloader', Dropship.Preloader, false);
             this.state.add('MainMenu', Dropship.MainMenu, false);
+            this.state.add('Options', Dropship.Options, false);
             this.state.add('LevelComplete', Dropship.LevelComplete, false);
             this.state.add('Level1', Dropship.Level1, false);
             this.state.start('Boot');
