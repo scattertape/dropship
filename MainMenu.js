@@ -113,7 +113,7 @@ var Dropship;
             }
             else {
                 // Accelerometer exists
-                var tabletText = this.game.add.text(playButton.x, playButton.y, "", style1, this.group2);
+                var tabletText = this.game.add.text(this.game.width * 0.5, this.game.height * 0.45, "", style1, this.group2);
                 tabletText.anchor.setTo(0.5, 0.375);
                 if (this.game.state.states['Options'].useJoystick == false) {
                     tabletText.setText('No joystick');
