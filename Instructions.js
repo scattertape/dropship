@@ -25,7 +25,7 @@ var Dropship;
                 + "\nLeft arrow: turn left"
                 + "\nRight arrow: turn right"
                 + "\nSpace: fire"
-                + "\nDown arrow or B: release bomb", style2, this.group1);
+                + "\nDown arrow: release bomb", style2, this.group1);
             keysHeader.anchor.setTo(0.5, 0.0);
             keysText.anchor.setTo(0.5, 0.0);
             ////////////////////////////////////////

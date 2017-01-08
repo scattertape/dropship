@@ -195,8 +195,12 @@ var Dropship;
             this._space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             this._up = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
             this._b = this.game.input.keyboard.addKey(Phaser.Keyboard.B);
+            this._w = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+            this._a = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+            this._s = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+            this._d = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
             // following keys will not be propagated to browser
-            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.B, Phaser.Keyboard.COMMA, Phaser.Keyboard.PERIOD, Phaser.Keyboard.SPACEBAR]);
+            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.B, Phaser.Keyboard.W, Phaser.Keyboard.A, Phaser.Keyboard.S, Phaser.Keyboard.D, Phaser.Keyboard.SPACEBAR]);
             // allow inpact events
             this.game.physics.p2.setImpactEvents(true);
             this._missilesCollisionGroup = this.game.physics.p2.createCollisionGroup();
@@ -349,13 +353,14 @@ var Dropship;
             this._missileBtn.inputEnabled = true;
             this._missileBtn.events.onInputDown.add(this.missileBtnDown, this);
             if (this.game.state.states['Options'].useJoystick == true) {
+                this.joystickViz = new JoystickViz(this.game, 0, this.game.camera.height + 10);
+                this.joystickViz.anchor.setTo(0.0, 0.5);
+                this._controlsGroup.add(this.joystickViz);
                 this._joystick = new Joystick(this.game, 0, 0);
                 this._controlsGroup.add(this._joystick);
-                //this._joystick.anchor.setTo(0,0.0);
                 this._joystick.setup(this);
-                //this.anchor.setTo(0.0, 0.0);
                 this._joystick.fixedToCamera = true;
-                this._joystick.cameraOffset.setTo(0, this.game.camera.height - 70);
+                this._joystick.cameraOffset.setTo(0, 0);
             }
             if (this._swipeActive == true) {
                 //var swipeMinWidthDistance = this.game.world.width / 10;
@@ -495,6 +500,8 @@ var Dropship;
             this._objects.enableBody = true;
             this._objects.physicsBodyType = Phaser.Physics.P2JS;
             var objectsList = [
+                { "x": -260, "y": -200, "rotation": 90, "type": 'telebase', "level": 0 },
+                { "x": -260, "y": -100, "rotation": 90, "type": 'telebase', "level": 0 },
                 { "x": 175, "y": 145, "rotation": 90, "type": 'sheildBonus', "level": 1 },
                 { "x": -120, "y": -360, "rotation": 0, "type": 'octoid', "level": 1 },
                 { "x": -90, "y": -380, "rotation": 180, "type": 'octoid', "level": 1 },
@@ -552,7 +559,7 @@ var Dropship;
                     }
                     ;
                     if (objectsList[i].type == 'telebase') {
-                        texture = 'telebase';
+                        texture = 'telebase0000';
                     }
                     ;
                     var xPos = objectsList[i].x + this.world.centerX;
@@ -665,8 +672,9 @@ var Dropship;
             }
             this._base.body.collides([this._antiGravCollisionGroup, this._aggCollisionGroup]);
             this._teleporters = this.game.add.group();
+            this._allGroup.add(this._teleporters);
             var teleporterList = [
-                { "x": -140, "y": -220, "rotation": 0, "level": 0 },
+                { "x": 100, "y": 100, "rotation": 0, "level": 0 },
                 { "x": -140, "y": -220, "rotation": 0, "level": 1 }
             ];
             for (var i = 0; i < teleporterList.length; i++) {
@@ -690,6 +698,9 @@ var Dropship;
             this._controlsGroup.fixedToCamera = true;
             this._controlsGroup.cameraOffset.setTo(0, this.game.height - this._controlsGroup.height);
             if (this.game.state.states['MainMenu'].landscapeLayout == true) {
+                if (this.game.state.states['Options'].useJoystick == true) {
+                    this.joystickViz.y = 650;
+                }
                 this._tiles.forEach(function (tile) {
                     var newPoint = this.rotate_point(tile.body.x, tile.body.y, this.world.centerX, this.world.centerY, 90);
                     tile.body.x = newPoint.x;
@@ -697,6 +708,12 @@ var Dropship;
                     tile.body.angle = 90;
                 }, this);
                 this._objects.forEach(function (obj) {
+                    var newPoint = this.rotate_point(obj.body.x, obj.body.y, this.world.centerX, this.world.centerY, 90);
+                    obj.body.x = newPoint.x;
+                    obj.body.y = newPoint.y;
+                    obj.body.angle = obj.body.angle + 90;
+                }, this);
+                this._teleporters.forEach(function (obj) {
                     var newPoint = this.rotate_point(obj.body.x, obj.body.y, this.world.centerX, this.world.centerY, 90);
                     obj.body.x = newPoint.x;
                     obj.body.y = newPoint.y;
@@ -771,32 +788,36 @@ var Dropship;
             //this._cannon.y = this._base.y;
             //this._cannon.angle = this._base.angle+90;
             if (this._up.justDown) {
-                // this._base.body.thrust(State.THRUST_POWER);
+                this.igniteThruster();
+            }
+            if (this._w.justDown) {
                 this.igniteThruster();
             }
             if (this._up.justUp) {
-                // this._base.body.thrust(State.THRUST_POWER);
+                this.deactivateThruster();
+            }
+            if (this._w.justUp) {
                 this.deactivateThruster();
             }
             // if (this.game.input.activePointer.isDown && this._leftBtn.input.checkPointerOver(this.game.input.activePointer)) { this.pressLeft(); }
             // if (this.game.input.activePointer.isDown && this._rightBtn.input.checkPointerOver(this.game.input.activePointer)) { this.pressRight(); }
             // left and right key
-            if (keyboard.isDown(Phaser.Keyboard.COMMA)) {
-            }
-            else if (keyboard.isDown(Phaser.Keyboard.LEFT)) {
+            if (keyboard.isDown(Phaser.Keyboard.LEFT)) {
                 this.pressLeft();
             }
             else if (keyboard.isDown(Phaser.Keyboard.RIGHT)) {
                 this.pressRight();
             }
-            else if (keyboard.isDown(Phaser.Keyboard.PERIOD)) {
+            if (keyboard.isDown(Phaser.Keyboard.A)) {
+                this.pressLeft();
+            }
+            else if (keyboard.isDown(Phaser.Keyboard.D)) {
+                this.pressRight();
             }
             if (this._down.justDown) {
-                // get firtst missile from pool
                 this.missileBtnDown();
             }
             if (this._b.justDown) {
-                // get firtst missile from pool
                 this.missileBtnDown();
             }
             // Fire Laser
@@ -1259,7 +1280,7 @@ var Dropship;
                 console.log('camera error? ' + this.game.world.getBounds() + ', camX ' + cameraX + ', camY ' + cameraY);
                 //this.game.state.start('LevelComplete', true, false);
                 //this.game.state.states['Level1'].gameOver();
-                this.game.state.start('MainMenu', true, false);
+                this.game.state.start('LevelFailed', true, false);
             }
         };
         Level1.prototype.transitionComplete = function () {
@@ -1335,10 +1356,14 @@ var Dropship;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             console.log('teleporter constructor...');
-            _super.call(this, game, x, y, 'Atlas', 'teleporter');
+            _super.call(this, game, x, y, 'Atlas', 'teleporter0000');
         }
         Teleporter.prototype.setUp = function (si) {
             this.stateInstance = si;
+            this.animations.add("spin", Phaser.Animation.generateFrameNames("teleporter", 0, 9, "", 4), 30, true);
+            //this.generator.animations.add("active", ["Bolt0000", "Bolt0001", "Bolt0002", "Bolt0003", "Bolt0004", "Bolt0005"], 30, true);
+            //this.animations.add("blowup", Phaser.Animation.generateFrameNames("AntiGrav", 12, 32, "", 4));
+            this.play("spin");
         };
         return Teleporter;
     }(Phaser.Sprite));
@@ -2178,7 +2203,7 @@ var Dropship;
             //this.game.state.start(game.state.current);
             //this.game.state.restart();
             //this.game.state.states['MainMenu'].level++;
-            this.game.state.start('MainMenu', true, false);
+            this.game.state.start('LevelFailed', true, false);
         };
         return Ship;
     }(Phaser.Sprite));
@@ -2189,6 +2214,7 @@ var Dropship;
             if (y === void 0) { y = 0; }
             console.log('joystick construcy...');
             _super.call(this, game, x, y, 'Atlas', 'joystick0001');
+            // super(game, x, y);
             //this.anchor.setTo(0.0, 0.0);
             //this.fixedToCamera = true;
             //this.cameraOffset.setTo(x, y);
@@ -2215,7 +2241,7 @@ var Dropship;
                         this.stateInstance._base.body.angle = this.stateInstance._base.body.angle - 5; // -= mrNum * 2 / 1000 * (Math.PI / 4);
                         this.stateInstance._base.rotationChanged(true);
                         if (this.myPointer.x < 160) {
-                            this.loadTexture('Atlas', 'joystick0000');
+                            this.visual.loadTexture('Atlas', 'joystick0000');
                         }
                         else {
                         }
@@ -2224,14 +2250,14 @@ var Dropship;
                         this.stateInstance._base.body.angle = this.stateInstance._base.body.angle + 5;
                         this.stateInstance._base.rotationChanged(false);
                         if (this.myPointer.x > 160) {
-                            this.loadTexture('Atlas', 'joystick0002');
+                            this.visual.loadTexture('Atlas', 'joystick0002');
                         }
                         else {
                         }
                     }
                     console.log(this.myPointer.x);
                     if (this.myPointer.x > 150 && this.myPointer.x < 170) {
-                        this.loadTexture('Atlas', 'joystick0001');
+                        this.visual.loadTexture('Atlas', 'joystick0001');
                     }
                     this.previousDelta = deltaX;
                 }
@@ -2239,23 +2265,27 @@ var Dropship;
         };
         Joystick.prototype.setup = function (si) {
             this.stateInstance = si;
+            this.visual = this.stateInstance.joystickViz;
             this.game.add.existing(this);
+            this.alpha = 0.5;
+            this.height = this.game.height;
             this.inputEnabled = true;
+            this.renderable = false;
             this.events.onInputDown.add(onDown2, this);
             this.events.onInputUp.add(onUp, this);
             function onDown2(sprite, pointer) {
                 sprite.isBeingDragged = true;
                 sprite.myPointer = pointer;
                 if (pointer.x < 160) {
-                    sprite.loadTexture('Atlas', 'joystick0000');
+                    sprite.visual.loadTexture('Atlas', 'joystick0000');
                 }
                 else {
-                    sprite.loadTexture('Atlas', 'joystick0002');
+                    sprite.visual.loadTexture('Atlas', 'joystick0002');
                 }
             }
             function onUp(sprite, pointer) {
                 // console.log('onup: was' + pointer.positionDown + ', now ' + pointer.positionUp);
-                sprite.loadTexture('Atlas', 'joystick0001');
+                sprite.visual.loadTexture('Atlas', 'joystick0001');
                 sprite.isBeingDragged = false;
                 //globalPointerID = -1;
             }
@@ -2266,6 +2296,22 @@ var Dropship;
         Joystick.prototype.onUpdate = function () {
         };
         return Joystick;
+    }(Phaser.Sprite));
+    var JoystickViz = (function (_super) {
+        __extends(JoystickViz, _super);
+        function JoystickViz(game, x, y) {
+            if (x === void 0) { x = 0; }
+            if (y === void 0) { y = 0; }
+            console.log('laser constructor...');
+            _super.call(this, game, x, y, 'Atlas', 'joystick0001');
+        }
+        JoystickViz.prototype.setUp = function (si) {
+            this.stateInstance = si;
+            //this.y = this.game.height - 70;
+            this.game.add.existing(this);
+            this.fixedToCamera = true;
+        };
+        return JoystickViz;
     }(Phaser.Sprite));
 })(Dropship || (Dropship = {}));
 //# sourceMappingURL=Level1.js.map

@@ -24,6 +24,7 @@ var Dropship;
             this.game.time.desiredFps = 60;
             this.game.load.image("BG", "assets/bg.png");
             this.game.load.atlas("Atlas", "assets/atlas.png", "assets/atlas.json");
+            this.game.load.image("control_keyboard", "assets/control_keyboard.png");
             this.game.load.physics('physicsDataLevel0', 'assets/level0.json');
             this.game.load.image('level0-5', 'assets/level0_05.jpg');
             this.game.load.image('level0-1', 'assets/level1_01.jpg');

@@ -21,6 +21,12 @@ var Dropship;
             this.add.tween(this.background).to({ alpha: 0.3 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.group1 = this.game.add.group();
             var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
+            ////////////////////////////////////////
+            var fullScreenButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.4, 'button', this.goFullScreen, this, 1, 0, 1, 0);
+            fullScreenButton.anchor.setTo(0.5, 0.5);
+            this.group1.add(fullScreenButton);
+            var fullText = this.game.add.text(this.game.width * 0.5, this.game.height * 0.4, "Full screen", style1, this.group1);
+            fullText.anchor.setTo(0.5, 0.375);
             //////////////////////////////////////////
             var damageButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.5, 'button', this.damageToggle, this, 1, 0, 1, 0);
             damageButton.anchor.setTo(0.5, 0.5);
@@ -47,6 +53,11 @@ var Dropship;
             this.group1.add(exitButton);
             var exitText = this.game.add.text(exitButton.x, exitButton.y, "Exit", style1, this.group1);
             exitText.anchor.setTo(0.5, 0.375);
+        };
+        Options.prototype.goFullScreen = function () {
+            //this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.startFullScreen();
         };
         Options.prototype.damageToggle = function () {
             if (this.damage) {

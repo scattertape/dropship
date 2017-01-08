@@ -14,7 +14,9 @@ var Dropship;
             this.background = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'titlepage');
             this.background.alpha = 0;
             this.background.anchor.setTo(0.5, 0.5);
-            this.complete = this.add.sprite(this.game.width * 0.5, this.game.height - 300, 'complete');
+            //this.complete = this.add.sprite(this.game.width * 0.5, this.game.height - 300, 'complete');
+            var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
+            this.complete = this.game.add.text(this.game.width * 0.5, (this.game.height * 0.5), "Level complete", style1);
             this.complete.anchor.setTo(0.5, 0.5);
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.add.tween(this.complete).to({ y: 220 }, 200, Phaser.Easing.Elastic.Out, true, 200);
@@ -29,7 +31,7 @@ var Dropship;
             if (this.game.state.states['MainMenu'].level == 0) {
                 this.game.state.states['MainMenu'].level++;
             }
-            this.game.state.start('MainMenu', true, false);
+            this.game.state.start('Level1', true, false);
         };
         return LevelComplete;
     }(Phaser.State));
