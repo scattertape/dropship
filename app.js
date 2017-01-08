@@ -31,6 +31,7 @@ var Dropship;
             this.state.add('Options', Dropship.Options, false);
             this.state.add('Instructions', Dropship.Instructions, false);
             this.state.add('LevelComplete', Dropship.LevelComplete, false);
+            this.state.add('LevelFailed', Dropship.LevelFailed, false);
             this.state.add('Level1', Dropship.Level1, false);
             this.state.start('Boot');
         }

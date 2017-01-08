@@ -18,7 +18,7 @@ var Dropship;
         __extends(MainMenu, _super);
         function MainMenu() {
             _super.apply(this, arguments);
-            this.level = 1;
+            this.level = 0;
             this.deviceMoArray = 0;
             this.landscapeLayout = false;
         }
@@ -33,7 +33,7 @@ var Dropship;
             this.group1 = this.game.add.group();
             var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
             //////////////////////////////////////////////
-            var playButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.5, 'button', this.fadeOut, this, 1, 0, 1, 0);
+            var playButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.5, 'button', this.playGame, this, 1, 0, 1, 0);
             playButton.anchor.setTo(0.5, 0.5);
             this.group1.add(playButton);
             var playText = this.game.add.text(playButton.x, playButton.y, "Play", style1, this.group1);
@@ -51,12 +51,12 @@ var Dropship;
             var instructionsText = this.game.add.text(instructionsButton.x, instructionsButton.y, "Instructions", style1, this.group1);
             instructionsText.anchor.setTo(0.5, 0.375);
             //////////////////////////////////////////////
-            this.logo = this.add.sprite(this.game.width * 0.5, 0, 'logo');
+            this.logo = this.add.sprite(this.game.width * 0.5, -100, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
             this.add.tween(this.background).to({ alpha: 1 }, 200, Phaser.Easing.Bounce.InOut, true);
             this.add.tween(this.logo).to({ y: 220, alpha: 1 }, 250, Phaser.Easing.Elastic.Out, true, 200);
             var style2 = { font: "15px Arial", fill: "#0f999c", align: 'center' };
-            this.text1 = this.game.add.text(this.game.width * 0.5, this.game.height * 0.85, String(''), style2);
+            this.text1 = this.game.add.text(this.game.width * 0.5, this.game.height * 0.85, String(''), style2, this.group1);
             this.text1.anchor.setTo(0.5, 0.5);
             var orientationStr1 = 'landscape';
             if (this.landscapeLayout == false) {
@@ -78,14 +78,63 @@ var Dropship;
             this.deviceMoArray = moArray.length;
             this.game.state.start('Instructions', true, false);
         };
-        MainMenu.prototype.fadeOut = function () {
-            this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
-            var tween = this.add.tween(this.logo).to({ y: -100 }, 150, Phaser.Easing.Linear.None, true);
-            tween.onComplete.add(this.startGame, this);
+        MainMenu.prototype.playGame = function () {
+            this.deviceMoArray = moArray.length;
+            this.group1.destroy(true);
+            this.background.alpha = 0.3;
+            this.add.tween(this.logo).to({ y: -100, alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
+            if (this.game.state.states['MainMenu'].level == 0) {
+                this.showControls();
+            }
+            else {
+                //var tween = this.add.tween(this.background).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
+                //tween.onComplete.add(this.startGame, this);
+                this.startGame();
+            }
+        };
+        MainMenu.prototype.showControls = function () {
+            //////////////////////////////////////////////
+            this.group2 = this.game.add.group();
+            var style1 = { font: "25px Arial", fill: "#ffffff", align: 'center' };
+            //////////////////////////////////////////////
+            var playButton = this.game.make.button(this.game.width * 0.5, this.game.height * 0.85, 'button', this.startGame, this, 1, 0, 1, 0);
+            playButton.anchor.setTo(0.5, 0.5);
+            this.group2.add(playButton);
+            var playText = this.game.add.text(playButton.x, playButton.y, "Start", style1, this.group2);
+            playText.anchor.setTo(0.5, 0.375);
+            //////////////////////////////////////////////
+            if (this.deviceMoArray == 0) {
+                // Keyboard controls
+                //var keyboardText = this.game.add.text(this.game.width * 0.5, this.game.height * 0.5, "Keyboard", style1, this.group2);
+                //keyboardText.anchor.setTo(0.5, 0.375);
+                var keys = this.add.sprite(this.game.width * 0.5, this.game.height * 0.45, 'control_keyboard', this.group2);
+                keys.anchor.setTo(0.5, 0.5);
+                this.group2.add(keys);
+            }
+            else {
+                // Accelerometer exists
+                var tabletText = this.game.add.text(playButton.x, playButton.y, "", style1, this.group2);
+                tabletText.anchor.setTo(0.5, 0.375);
+                if (this.game.state.states['Options'].useJoystick == false) {
+                    tabletText.setText('No joystick');
+                }
+                else {
+                    tabletText.setText('Using joystick');
+                }
+            }
         };
         MainMenu.prototype.startGame = function () {
             window.removeEventListener("devicemotion", onDeviceMotionTest);
-            this.deviceMoArray = moArray.length;
+            this.group2.destroy(true);
+            //this.group2.alpha = 0;
+            //this.add.tween(this.group2).to({ alpha: 0 }, 150, Phaser.Easing.Linear.None, true);
+            var ship = this.add.sprite(this.game.width * 0.5, this.game.height * 0.5, 'Atlas', 'Ship0000');
+            ship.anchor.setTo(0.5, 0.5);
+            ship.alpha = 0;
+            var tween = this.add.tween(ship).to({ alpha: 1 }, 500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(this.shipAppear, this);
+        };
+        MainMenu.prototype.shipAppear = function () {
             this.game.state.start('Level1', true, false);
         };
         return MainMenu;
